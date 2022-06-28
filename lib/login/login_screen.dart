@@ -1,6 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:mandaditos_express/register/register_choose.dart';
+import 'package:mandaditos_express/register/register_screen.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -230,7 +230,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  const RegisterChoose())),
+                                                  const RegisterScreen())),
                                   )
                                 ],
                               ),
