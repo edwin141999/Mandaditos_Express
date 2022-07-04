@@ -11,6 +11,9 @@ class ColorSelect {
   //COLOR DEL DROPDOWN
   static const kColorDropdown = Color(0xffD9D9D9);
 
+  // COLOR DE LOS BOTONES
+  static const kContainerBackground = Color(0xffD9D9D9);
+
   //COLORES DE LOS LOGOS
   static const kFacebookColor = Color(0xff4867AA);
   static const kGoogleColor = Color(0xffE6E6E6);
