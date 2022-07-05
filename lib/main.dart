@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:mandaditos_express/splash/splash_view.dart';
 
@@ -16,3 +17,4 @@ class MyApp extends StatelessWidget {
         home: SplashView());
   }
 }
+
