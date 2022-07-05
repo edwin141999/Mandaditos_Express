@@ -56,7 +56,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       register();
     }
   }
-
   @override
   void initState() {
     _passwordVisible = false;
