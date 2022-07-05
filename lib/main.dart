@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mandaditos_express/splash/splash_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -9,18 +10,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Mandaditos Express',
-      debugShowCheckedModeBanner: false,
-      home: Container(
-        color: Colors.blue,
-        child: const Center(
-          child: Text(
-            'Hola mundo',
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-      ),
-    );
+    return const MaterialApp(
+        title: 'Mandaditos Express',
+        debugShowCheckedModeBanner: false,
+        home: SplashView());
   }
 }
