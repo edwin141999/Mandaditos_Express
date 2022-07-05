@@ -1,5 +1,6 @@
+
 import 'package:flutter/material.dart';
-import 'package:vistaproyecto/pages/reciboCompra.dart';
+import 'package:mandaditos_express/splash/splash_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -8,17 +9,12 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      debugShowCheckedModeBanner: false,
-      // home: SplashView(),
-      initialRoute: 'reciboCompra',
-      routes: {
-        'reciboCompra': (context) => const reciboCompra(),
-      },
-    );
+    return const MaterialApp(
+        title: 'Mandaditos Express',
+        debugShowCheckedModeBanner: false,
+        home: SplashView());
   }
 }
+
