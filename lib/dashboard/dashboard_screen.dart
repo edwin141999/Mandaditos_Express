@@ -37,7 +37,7 @@ class _DashboardState extends State<Dashboard> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Text(
-                        'Hola ${widget.userInfo.user.firstName}',
+                        'QUE ONDA ${widget.userInfo.user.firstName}',
                         style: const TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w500),
                       ),
