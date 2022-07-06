@@ -20,6 +20,8 @@ class _DashboardState extends State<Dashboard> {
   ];
 
   String callesValue = 'Calle 10 9';
+  var textUp = ['Ver puntos de interes', 'Solicitar un mandadito', ''];
+  var textDown = ['Productos registrados', 'Historial de pedidos', ''];
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +34,11 @@ class _DashboardState extends State<Dashboard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: 60,
+                  height: 90,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
+                      const Padding(padding: EdgeInsets.only(top: 30)),
                       Text(
                         'Hola ${widget.userInfo.user.firstName}',
                         style: const TextStyle(
@@ -100,21 +103,107 @@ class _DashboardState extends State<Dashboard> {
                     ],
                   ),
                 ),
-                Container(
-                  width: 150,
-                  height: 150,
-                  color: ColorSelect.kContainerBackground,
-                  child: const Center(
-                      child: Text(
-                    'Ver  puntos de interes',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 16),
-                  )),
-                )
+                SizedBox(
+                  height: 460,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: 160,
+                        child: ListView.builder(
+                          itemCount: textUp.length,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              margin: const EdgeInsets.only(right: 7),
+                              width: 150,
+                              color: ColorSelect.kContainerBackground,
+                              child: Center(
+                                  child: Text(
+                                textUp[index],
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 22),
+                              )),
+                            );
+                          },
+                        ),
+                      ),
+                      const Padding(padding: EdgeInsets.only(top: 10)),
+                      SizedBox(
+                        height: 160,
+                        child: ListView.builder(
+                          itemCount: textDown.length,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              margin: const EdgeInsets.only(right: 7),
+                              width: 150,
+                              color: ColorSelect.kContainerBackground,
+                              child: Center(
+                                  child: Text(
+                                textDown[index],
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 20),
+                              )),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
         ),
+      ),
+      bottomNavigationBar: const ButtonBar(),
+    );
+  }
+}
+
+class ButtonBar extends StatefulWidget {
+  const ButtonBar({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<ButtonBar> createState() => _ButtonBarState();
+}
+
+class _ButtonBarState extends State<ButtonBar> {
+  int selectedPage = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.101,
+      child: Column(
+        children: [
+          const Divider(color: Colors.black),
+          BottomNavigationBar(
+            items: [
+              BottomNavigationBarItem(
+                  icon: Image.asset('assets/images/icon_arrow_back.png'),
+                  label: ''),
+              BottomNavigationBarItem(
+                  icon: Image.asset('assets/images/icon_plus.png'), label: ''),
+              BottomNavigationBarItem(
+                  icon: Image.asset('assets/images/icon_shopping.png'),
+                  label: ''),
+              BottomNavigationBarItem(
+                  icon: Image.asset('assets/images/icon_ubicacion.png'),
+                  label: ''),
+            ],
+            currentIndex: selectedPage,
+            elevation: 0,
+            onTap: (int index) {
+              setState(() {
+                selectedPage = index;
+              });
+            },
+          ),
+        ],
       ),
     );
   }

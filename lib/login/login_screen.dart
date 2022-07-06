@@ -68,8 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> login() async {
-    var url = Uri.parse(
-        'http://ec2-54-174-241-22.compute-1.amazonaws.com/users/login');
+    var url = Uri.parse('http://54.163.243.254/users/login');
     return await Future.delayed(
         const Duration(seconds: 2),
         () => {
