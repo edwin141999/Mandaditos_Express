@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vistaproyecto/Styles/colors_view.dart';
+import 'package:mandaditos_express/styles/colors/colors_view.dart';
 
 class reciboCompra extends StatefulWidget {
   const reciboCompra({Key? key}) : super(key: key);
@@ -23,7 +23,7 @@ class _reciboCompraState extends State<reciboCompra> {
         leading: Container(
           //padding: const EdgeInsets.only()),
           child: Image.asset(
-            'assets/images/logoM.png',
+            'assets/images/Logo.png',
             height: 40,
             width: 40,
           ),
@@ -200,7 +200,7 @@ class _reciboCompraState extends State<reciboCompra> {
         ),
         const Divider(
           height: 1,
-          color: ColorSelect.txtBoSubHe,
+          color: ColorSelect.txtBoHe,
         ),
         Container(
           padding: const EdgeInsets.only(left: 200, top: 20),

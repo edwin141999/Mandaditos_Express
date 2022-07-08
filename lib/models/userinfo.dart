@@ -12,19 +12,48 @@ class User {
   User({
     required this.token,
     required this.user,
+    required this.datatype,
   });
 
   String token;
   UserClass user;
+  List<Datatype> datatype;
 
   factory User.fromJson(Map<String, dynamic> json) => User(
         token: json["token"],
         user: UserClass.fromJson(json["user"]),
+        datatype: List<Datatype>.from(
+            json["datatype"].map((x) => Datatype.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
         "token": token,
         "user": user.toJson(),
+        "datatype": List<dynamic>.from(datatype.map((x) => x.toJson())),
+      };
+}
+
+class Datatype {
+  Datatype({
+    required this.id,
+    required this.userId,
+    required this.direccion,
+  });
+
+  int id;
+  int userId;
+  String direccion;
+
+  factory Datatype.fromJson(Map<String, dynamic> json) => Datatype(
+        id: json["id"],
+        userId: json["user_id"],
+        direccion: json["direccion"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "user_id": userId,
+        "direccion": direccion,
       };
 }
 
