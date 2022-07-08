@@ -21,4 +21,11 @@ class ColorSelect {
   //TEXTOS
   static const kTextGrey = Color.fromRGBO(139, 139, 139, 1);
   static const kTextDropdown = Color(0xff9B9B9B);
+  static const txtBoHe = Color(0xFF4f1581);
+
+  static const paginator = Color(0xFAFAFAFA);
+
+  // COLORES DE LOS CONTAINER
+  static const kContainerGreen = Color(0xff41FA96);
+  static const kContainerPink = Color(0xffFA4141);
 }
