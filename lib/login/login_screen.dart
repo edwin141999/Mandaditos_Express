@@ -1,11 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:mandaditos_express/register/register_choose.dart';
-import 'package:mandaditos_express/styles/colors/colors_view.dart';
 import 'package:mandaditos_express/dashboard/dashboard_screen.dart';
 import 'package:mandaditos_express/register/register_screen.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 // SERVER
 import 'package:http/http.dart' as http;
@@ -53,16 +52,34 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _passwordVisible = false;
-  var usernameController = TextEditingController();
-  var passwordController = TextEditingController();
+  bool _isLoggedIn = false;
+  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   UserData userData = UserData();
 
   void submit() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      login();
+      loginwithDB();
     }
+  }
+
+  loginwithGoogle() async {
+    try {
+      await _googleSignIn.signIn();
+      setState(() {
+        _isLoggedIn = true;
+      });
+    } catch (err) {
+      rethrow;
+    }
+  }
+
+  _logout() {
+    _googleSignIn.signOut();
+    setState(() {
+      _isLoggedIn = false;
+    });
   }
 
   @override
@@ -71,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
   }
 
-  Future<void> login() async {
+  Future<void> loginwithDB() async {
     var url = Uri.parse('http://54.163.243.254/users/login');
     return await Future.delayed(
         const Duration(seconds: 2),
@@ -102,9 +119,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     context,
                     MaterialPageRoute(
                       builder: (context) {
-                        return Dashboard(
-                          userInfo: userFromJson(response.body),
-                        );
+                        // print(response.body);
+                        return Dashboard(userInfo: userFromJson(response.body));
                       },
                     ),
                   );
@@ -297,11 +313,39 @@ class _LoginScreenState extends State<LoginScreen> {
                                           borderRadius:
                                               BorderRadius.circular(50),
                                           color: Colors.red),
-                                      child: IconButton(
-                                          onPressed: () {},
-                                          icon: Image.asset(
-                                              'assets/images/google_logo.png',
-                                              height: 45)),
+                                      child: _isLoggedIn
+                                          ? Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                Image.network(
+                                                  _googleSignIn
+                                                      .currentUser!.photoUrl
+                                                      .toString(),
+                                                  height: 50,
+                                                  width: 50,
+                                                ),
+                                                Text(_googleSignIn
+                                                    .currentUser!.displayName
+                                                    .toString()),
+                                                Text(_googleSignIn
+                                                    .currentUser!.email
+                                                    .toString()),
+                                                OutlinedButton(
+                                                  child: const Text("Logout"),
+                                                  onPressed: () {
+                                                    _logout();
+                                                  },
+                                                )
+                                              ],
+                                            )
+                                          : IconButton(
+                                              onPressed: () {
+                                                loginwithGoogle();
+                                              },
+                                              icon: Image.asset(
+                                                  'assets/images/google_logo.png',
+                                                  height: 45)),
                                     ),
                                   ],
                                 ),
