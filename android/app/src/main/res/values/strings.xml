@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mandaditos Express</string>
+    <string name="facebook_app_id">1200174434156347</string>
+    <string name="fb_login_protocol_scheme">fb1200174434156347</string>
+    <string name="facebook_client_token">40666845c8b8dda3e126f679883cdb46</string>
+</resources>
