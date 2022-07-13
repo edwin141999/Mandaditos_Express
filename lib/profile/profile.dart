@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mandaditos_express/login/login_screen.dart';
+import 'package:mandaditos_express/metodos_pago/metodospago_screen.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -61,6 +62,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
               height: MediaQuery.of(context).size.height,
               child: Column(
                 children: [
+                  Row(
+                    children: [
+                      Image.asset('assets/images/icon_tarjeta.png'),
+                      const SizedBox(width: 30),
+                      GestureDetector(
+                        child: const Text('Metodos de pago',
+                            style: TextStyle(color: Colors.blue, fontSize: 20)),
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const MetodosPagoScreen()),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 30),
                   Row(
                     children: [
                       Image.asset('assets/images/icon_cerrar_sesion.png'),
