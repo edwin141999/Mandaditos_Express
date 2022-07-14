@@ -56,6 +56,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       register();
     }
   }
+
   @override
   void initState() {
     _passwordVisible = false;
@@ -64,8 +65,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Future<void> register() async {
     // var url = Uri.parse('http://192.168.100.13:3000/users/register');
-    var url = Uri.parse(
-        'http://ec2-54-174-241-22.compute-1.amazonaws.com/users/register');
+    var url = Uri.parse('http://54.163.243.254/users/register');
     return await Future.delayed(
         const Duration(seconds: 2),
         () => {
