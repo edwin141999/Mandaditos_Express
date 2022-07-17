@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mandaditos_express/dashboard/dashboard_screen.dart';
 import 'package:mandaditos_express/login/login_screen.dart';
 import 'package:mandaditos_express/metodos_pago/metodospago_screen.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
@@ -35,7 +36,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Image.asset('assets/images/icon_back_arrow.png',
                       scale: .8),
                   onTap: () {
-                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            Dashboard(userInfo: widget.userInfo),
+                      ),
+                    );
                   },
                 ),
                 Text(
@@ -72,7 +79,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const MetodosPagoScreen()),
+                              builder: (context) =>
+                                  MetodosPagoScreen(userInfo: widget.userInfo)),
                         ),
                       ),
                     ],
