@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:mandaditos_express/login/login_screen.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 
@@ -33,6 +35,8 @@ class _RegisterData {
   String phoneNumber = '';
   String userType = '';
   String address = '';
+  String latitud = '';
+  String longitud = '';
   String cityDrive = '';
 }
 
@@ -53,17 +57,84 @@ class _RegisterScreenState extends State<RegisterScreen> {
   List<String> types = ['Cliente', 'Repartidor'];
   String typeValue = 'Cliente';
 
-  void submit() {
+  void submit() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       register();
     }
   }
 
+  void inicializarUbicacion() async {
+    Position position = await _getGeoLocationPosition();
+    getAddressFromLatLong(position);
+  }
+
+  late Timer timer;
+
   @override
   void initState() {
+    // inicializarUbicacion();
     _passwordVisible = false;
     super.initState();
+    // timer = Timer.periodic(const Duration(seconds: 5), (Timer t) {
+    log('Getting location...');
+    inicializarUbicacion();
+    // });
+  }
+
+  // @override
+  // void dispose() {
+  //   timer.cancel();
+  //   super.dispose();
+  // }
+
+  Future<Position> _getGeoLocationPosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      await Geolocator.openLocationSettings();
+      return Future.error('Location service are disabled');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permission are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions');
+    }
+
+    return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+  }
+
+  String address = 'search';
+  String location = 'Null';
+
+  Future<void> getAddressFromLatLong(Position position) async {
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(position.latitude, position.longitude);
+    log('UBICACION');
+    // log(placemarks.toString());
+    Placemark place = placemarks[0];
+    address =
+        '${place.street}, ${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}';
+    location = 'Lat: ${position.latitude} - Long: ${position.longitude}';
+    userData.latitud = position.latitude.toString();
+    userData.longitud = position.longitude.toString();
+    userData.address = place.street.toString();
+    userData.cityDrive = place.locality.toString();
+    setState(() {
+      log(address);
+      log(location);
+    });
   }
 
   Future<void> register() async {
@@ -76,58 +147,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
     reqBody['phone_number'] = userData.phoneNumber;
     reqBody['user_type'] = userData.userType;
     reqBody['direccion'] = userData.address;
-    // reqBody['cityDrive'] = userData.cityDrive;
-    log(reqBody.toString());
-    // var response = await http.post(url,
-    //     headers: {'Content-Type': 'application/json'},
-    //     body: jsonEncode(reqBody));
-    // log(response.body);
-
-    // return await Future.delayed(
-    //     const Duration(seconds: 2),
-    //     () => {
-    //           http.post(
-    //             url,
-    //             body: {
-    //               'first_name': userData.firstName,
-    //               'last_name': userData.lastName,
-    //               'email': userData.email,
-    //               'password': userData.password,
-    //               'phone_number': userData.phoneNumber,
-    //               'user_type': userData.userType,
-    //               'direccion': userData.address
-    //             },
-    //           ).then((response) {
-    //             Map<String, dynamic> responseMap = json.decode(response.body);
-    //             if (response.statusCode == 200) {
-    //               ScaffoldMessenger.of(context).showSnackBar(
-    //                 SnackBar(
-    //                   duration: const Duration(seconds: 3),
-    //                   backgroundColor: Colors.greenAccent[200],
-    //                   elevation: 1,
-    //                   content: const Text(
-    //                     'You are Signed Up!',
-    //                     textAlign: TextAlign.center,
-    //                     style: TextStyle(
-    //                         color: Colors.white, fontWeight: FontWeight.bold),
-    //                   ),
-    //                 ),
-    //               );
-    //             } else {
-    //               if (responseMap.containsKey("message")) {
-    //                 showDialog(
-    //                     context: context,
-    //                     builder: (ctx) => getAlertDialog("Register failed",
-    //                         '${responseMap["message"]}', ctx));
-    //               }
-    //             }
-    //           }).catchError((err) {
-    //             showDialog(
-    //                 context: context,
-    //                 builder: (ctx) =>
-    //                     getAlertDialog("Register failed", "Server error", ctx));
-    //           })
-    //         });
+    reqBody['latitud'] = userData.latitud;
+    reqBody['longitud'] = userData.longitud;
+    reqBody['city_drive'] = userData.cityDrive;
+    var response = await http.post(url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(reqBody));
+    try {
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            duration: const Duration(seconds: 3),
+            backgroundColor: Colors.greenAccent[200],
+            elevation: 1,
+            content: const Text(
+              'You are Signed Up!',
+              textAlign: TextAlign.center,
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+          ),
+        );
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const LoginScreen()));
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return getAlertDialog('Error', 'Error al registrarse', context);
+          },
+        );
+      }
+    } catch (e) {
+      showDialog(
+          context: context,
+          builder: (context) =>
+              getAlertDialog('Error', 'Server error', context));
+    }
+    log(response.body);
   }
 
   @override
@@ -450,6 +507,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     onSaved: (value) {
                                       userData.address = value!;
                                     },
+                                    controller: TextEditingController(
+                                        text: userData.address),
+                                    onChanged: (value) {
+                                      userData.address = value;
+                                    },
+                                    enabled: false,
                                     style: const TextStyle(
                                         fontSize: 17, color: Colors.black),
                                     decoration: const InputDecoration(
@@ -483,6 +546,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     onSaved: (value) {
                                       userData.cityDrive = value!;
                                     },
+                                    controller: TextEditingController(
+                                        text: userData.cityDrive),
+                                    onChanged: (value) {
+                                      userData.cityDrive = value;
+                                    },
+                                    enabled: false,
                                     style: const TextStyle(
                                         fontSize: 17, color: Colors.black),
                                     decoration: const InputDecoration(
