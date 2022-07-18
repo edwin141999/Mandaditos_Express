@@ -144,248 +144,245 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 45),
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
-                  child: Image.asset(
-                    'assets/images/Logo.png',
-                    height: 137,
-                  ),
-                ),
-                SizedBox(
-                  height: 450,
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        SizedBox(
-                          height: 70,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              const Text(
-                                'Correo electronico',
-                                style: TextStyle(
-                                    fontSize: 18, color: Colors.black),
-                              ),
-                              SizedBox(
-                                height: 27,
-                                child: TextFormField(
-                                  onSaved: (value) {
-                                    userData.email = value!;
-                                  },
-                                  keyboardType: TextInputType.emailAddress,
-                                  style: const TextStyle(
-                                      fontSize: 17, color: Colors.black),
-                                  decoration: InputDecoration(
-                                    hintText: 'Ingrese su correo electronico',
-                                    hintStyle: const TextStyle(
-                                        fontSize: 17,
-                                        color: ColorSelect.kTextGrey),
-                                    contentPadding:
-                                        const EdgeInsets.only(bottom: 10),
-                                    suffixIcon: Image.asset(
-                                        'assets/images/user_logo.png',
-                                        color: ColorSelect.kTextGrey),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 45),
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * .92,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Image.asset('assets/images/Logo.png', height: 137),
+                  SizedBox(
+                    height: 450,
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          SizedBox(
+                            height: 70,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                const Text(
+                                  'Correo electronico',
+                                  style: TextStyle(
+                                      fontSize: 18, color: Colors.black),
+                                ),
+                                SizedBox(
+                                  height: 27,
+                                  child: TextFormField(
+                                    onSaved: (value) {
+                                      userData.email = value!;
+                                    },
+                                    keyboardType: TextInputType.emailAddress,
+                                    style: const TextStyle(
+                                        fontSize: 17, color: Colors.black),
+                                    decoration: InputDecoration(
+                                      hintText: 'Ingrese su correo electronico',
+                                      hintStyle: const TextStyle(
+                                          fontSize: 17,
+                                          color: ColorSelect.kTextGrey),
+                                      contentPadding:
+                                          const EdgeInsets.only(bottom: 10),
+                                      suffixIcon: Image.asset(
+                                          'assets/images/user_logo.png',
+                                          color: ColorSelect.kTextGrey),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 85,
-                          child: Column(
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  const Text('Contraseña',
-                                      style: TextStyle(
-                                          fontSize: 18, color: Colors.black)),
-                                  SizedBox(
-                                    height: 30,
-                                    child: TextFormField(
-                                      onSaved: (value) {
-                                        userData.password = value!;
-                                      },
-                                      obscureText: !_passwordVisible,
-                                      enableSuggestions: false,
-                                      autocorrect: false,
-                                      style: const TextStyle(
-                                          fontSize: 17, color: Colors.black),
-                                      toolbarOptions:
-                                          const ToolbarOptions(paste: false),
-                                      decoration: InputDecoration(
-                                        hintText: 'Ingrese su contraseña',
-                                        hintStyle: const TextStyle(
-                                            fontSize: 17,
-                                            color: ColorSelect.kTextGrey),
-                                        contentPadding:
-                                            const EdgeInsets.only(bottom: 0),
-                                        suffixIcon: IconButton(
-                                            onPressed: () {
-                                              setState(() {
-                                                _passwordVisible =
-                                                    !_passwordVisible;
-                                              });
-                                            },
-                                            alignment: Alignment.topCenter,
-                                            icon: Icon(_passwordVisible
-                                                ? Icons.visibility
-                                                : Icons.visibility_off)),
+                          SizedBox(
+                            height: 85,
+                            child: Column(
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    const Text('Contraseña',
+                                        style: TextStyle(
+                                            fontSize: 18, color: Colors.black)),
+                                    SizedBox(
+                                      height: 30,
+                                      child: TextFormField(
+                                        onSaved: (value) {
+                                          userData.password = value!;
+                                        },
+                                        obscureText: !_passwordVisible,
+                                        enableSuggestions: false,
+                                        autocorrect: false,
+                                        style: const TextStyle(
+                                            fontSize: 17, color: Colors.black),
+                                        toolbarOptions:
+                                            const ToolbarOptions(paste: false),
+                                        decoration: InputDecoration(
+                                          hintText: 'Ingrese su contraseña',
+                                          hintStyle: const TextStyle(
+                                              fontSize: 17,
+                                              color: ColorSelect.kTextGrey),
+                                          contentPadding:
+                                              const EdgeInsets.only(bottom: 0),
+                                          suffixIcon: IconButton(
+                                              onPressed: () {
+                                                setState(() {
+                                                  _passwordVisible =
+                                                      !_passwordVisible;
+                                                });
+                                              },
+                                              alignment: Alignment.topCenter,
+                                              icon: Icon(_passwordVisible
+                                                  ? Icons.visibility
+                                                  : Icons.visibility_off)),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              const Padding(padding: EdgeInsets.only(top: 10)),
-                              const SizedBox(
-                                width: double.infinity,
-                                child: Text('Recuperar contraseña',
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      color: ColorSelect.kSecondaryColor,
-                                    ),
-                                    textAlign: TextAlign.end),
-                              ),
-                            ],
+                                  ],
+                                ),
+                                const Padding(
+                                    padding: EdgeInsets.only(top: 10)),
+                                const SizedBox(
+                                  width: double.infinity,
+                                  child: Text('Recuperar contraseña',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        color: ColorSelect.kSecondaryColor,
+                                      ),
+                                      textAlign: TextAlign.end),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 45,
-                          child: OutlinedButton(
-                            onPressed: submit,
-                            child: const Text('Iniciar Sesion',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w400)),
-                            style: OutlinedButton.styleFrom(
-                              backgroundColor: ColorSelect.kPrimaryColor,
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(50),
+                          SizedBox(
+                            width: double.infinity,
+                            height: 45,
+                            child: OutlinedButton(
+                              onPressed: submit,
+                              child: const Text('Iniciar Sesion',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w400)),
+                              style: OutlinedButton.styleFrom(
+                                backgroundColor: ColorSelect.kPrimaryColor,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 100,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              const Text('O Inicia Sesion con',
-                                  style: TextStyle(fontSize: 15)),
-                              SizedBox(
-                                width: 120,
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Container(
-                                      height: 45,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(50),
-                                          color: ColorSelect.kFacebookColor),
-                                      child: IconButton(
-                                          onPressed: () {},
-                                          icon: Image.asset(
-                                              'assets/images/fb_logo.png',
-                                              height: 25)),
-                                    ),
-                                    Container(
-                                      height: 45,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(50),
-                                          color: Colors.red),
-                                      child: _isLoggedIn
-                                          ? Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: <Widget>[
-                                                Image.network(
-                                                  _googleSignIn
-                                                      .currentUser!.photoUrl
-                                                      .toString(),
-                                                  height: 50,
-                                                  width: 50,
-                                                ),
-                                                Text(_googleSignIn
-                                                    .currentUser!.displayName
-                                                    .toString()),
-                                                Text(_googleSignIn
-                                                    .currentUser!.email
-                                                    .toString()),
-                                                OutlinedButton(
-                                                  child: const Text("Logout"),
-                                                  onPressed: () {
-                                                    _logout();
-                                                  },
-                                                )
-                                              ],
-                                            )
-                                          : IconButton(
-                                              onPressed: () {
-                                                loginwithGoogle();
-                                              },
-                                              icon: Image.asset(
-                                                  'assets/images/google_logo.png',
-                                                  height: 45)),
-                                    ),
-                                  ],
+                          SizedBox(
+                            height: 100,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                const Text('O Inicia Sesion con',
+                                    style: TextStyle(fontSize: 15)),
+                                SizedBox(
+                                  width: 120,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        height: 45,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(50),
+                                            color: ColorSelect.kFacebookColor),
+                                        child: IconButton(
+                                            onPressed: () {},
+                                            icon: Image.asset(
+                                                'assets/images/fb_logo.png',
+                                                height: 25)),
+                                      ),
+                                      Container(
+                                        height: 45,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(50),
+                                            color: Colors.red),
+                                        child: _isLoggedIn
+                                            ? Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: <Widget>[
+                                                  Image.network(
+                                                    _googleSignIn
+                                                        .currentUser!.photoUrl
+                                                        .toString(),
+                                                    height: 50,
+                                                    width: 50,
+                                                  ),
+                                                  Text(_googleSignIn
+                                                      .currentUser!.displayName
+                                                      .toString()),
+                                                  Text(_googleSignIn
+                                                      .currentUser!.email
+                                                      .toString()),
+                                                  OutlinedButton(
+                                                    child: const Text("Logout"),
+                                                    onPressed: () {
+                                                      _logout();
+                                                    },
+                                                  )
+                                                ],
+                                              )
+                                            : IconButton(
+                                                onPressed: () {
+                                                  loginwithGoogle();
+                                                },
+                                                icon: Image.asset(
+                                                    'assets/images/google_logo.png',
+                                                    height: 45)),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 40,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              const Text('¿No tienes una cuenta?',
-                                  style: TextStyle(fontSize: 15)),
-                              RichText(
-                                text: TextSpan(
-                                  style: const TextStyle(fontSize: 15),
-                                  children: <TextSpan>[
-                                    TextSpan(
-                                      text: 'Registrate aqui',
-                                      style: const TextStyle(
-                                          color: ColorSelect.kSecondaryColor),
-                                      recognizer: TapGestureRecognizer()
-                                        ..onTap = () => Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const RegisterScreen())),
-                                    )
-                                  ],
+                          SizedBox(
+                            height: 40,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                const Text('¿No tienes una cuenta?',
+                                    style: TextStyle(fontSize: 15)),
+                                RichText(
+                                  text: TextSpan(
+                                    style: const TextStyle(fontSize: 15),
+                                    children: <TextSpan>[
+                                      TextSpan(
+                                        text: 'Registrate aqui',
+                                        style: const TextStyle(
+                                            color: ColorSelect.kSecondaryColor),
+                                        recognizer: TapGestureRecognizer()
+                                          ..onTap = () => Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const RegisterScreen())),
+                                      )
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

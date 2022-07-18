@@ -102,40 +102,6 @@ class _DashboardState extends State<Dashboard> {
                 ),
                 const Padding(padding: EdgeInsets.only(top: 15)),
                 SizedBox(
-                  height: 50,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      const Text(
-                        '¿Desea algo?',
-                        style: TextStyle(fontSize: 15, color: Colors.black),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: SizedBox(
-                              height: 20,
-                              width: MediaQuery.of(context).size.width,
-                              child: const TextField(
-                                style: TextStyle(
-                                    fontSize: 17, color: Colors.black),
-                                decoration: InputDecoration(
-                                  hintStyle: TextStyle(
-                                      fontSize: 17,
-                                      color: Color.fromRGBO(139, 139, 139, 1)),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Image.asset('assets/images/search.png'),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
                   height: MediaQuery.of(context).size.height * 0.7,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -189,7 +155,7 @@ class AccionesContainer extends StatelessWidget {
         ),
         Container(
           width: 140,
-          margin: const EdgeInsets.only(bottom: 30),
+          margin: const EdgeInsets.only(bottom: 30, top: 10),
           child: Text(text,
               style: const TextStyle(fontSize: 22),
               textAlign: TextAlign.center),
