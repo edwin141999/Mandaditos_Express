@@ -1,9 +1,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.mandaditos_express">
-   <application
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <application
         android:label="Mandaditos Express"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
+        <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyA4aQncvPHWiBPiVc1pr_vaqT9j-lt0b5k"/>
+        
+        
         <activity
             android:name=".MainActivity"
             android:exported="true"

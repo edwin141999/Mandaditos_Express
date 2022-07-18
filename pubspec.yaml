@@ -32,12 +32,15 @@ dependencies:
     google_sign_in: ^5.3.3
     validate:
     http: ^0.13.4
-
+    google_maps_flutter_web: ^0.3.2+2
+    provider: ^6.0.3
     # The following adds the Cupertino Icons font to your application.
     # Use with the CupertinoIcons class for iOS style icons.
     cupertino_icons: ^1.0.2
     flutter_launcher_icons: ^0.9.3
     email_validator: ^2.0.1
+    google_maps_flutter: ^2.1.8
+    flutter_polyline_points: ^1.0.0
 
 dev_dependencies:
     flutter_test:
