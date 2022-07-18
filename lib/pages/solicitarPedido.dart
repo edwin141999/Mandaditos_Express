@@ -107,6 +107,7 @@ class _SolicitarPedido extends State<SolicitarPedido> {
                       color: Colors.black.withOpacity(0.5),
                       ),
                       borderRadius: BorderRadius.circular(10),
+                      // Quien guste, puede agregar mas tipos de pedidos.
                       items: [
                         'Comida / Consumible',
                         'Pedido Personal',
