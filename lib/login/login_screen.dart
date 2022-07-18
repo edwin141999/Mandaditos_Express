@@ -5,6 +5,8 @@ import 'package:mandaditos_express/register/register_screen.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:flutter/cupertino.dart';
 
 // SERVER
 import 'package:http/http.dart' as http;
@@ -51,11 +53,16 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  Map<String, dynamic>? _userData;
+  AccessToken? _accessToken;
+  bool _checking = false;
+
   bool _passwordVisible = false;
-  bool _isLoggedIn = false;
-  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   UserData userData = UserData();
+
+  bool _isLoggedIn = false;
+  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
 
   void submit() {
     if (_formKey.currentState!.validate()) {
@@ -86,6 +93,47 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     _passwordVisible = false;
     super.initState();
+  }
+
+  _checkIfisLoggedIn() async {
+    final accessToken = await FacebookAuth.instance.accessToken;
+    setState(() {
+      _checking = false;
+    });
+
+    if (accessToken != null) {
+      print(accessToken.toJson());
+      final userData = await FacebookAuth.instance.getUserData();
+      _accessToken = accessToken;
+      setState(() {
+        _userData = userData;
+      });
+    } else {
+      _loginFB();
+    }
+  }
+
+  _loginFB() async {
+    final LoginResult result = await FacebookAuth.instance.login();
+    if (result.status == LoginStatus.success) {
+      _accessToken = result.accessToken;
+
+      final userData = await FacebookAuth.instance.getUserData();
+      _userData = userData;
+    } else {
+      print(result.status);
+      print(result.message);
+    }
+    setState(() {
+      _checking = false;
+    });
+  }
+
+  _logoutFB() async {
+    await FacebookAuth.instance.logOut();
+    _accessToken = null;
+    _userData = null;
+    setState(() {});
   }
 
   Future<void> loginwithDB() async {
@@ -206,30 +254,88 @@ class _LoginScreenState extends State<LoginScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceAround,
                                   children: [
-                                    const Text('Contraseña',
-                                        style: TextStyle(
-                                            fontSize: 18, color: Colors.black)),
-                                    SizedBox(
-                                      height: 30,
-                                      child: TextFormField(
-                                        onSaved: (value) {
-                                          userData.password = value!;
+                                    Container(
+                                      height: 45,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(50),
+                                        color: ColorSelect.kFacebookColor
+                                      ),
+                                      child: _checking
+                                      ? Center(
+                                        child: Column(mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            _userData != null
+                                                ? Text('name: ${_userData!['name']}')
+                                                : Container(),
+                                            _userData != null
+                                                ? Text('email: ${_userData!['email']}')
+                                                : Container(),
+                                            _userData != null
+                                            ? Container(
+                                                child: Image.network(
+                                                    _userData!['picture']['data']['url']),
+                                              )
+                                            : Container(),
+                                            const SizedBox(
+                                              height: 20,
+                                            ),
+                                            CupertinoButton(
+                                              color: Colors.blue,
+                                              child: Text(
+                                                _userData != null ? 'LOGOUT' : 'LOGIN',
+                                                style: TextStyle(color: Colors.white),
+                                              ),
+                                              onPressed: _userData != null ? _logoutFB : _loginFB
+                                            )
+                                          ],
+                                        )
+                                      )
+                                      : IconButton(
+                                        onPressed: () {
+                                           _checkIfisLoggedIn();
                                         },
-                                        obscureText: !_passwordVisible,
-                                        enableSuggestions: false,
-                                        autocorrect: false,
-                                        style: const TextStyle(
-                                            fontSize: 17, color: Colors.black),
-                                        toolbarOptions:
-                                            const ToolbarOptions(paste: false),
-                                        decoration: InputDecoration(
-                                          hintText: 'Ingrese su contraseña',
-                                          hintStyle: const TextStyle(
-                                              fontSize: 17,
-                                              color: ColorSelect.kTextGrey),
-                                          contentPadding:
-                                              const EdgeInsets.only(bottom: 0),
-                                          suffixIcon: IconButton(
+                                        icon: Image.asset(
+                                          'assets/images/fb_logo.png',
+                                          height: 45
+                                        )
+                                      ),
+                                    ),
+
+                                    Container(
+                                      height: 45,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                            BorderRadius.circular(50),
+                                          color: Colors.red
+                                      ),
+                                      child: _isLoggedIn
+                                          ? Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                Image.network(
+                                                  _googleSignIn
+                                                      .currentUser!.photoUrl
+                                                      .toString(),
+                                                  height: 50,
+                                                  width: 50,
+                                                ),
+                                                Text(_googleSignIn
+                                                    .currentUser!.displayName
+                                                    .toString()),
+                                                Text(_googleSignIn
+                                                    .currentUser!.email
+                                                    .toString()),
+                                                OutlinedButton(
+                                                  child: const Text("Logout"),
+                                                  onPressed: () {
+                                                    _logout();
+                                                  },
+                                                )
+                                              ],
+                                            )
+                                          : IconButton(
                                               onPressed: () {
                                                 setState(() {
                                                   _passwordVisible =
