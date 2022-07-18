@@ -117,7 +117,7 @@ class _CreaTarjetaScreenState extends State<CreaTarjetaScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Añadir Nueva Tarjeta',
+        title: const Text('Añadir Tarjeta de Debito',
             style: TextStyle(fontWeight: FontWeight.w400)),
         backgroundColor: const Color(0xff265C7E),
         elevation: 0,
@@ -165,17 +165,59 @@ class _CreaTarjetaScreenState extends State<CreaTarjetaScreen> {
                                   data.numeroTarjeta = value!;
                                 },
                                 onChanged: (value) {
-                                  if (value.startsWith('415231')) {
+                                  if (value.startsWith('415231') ||
+                                      value.startsWith('455549') ||
+                                      value.startsWith('455528') ||
+                                      value.startsWith('455548')) {
                                     setState(() {
                                       colorMuestra = coloresBanco[0];
                                       imagenMuestra = imagenesBanco[0];
                                       data.nombreBanco = 'Bancomer';
                                     });
-                                  } else if (value.startsWith('430967569')) {
+                                  } else if (value.startsWith('554492') ||
+                                      value.startsWith('429522') ||
+                                      value.startsWith('520698') ||
+                                      value.startsWith('525678')) {
+                                    setState(() {
+                                      colorMuestra = coloresBanco[1];
+                                      imagenMuestra = imagenesBanco[1];
+                                      data.nombreBanco = 'Banamex';
+                                    });
+                                  } else if (value.startsWith('557910') ||
+                                      value.startsWith('557907') ||
+                                      value.startsWith('557909') ||
+                                      value.startsWith('475714') ||
+                                      value.startsWith('471952')) {
+                                    setState(() {
+                                      colorMuestra = coloresBanco[2];
+                                      imagenMuestra = imagenesBanco[2];
+                                      data.nombreBanco = 'Santander';
+                                    });
+                                  } else if (value.startsWith('491566')) {
+                                    setState(() {
+                                      colorMuestra = coloresBanco[3];
+                                      imagenMuestra = imagenesBanco[3];
+                                      data.nombreBanco = 'Banorte';
+                                    });
+                                  } else if (value.startsWith('430967569') ||
+                                      value.startsWith('49108935') ||
+                                      value.startsWith('491089682') ||
+                                      value.startsWith('491089630') ||
+                                      value.startsWith('491089710') ||
+                                      value.startsWith('491089921') ||
+                                      value.startsWith('491089726') ||
+                                      value.startsWith('49108902')) {
                                     setState(() {
                                       colorMuestra = coloresBanco[4];
                                       imagenMuestra = imagenesBanco[4];
                                       data.nombreBanco = 'HSBC';
+                                    });
+                                  } else if (value.startsWith('557922') ||
+                                      value.startsWith('557920')) {
+                                    setState(() {
+                                      colorMuestra = coloresBanco[5];
+                                      imagenMuestra = imagenesBanco[5];
+                                      data.nombreBanco = 'Scotiabank';
                                     });
                                   } else {
                                     setState(() {
