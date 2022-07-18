@@ -40,7 +40,7 @@ dependencies:
     email_validator: ^2.0.1
     flutter_facebook_auth: ^4.1.1
     font_awesome_flutter: ^10.1.0
-    mysql_client: ^0.0.24
+    # mysql_client: ^0.0.24
     geolocator: ^9.0.1
     geocoding: ^2.0.4
 

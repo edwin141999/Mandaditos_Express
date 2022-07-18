@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:mysql_client/mysql_client.dart';
+// import 'package:mysql_client/mysql_client.dart';
 
 class SolicitarPedido extends StatefulWidget {
   const SolicitarPedido({Key? key}) : super(key: key);
@@ -16,33 +16,33 @@ class _SolicitarPedido extends State<SolicitarPedido> {
 
   Future<void> insertarDatos() async {
     // Crear la coneccion
-    print("Conectando...");
-    final conn = await MySQLConnection.createConnection(
-      host: 'rds-me.cqdlxg2bft08.us-east-1.rds.amazonaws.com',
-      port: 3306,
-      userName: 'me',
-      password: 'me123456',
-      databaseName: 'me',
-    );
-    await conn.connect();
-    print("Conectado.");
+    // print("Conectando...");
+    // final conn = await MySQLConnection.createConnection(
+    //   host: 'rds-me.cqdlxg2bft08.us-east-1.rds.amazonaws.com',
+    //   port: 3306,
+    //   userName: 'me',
+    //   password: 'me123456',
+    //   databaseName: 'me',
+    // );
+    // await conn.connect();
+    // print("Conectado.");
 
     // Insertar datos.
-    var stmt = await conn.prepare(
-      "insert into item (tipo_producto, recoger_ubicacion, descripcion) values (?, ?, ?)",
-    );
-    await stmt.execute([tipoProducto, lugar, descripcion]);
+    // var stmt = await conn.prepare(
+    //   "insert into item (tipo_producto, recoger_ubicacion, descripcion) values (?, ?, ?)",
+    // );
+    // await stmt.execute([tipoProducto, lugar, descripcion]);
 
     // Ver resultados
-    stmt = await conn.prepare("select * from item");
-    var result = await stmt.execute([]);
-    await stmt.deallocate();
-    for (final row in result.rows) {
-      print(row.assoc());
-    }
-    await conn.close();
+    // stmt = await conn.prepare("select * from item");
+    // var result = await stmt.execute([]);
+    // await stmt.deallocate();
+    // for (final row in result.rows) {
+    //   print(row.assoc());
+    // }
+    // await conn.close();
   }
- 
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -214,7 +214,7 @@ class _SolicitarPedido extends State<SolicitarPedido> {
                 ),
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(312, 54),
-                  primary: Color.fromARGB(255, 22, 87, 199),
+                  primary: const Color.fromARGB(255, 22, 87, 199),
                   onPrimary: Colors.white,
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(25))

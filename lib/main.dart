@@ -16,8 +16,8 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
         title: 'Mandaditos Express',
         debugShowCheckedModeBanner: false,
-        // home: SplashView());
-        //home: menuM());
-        home: pedidosP());
+        home: SplashView());
+    //home: menuM());
+    // home: pedidosP());
   }
 }

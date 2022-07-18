@@ -257,58 +257,65 @@ class _LoginScreenState extends State<LoginScreen> {
                                     Container(
                                       height: 45,
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(50),
-                                        color: ColorSelect.kFacebookColor
-                                      ),
+                                          borderRadius:
+                                              BorderRadius.circular(50),
+                                          color: ColorSelect.kFacebookColor),
                                       child: _checking
-                                      ? Center(
-                                        child: Column(mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: [
-                                            _userData != null
-                                                ? Text('name: ${_userData!['name']}')
-                                                : Container(),
-                                            _userData != null
-                                                ? Text('email: ${_userData!['email']}')
-                                                : Container(),
-                                            _userData != null
-                                            ? Container(
-                                                child: Image.network(
-                                                    _userData!['picture']['data']['url']),
-                                              )
-                                            : Container(),
-                                            const SizedBox(
-                                              height: 20,
-                                            ),
-                                            CupertinoButton(
-                                              color: Colors.blue,
-                                              child: Text(
-                                                _userData != null ? 'LOGOUT' : 'LOGIN',
-                                                style: TextStyle(color: Colors.white),
-                                              ),
-                                              onPressed: _userData != null ? _logoutFB : _loginFB
-                                            )
-                                          ],
-                                        )
-                                      )
-                                      : IconButton(
-                                        onPressed: () {
-                                           _checkIfisLoggedIn();
-                                        },
-                                        icon: Image.asset(
-                                          'assets/images/fb_logo.png',
-                                          height: 45
-                                        )
-                                      ),
+                                          ? Center(
+                                              child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                _userData != null
+                                                    ? Text(
+                                                        'name: ${_userData!['name']}')
+                                                    : Container(),
+                                                _userData != null
+                                                    ? Text(
+                                                        'email: ${_userData!['email']}')
+                                                    : Container(),
+                                                _userData != null
+                                                    ? Container(
+                                                        child: Image.network(
+                                                            _userData![
+                                                                    'picture'][
+                                                                'data']['url']),
+                                                      )
+                                                    : Container(),
+                                                const SizedBox(
+                                                  height: 20,
+                                                ),
+                                                CupertinoButton(
+                                                    color: Colors.blue,
+                                                    child: Text(
+                                                      _userData != null
+                                                          ? 'LOGOUT'
+                                                          : 'LOGIN',
+                                                      style: const TextStyle(
+                                                          color: Colors.white),
+                                                    ),
+                                                    onPressed: _userData != null
+                                                        ? _logoutFB
+                                                        : _loginFB)
+                                              ],
+                                            ))
+                                          : IconButton(
+                                              onPressed: () {
+                                                _checkIfisLoggedIn();
+                                              },
+                                              icon: Image.asset(
+                                                  'assets/images/fb_logo.png',
+                                                  height: 45)),
                                     ),
 
                                     Container(
                                       height: 45,
                                       decoration: BoxDecoration(
                                           borderRadius:
-                                            BorderRadius.circular(50),
-                                          color: Colors.red
-                                      ),
+                                              BorderRadius.circular(50),
+                                          color: Colors.red),
                                       child: _isLoggedIn
                                           ? Column(
                                               mainAxisAlignment:
@@ -346,9 +353,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                               icon: Icon(_passwordVisible
                                                   ? Icons.visibility
                                                   : Icons.visibility_off)),
-                                        ),
-                                      ),
                                     ),
+                                    // ),
+                                    // ),
                                   ],
                                 ),
                                 const Padding(
