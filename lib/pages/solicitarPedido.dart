@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:mysql_client/mysql_client.dart';
+import '../services/pedidosService.dart';
+
 
 class SolicitarPedido extends StatefulWidget {
   const SolicitarPedido({Key? key}) : super(key: key);
@@ -13,35 +14,6 @@ class _SolicitarPedido extends State<SolicitarPedido> {
   String? tipoProducto = "Comida / Consumible";
   String? descripcion = "";
   String? lugar = "";
-
-  Future<void> insertarDatos() async {
-    // Crear la coneccion
-    print("Conectando...");
-    final conn = await MySQLConnection.createConnection(
-      host: 'rds-me.cqdlxg2bft08.us-east-1.rds.amazonaws.com',
-      port: 3306,
-      userName: 'me',
-      password: 'me123456',
-      databaseName: 'me',
-    );
-    await conn.connect();
-    print("Conectado.");
-
-    // Insertar datos.
-    var stmt = await conn.prepare(
-      "insert into item (tipo_producto, recoger_ubicacion, descripcion) values (?, ?, ?)",
-    );
-    await stmt.execute([tipoProducto, lugar, descripcion]);
-
-    // Ver resultados
-    stmt = await conn.prepare("select * from item");
-    var result = await stmt.execute([]);
-    await stmt.deallocate();
-    for (final row in result.rows) {
-      print(row.assoc());
-    }
-    await conn.close();
-  }
  
   @override
   Widget build(BuildContext context) {
@@ -107,7 +79,6 @@ class _SolicitarPedido extends State<SolicitarPedido> {
                       color: Colors.black.withOpacity(0.5),
                       ),
                       borderRadius: BorderRadius.circular(10),
-                      // Quien guste, puede agregar mas tipos de pedidos.
                       items: [
                         'Comida / Consumible',
                         'Pedido Personal',
@@ -222,7 +193,7 @@ class _SolicitarPedido extends State<SolicitarPedido> {
                   ),
                 ),
                 onPressed: () {
-                  insertarDatos();
+                  insertarDatos(tipoProducto, lugar, descripcion);
                   // Navigator.pushNamed(context, '');
                 },
               )
