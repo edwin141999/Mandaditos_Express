@@ -38,6 +38,11 @@ dependencies:
     cupertino_icons: ^1.0.2
     flutter_launcher_icons: ^0.9.3
     email_validator: ^2.0.1
+    # flutter_facebook_auth: ^4.1.1
+    font_awesome_flutter: ^10.1.0
+    # mysql_client: ^0.0.24
+    geolocator: ^9.0.1
+    geocoding: ^2.0.4
 
 dev_dependencies:
     flutter_test:
