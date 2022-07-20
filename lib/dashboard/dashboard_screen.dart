@@ -45,10 +45,8 @@ class _DashboardState extends State<Dashboard> {
             child: SizedBox(
               width: 35,
               child: GestureDetector(
-                child: Image.asset(
-                  'assets/images/icon_profile.png',
-                  color: Colors.black,
-                ),
+                child: Image.asset('assets/images/icon_profile.png',
+                    color: Colors.black),
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return ProfileScreen(userInfo: widget.userInfo);
@@ -76,26 +74,33 @@ class _DashboardState extends State<Dashboard> {
                         'Hola ${widget.userInfo.user.firstName}',
                         style: const TextStyle(fontSize: 22),
                       ),
-                      DropdownButton(
-                        items: calles.map((e) {
-                          return DropdownMenuItem(
-                            child: Text(e),
-                            value: e,
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            callesValue = value.toString();
-                          });
-                        },
-                        value: callesValue,
-                        underline: Container(),
-                        isDense: true,
-                        icon: const Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Colors.black,
-                          size: 20,
-                        ),
+                      Row(
+                        children: [
+                          const Text('Tu Direccion Actual: ',
+                              style: TextStyle(
+                                  fontSize: 17, fontWeight: FontWeight.bold)),
+                          DropdownButton(
+                            items: calles.map((e) {
+                              return DropdownMenuItem(
+                                child: Text(e),
+                                value: e,
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                callesValue = value.toString();
+                              });
+                            },
+                            value: callesValue,
+                            underline: Container(),
+                            isDense: true,
+                            icon: const Icon(
+                              Icons.keyboard_arrow_down,
+                              color: Colors.black,
+                              size: 20,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),

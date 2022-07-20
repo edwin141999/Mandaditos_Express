@@ -22,7 +22,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         toolbarHeight: 223,
         automaticallyImplyLeading: false,
         flexibleSpace: Image.asset(
-          'assets/images/icon_profile.png',
+          'assets/images/profile_logo.png',
           fit: BoxFit.contain,
         ),
         actions: [
@@ -50,7 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ' ' +
                       widget.userInfo.user.lastName,
                   style: const TextStyle(
-                      color: Colors.black,
+                      color: Colors.grey,
                       fontSize: 22,
                       fontWeight: FontWeight.bold),
                 ),
@@ -66,7 +66,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 30),
             child: SizedBox(
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
+              height: MediaQuery.of(context).size.height * 0.55,
               child: Column(
                 children: [
                   OpcionesPerfil(
