@@ -213,7 +213,7 @@ class _SolicitarPedido extends State<SolicitarPedido> {
                 ),
                 onPressed: () {
                   generarPedido();
-                  // Navigator.pushNamed(context, ''); Supongo, que se requiere el modelo de cliente
+                  // Navigator.pushNamed(context, ''); Pasar la direccion del cliente, y conectar la vista confirmarPedido.
                 },
               )
             )
