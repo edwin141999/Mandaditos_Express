@@ -1,35 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:mandaditos_express/models/userinfo.dart';
-import 'package:mandaditos_express/profile/profile.dart';
+
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 
-class Dashboard extends StatefulWidget {
-  final User userInfo;
-  const Dashboard({Key? key, required this.userInfo}) : super(key: key);
+class menuM extends StatefulWidget {
+  //final User userInfo;
+  //const Dashboard({Key? key, required this.userInfo}) : super(key: key);
+  const menuM({Key? key}) : super(key: key);
 
   @override
-  State<Dashboard> createState() => _DashboardState();
+  State<menuM> createState() => _menuMState();
 }
 
-class _DashboardState extends State<Dashboard> {
+class _menuMState extends State<menuM> {
   var calles = [];
 
   String callesValue = '';
-  var textInfo = ['Solicitar un mandadito', 'Historial de pedidos'];
+  var textInfo = ['Mandados disponibles', 'Historial de Mandados'];
   var imgInfo = [
     'assets/images/icon_solicitar.png',
     'assets/images/icon_pedidos.png'
   ];
   var colorInfo = [ColorSelect.kContainerGreen, ColorSelect.kContainerPink];
 
-  @override
-  void initState() {
-    for (var item in widget.userInfo.datatype) {
-      calles.add(item.direccion);
-    }
-    callesValue = widget.userInfo.datatype[0].direccion;
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   for (var item in widget.userInfo.datatype) {
+  //     calles.add(item.direccion);
+  //   }
+  //   callesValue = widget.userInfo.datatype[0].direccion;
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -49,11 +49,12 @@ class _DashboardState extends State<Dashboard> {
                   'assets/images/icon_profile.png',
                   color: Colors.black,
                 ),
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return ProfileScreen(userInfo: widget.userInfo);
-                  }));
-                },
+                //
+                // onTap: () {
+                //   Navigator.push(context, MaterialPageRoute(builder: (context) {
+                //     return ProfileScreen(userInfo: widget.userInfo);
+                //   }));
+                // },
               ),
             ),
           ),
@@ -73,7 +74,7 @@ class _DashboardState extends State<Dashboard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Hola ${widget.userInfo.user.firstName}',
+                        'Hola', // ${widget.userInfo.user.firstName}', //usuario
                         style: const TextStyle(fontSize: 22),
                       ),
                       DropdownButton(
@@ -146,7 +147,7 @@ class AccionesContainer extends StatelessWidget {
       children: [
         Container(
           width: 160,
-          height: 123,
+          height: 130,
           decoration: BoxDecoration(
             color: colorContainer.withOpacity(.42),
             borderRadius: BorderRadius.circular(17),
@@ -155,7 +156,7 @@ class AccionesContainer extends StatelessWidget {
         ),
         Container(
           width: 140,
-          margin: const EdgeInsets.only(bottom: 30, top: 10),
+          margin: const EdgeInsets.only(bottom: 30),
           child: Text(text,
               style: const TextStyle(fontSize: 22),
               textAlign: TextAlign.center),
