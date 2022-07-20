@@ -1,6 +1,9 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../services/pedidosService.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:async';
 
 
 class SolicitarPedido extends StatefulWidget {
@@ -14,6 +17,22 @@ class _SolicitarPedido extends State<SolicitarPedido> {
   String? tipoProducto = "Comida / Consumible";
   String? descripcion = "";
   String? lugar = "";
+  String precioProducto = "0";
+
+  Future<void> generarPedido() async {
+    var url = Uri.parse('http://54.163.243.254:81/users/item');
+    var reqBody = {};
+    reqBody['tipo_producto'] = tipoProducto;
+    reqBody['recoger_ubicacion'] = lugar;
+    reqBody['descripcion'] = descripcion;
+    reqBody['precio_producto'] = precioProducto;
+    final resp = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(reqBody)
+    );
+    log(resp.body);
+  }
  
   @override
   Widget build(BuildContext context) {
@@ -193,8 +212,8 @@ class _SolicitarPedido extends State<SolicitarPedido> {
                   ),
                 ),
                 onPressed: () {
-                  insertarDatos(tipoProducto, lugar, descripcion);
-                  // Navigator.pushNamed(context, '');
+                  generarPedido();
+                  // Navigator.pushNamed(context, ''); Supongo, que se requiere el modelo de cliente
                 },
               )
             )
