@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'dart:async'
+import 'dart:async';
 
 class SolicitarPedido extends StatefulWidget {
   const SolicitarPedido({Key? key}) : super(key: key);
@@ -25,14 +25,12 @@ class _SolicitarPedido extends State<SolicitarPedido> {
     reqBody['recoger_ubicacion'] = lugar;
     reqBody['descripcion'] = descripcion;
     reqBody['precio_producto'] = precioProducto;
-    final resp = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(reqBody)
-    );
+    final resp = await http.post(url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(reqBody));
     log(resp.body);
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,26 +41,21 @@ class _SolicitarPedido extends State<SolicitarPedido> {
           onPressed: () {
             Navigator.pop(context);
           },
-          child: Icon(
-            FontAwesomeIcons.arrowLeft,
-            color: Colors.black.withOpacity(0.7)
-          ),
+          child: Icon(FontAwesomeIcons.arrowLeft,
+              color: Colors.black.withOpacity(0.7)),
         ),
         title: Container(
-          child: Row(
-            children: const [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8)
+            child: Row(
+          children: const [
+            Padding(padding: EdgeInsets.symmetric(horizontal: 8)),
+            Text(
+              'Solicitar un mandado',
+              style: TextStyle(
+                color: Colors.black,
               ),
-              Text(
-                'Solicitar un mandado', 
-                style: TextStyle(
-                  color: Colors.black,
-                ),
-              ),
-            ],
-          )
-        ),
+            ),
+          ],
+        )),
       ),
       // Cuerpo
       body: SingleChildScrollView(
@@ -80,40 +73,37 @@ class _SolicitarPedido extends State<SolicitarPedido> {
                       // fontWeight: FontWeight.bold
                     ),
                   ),
-                                        
                   Container(
                     margin: const EdgeInsets.only(top: 25),
                     width: 320,
                     decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.5),
-                      borderRadius: BorderRadius.circular(10)
-                    ),
+                        color: Colors.grey.withOpacity(0.5),
+                        borderRadius: BorderRadius.circular(10)),
                     child: DropdownButton<String>(
                       icon: const Icon(Icons.keyboard_arrow_down),
                       value: tipoProducto,
                       isExpanded: true,
                       style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.black.withOpacity(0.5),
+                        fontSize: 12,
+                        color: Colors.black.withOpacity(0.5),
                       ),
                       borderRadius: BorderRadius.circular(10),
                       items: [
                         'Comida / Consumible',
                         'Pedido Personal',
                       ]
-                      .map<DropdownMenuItem<String>>(
-                        (value) => DropdownMenuItem(
-                          child: Text(
-                            value,
-                            style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          value: value,
-                        )
-                      )
-                      .toList(),
+                          .map<DropdownMenuItem<String>>(
+                              (value) => DropdownMenuItem(
+                                    child: Text(
+                                      value,
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    value: value,
+                                  ))
+                          .toList(),
                       onChanged: (newValue) {
                         setState(() {
                           tipoProducto = newValue;
@@ -124,7 +114,6 @@ class _SolicitarPedido extends State<SolicitarPedido> {
                 ],
               ),
             ),
-
             Container(
               margin: const EdgeInsets.only(left: 20, top: 30),
               child: Stack(
@@ -135,31 +124,28 @@ class _SolicitarPedido extends State<SolicitarPedido> {
                       fontSize: 12,
                     ),
                   ),
-                                        
                   Container(
-                    margin: const EdgeInsets.only(top: 25),
-                    width: 320,
-                    height: 140,
-                    child: TextField(
-                      onChanged: (text) {
-                        descripcion = text;
-                      },
-                      decoration: const InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(width: 1, color: Colors.black ), 
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(width: 1, color: Colors.black)
-                        )
-                      ),
-                      keyboardType: TextInputType.multiline,
-                      maxLines: 6,
-                    )
-                  ),
+                      margin: const EdgeInsets.only(top: 25),
+                      width: 320,
+                      height: 140,
+                      child: TextField(
+                        onChanged: (text) {
+                          descripcion = text;
+                        },
+                        decoration: const InputDecoration(
+                            enabledBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(width: 1, color: Colors.black),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(width: 1, color: Colors.black))),
+                        keyboardType: TextInputType.multiline,
+                        maxLines: 6,
+                      )),
                 ],
               ),
             ),
-
             Container(
               margin: const EdgeInsets.only(left: 20, top: 30),
               child: Stack(
@@ -170,55 +156,44 @@ class _SolicitarPedido extends State<SolicitarPedido> {
                       fontSize: 12,
                     ),
                   ),
-                                        
                   Container(
-                    margin: const EdgeInsets.only(top: 10),
-                    width: 320,
-                    child: TextField(
-                      onChanged: (text) {
-                        lugar = text;
-                      },
-                      decoration: const InputDecoration(   
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black)
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black)
-                        )
-                      ),
-                    )
-                  ),
+                      margin: const EdgeInsets.only(top: 10),
+                      width: 320,
+                      child: TextField(
+                        onChanged: (text) {
+                          lugar = text;
+                        },
+                        decoration: const InputDecoration(
+                            focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.black)),
+                            enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.black))),
+                      )),
                 ],
               ),
             ),
-
             Container(
-              margin: const EdgeInsets.only(left: 20, top: 30),
-              child: ElevatedButton(
-                child: const Text(
-                  "Solicitar Pedido",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16
+                margin: const EdgeInsets.only(left: 20, top: 30),
+                child: ElevatedButton(
+                  child: const Text(
+                    "Solicitar Pedido",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(312, 54),
-                  primary: Color.fromARGB(255, 22, 87, 199),
-                  onPrimary: Colors.white,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(25))
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(312, 54),
+                    primary: Color.fromARGB(255, 22, 87, 199),
+                    onPrimary: Colors.white,
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(25))),
                   ),
-                ),
-                onPressed: () {
-                  generarPedido();
-                  // Navigator.pushNamed(context, ''); Pasar la direccion del cliente, y conectar la vista confirmarPedido.
-                },
-              )
-            )
+                  onPressed: () {
+                    generarPedido();
+                    // Navigator.pushNamed(context, ''); Pasar la direccion del cliente, y conectar la vista confirmarPedido.
+                  },
+                ))
           ],
         ),
-      ), 
+      ),
     );
   }
 }

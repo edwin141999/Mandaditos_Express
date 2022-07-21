@@ -80,7 +80,7 @@ class _ListaPedidos extends StatelessWidget {
   final List<PedidoElement> pe;
   //log(pe.length);
 
-//   const _ListaPedidos(this.pe);
+  const _ListaPedidos(this.pe);
 
   @override
   Widget build(BuildContext context) {
