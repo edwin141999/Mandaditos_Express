@@ -158,13 +158,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             duration: const Duration(seconds: 3),
-            backgroundColor: Colors.greenAccent[200],
+            backgroundColor: Colors.green,
             elevation: 1,
-            content: const Text(
-              'You are Signed Up!',
+            content: Text(
+              'Te haz registrado como ${userData.userType}!',
               textAlign: TextAlign.center,
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                  color: Colors.white, fontWeight: FontWeight.bold),
             ),
           ),
         );
@@ -182,7 +182,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       showDialog(
           context: context,
           builder: (context) =>
-              getAlertDialog('Error', 'Server error', context));
+              getAlertDialog('Error', 'Error del Servidor', context));
     }
     log(response.body);
   }
@@ -598,10 +598,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: OutlinedButton(
                         onPressed: () {
                           submit();
-                          // Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //         builder: (context) => const LoginScreen()));
                         },
                         child: const Text('Registrarse',
                             style: TextStyle(

@@ -168,6 +168,8 @@ class Item {
     required this.recogerUbicacion,
     required this.descripcion,
     required this.precioProducto,
+    required this.latitud,
+    required this.longitud,
   });
 
   int id;
@@ -175,6 +177,8 @@ class Item {
   String recogerUbicacion;
   String descripcion;
   String precioProducto;
+  String latitud;
+  String longitud;
 
   factory Item.fromJson(Map<String, dynamic> json) => Item(
         id: json["id"],
@@ -182,6 +186,8 @@ class Item {
         recogerUbicacion: json["recoger_ubicacion"],
         descripcion: json["descripcion"],
         precioProducto: json["precio_producto"],
+        latitud: json["latitud"],
+        longitud: json["longitud"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -190,5 +196,7 @@ class Item {
         "recoger_ubicacion": recogerUbicacion,
         "descripcion": descripcion,
         "precio_producto": precioProducto,
+        "latitud": latitud,
+        "longitud": longitud,
       };
 }
