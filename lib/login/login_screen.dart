@@ -275,21 +275,47 @@ class _LoginScreenState extends State<LoginScreen> {
                                         onSaved: (value) {
                                           userData.password = value!;
                                         },
-                                        obscureText: !_passwordVisible,
-                                        enableSuggestions: false,
-                                        autocorrect: false,
-                                        style: const TextStyle(
-                                            fontSize: 17, color: Colors.black),
-                                        toolbarOptions:
-                                            const ToolbarOptions(paste: false),
-                                        decoration: InputDecoration(
-                                          hintText: 'Ingrese su contraseña',
-                                          hintStyle: const TextStyle(
-                                              fontSize: 17,
-                                              color: ColorSelect.kTextGrey),
-                                          contentPadding:
-                                              const EdgeInsets.only(bottom: 0),
-                                          suffixIcon: IconButton(
+                                        icon: Image.asset(
+                                          'assets/images/fb_logo.png',
+                                          height: 45
+                                        )
+                                      ),
+                                    ),
+
+                                    Container(
+                                      height: 45,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                            BorderRadius.circular(50),
+                                          color: Colors.red
+                                      ),
+                                      child: _isLoggedIn
+                                          ? Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                Image.network(
+                                                  _googleSignIn
+                                                      .currentUser!.photoUrl
+                                                      .toString(),
+                                                  height: 50,
+                                                  width: 50,
+                                                ),
+                                                Text(_googleSignIn
+                                                    .currentUser!.displayName
+                                                    .toString()),
+                                                Text(_googleSignIn
+                                                    .currentUser!.email
+                                                    .toString()),
+                                                OutlinedButton(
+                                                  child: const Text("Logout"),
+                                                  onPressed: () {
+                                                    _logout();
+                                                  },
+                                                )
+                                              ],
+                                            )
+                                          : IconButton(
                                               onPressed: () {
                                                 setState(() {
                                                   _passwordVisible =
