@@ -1,7 +1,6 @@
 // To parse this JSON data, do
 //
 //     final pedido = pedidoFromJson(jsonString);
-
 import 'dart:convert';
 
 Pedido pedidoFromJson(String str) => Pedido.fromJson(json.decode(str));
@@ -130,6 +129,7 @@ class Users {
     required this.password,
     required this.phoneNumber,
     required this.userType,
+    required this.tipopago,
   });
 
   int id;
@@ -139,6 +139,7 @@ class Users {
   String password;
   String phoneNumber;
   String userType;
+  List<Tipopago> tipopago;
 
   factory Users.fromJson(Map<String, dynamic> json) => Users(
         id: json["id"],
@@ -148,6 +149,8 @@ class Users {
         password: json["password"],
         phoneNumber: json["phone_number"],
         userType: json["user_type"],
+        tipopago: List<Tipopago>.from(
+            json["tipopago"].map((x) => Tipopago.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -158,6 +161,55 @@ class Users {
         "password": password,
         "phone_number": phoneNumber,
         "user_type": userType,
+        "tipopago": List<dynamic>.from(tipopago.map((x) => x.toJson())),
+      };
+}
+
+class Tipopago {
+  Tipopago({
+    required this.id,
+    required this.userId,
+    required this.metodo,
+    required this.cvv,
+    required this.monthExpiracion,
+    required this.nombreTarjeta,
+    required this.numeroTarjeta,
+    required this.yearExpiracion,
+    required this.nombreBanco,
+  });
+
+  int id;
+  int userId;
+  String metodo;
+  dynamic cvv;
+  dynamic monthExpiracion;
+  dynamic nombreTarjeta;
+  dynamic numeroTarjeta;
+  dynamic yearExpiracion;
+  dynamic nombreBanco;
+
+  factory Tipopago.fromJson(Map<String, dynamic> json) => Tipopago(
+        id: json["id"],
+        userId: json["user_id"],
+        metodo: json["metodo"],
+        cvv: json["cvv"],
+        monthExpiracion: json["month_expiracion"],
+        nombreTarjeta: json["nombre_tarjeta"],
+        numeroTarjeta: json["numero_tarjeta"],
+        yearExpiracion: json["year_expiracion"],
+        nombreBanco: json["nombre_banco"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "user_id": userId,
+        "metodo": metodo,
+        "cvv": cvv,
+        "month_expiracion": monthExpiracion,
+        "nombre_tarjeta": nombreTarjeta,
+        "numero_tarjeta": numeroTarjeta,
+        "year_expiracion": yearExpiracion,
+        "nombre_banco": nombreBanco,
       };
 }
 
