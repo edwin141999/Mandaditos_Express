@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'package:mandaditos_express/models/pedidoinfo.dart';
@@ -13,6 +16,24 @@ class pedidosP extends StatefulWidget {
 }
 
 class _pedidosPState extends State<pedidosP> {
+  Pedido pedidosInfo = Pedido(pedidos: []);
+
+  Future<Pedido> getMandados() async {
+    var url = Uri.parse('http://54.163.243.254:81/users/mostrarMandados');
+
+    final resp =
+        await http.get(url, headers: {'Content-Type': 'application/json'});
+
+    pedidosInfo = Pedido.fromJson(jsonDecode(resp.body));
+    return pedidoFromJson(resp.body);
+  }
+
+  @override
+  void initState() {
+    getMandados();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,7 +64,7 @@ class _pedidosPState extends State<pedidosP> {
             future: getMandados(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               return ListView.builder(
-                  itemCount: 3,
+                  itemCount: pedidosInfo.pedidos.length,
                   itemBuilder: (BuildContext context, int i) => Card(
                         elevation: 2,
                         margin: const EdgeInsets.all(15),
@@ -62,8 +83,10 @@ class _pedidosPState extends State<pedidosP> {
                                   ),
                                 ),
                               ])),
-                          title: const Text(
-                            '\nComida',
+                          title: Text(
+                            pedidosInfo.pedidos[i].cliente.users.firstName +
+                                ' ' +
+                                pedidosInfo.pedidos[i].cliente.users.lastName,
                             textScaleFactor: 1.5,
                           ),
                           trailing: SizedBox(
@@ -74,12 +97,14 @@ class _pedidosPState extends State<pedidosP> {
                                   children: [
                                 FloatingActionButton.extended(
                                   onPressed: () {},
-                                  icon: Icon(Icons.save),
-                                  label: Text("Detalles"),
+                                  icon: const Icon(Icons.save),
+                                  label: const Text("Detalles"),
                                 ),
                               ])),
-                          subtitle: Text('This is subtitle\n\n'
-                              'hhh'),
+                          subtitle: Text(
+                              '${pedidosInfo.pedidos[i].horaSolicitada.toString().substring(11, 16)} AM/PM \n'
+                              '${pedidosInfo.pedidos[i].item.tipoProducto}\n'
+                              'Total: ${pedidosInfo.pedidos[i].item.precioProducto} \$'),
                           selected: true,
 
                           // onTap: () {
@@ -99,31 +124,22 @@ class _pedidosPState extends State<pedidosP> {
   }
 }
 
-class _ListaPedidos extends StatelessWidget {
-  final List<PedidoClass> pe;
+// class _ListaPedidos extends StatelessWidget {
+//   final List<PedidoClass> pe;
 
-  const _ListaPedidos(this.pe);
+//   const _ListaPedidos(this.pe);
 
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-        itemCount: pe.length,
-        itemBuilder: (BuildContext context, int i) {
-          final pedido = pe[i];
-          int idpedido = pedido.envioId;
-          return ListTile(
-            title: Text('${pedido.envioId}'),
-            subtitle: const Text('hh'),
-          );
-        });
-  }
-}
-
-Future<Pedido> getMandados() async {
-  var url = Uri.parse('http://54.163.243.254:81/users/mostrarMandados');
-
-  final resp =
-      await http.get(url, headers: {'Content-Type': 'application/json'});
-
-  return pedidoFromJson(resp.body);
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return ListView.builder(
+//         itemCount: pe.length,
+//         itemBuilder: (BuildContext context, int i) {
+//           final pedido = pe[i];
+//           int idpedido = pedido.envioId;
+//           return ListTile(
+//             title: Text('${pedido.envioId}'),
+//             subtitle: const Text('hh'),
+//           );
+//         });
+//   }
+// }

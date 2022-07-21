@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:mandaditos_express/metodos_pago/metodospago_screen.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
 
@@ -127,6 +126,7 @@ class _CreaTarjetaScreenState extends State<CreaTarjetaScreen> {
             icon: Image.asset('assets/images/icon_back_arrow.png',
                 scale: .8, color: Colors.white),
             onPressed: () {
+              FocusScope.of(context).unfocus();
               Navigator.push(
                   context,
                   MaterialPageRoute(
