@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'dart:async';
-
+import 'dart:async'
 
 class SolicitarPedido extends StatefulWidget {
   const SolicitarPedido({Key? key}) : super(key: key);
@@ -33,7 +32,7 @@ class _SolicitarPedido extends State<SolicitarPedido> {
     );
     log(resp.body);
   }
- 
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(

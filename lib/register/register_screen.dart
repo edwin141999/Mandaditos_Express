@@ -190,8 +190,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color(0xffffffff),
+        toolbarHeight: 40,
+        automaticallyImplyLeading: false, // No back button
+        leading: IconButton(
+            icon: Image.asset('assets/images/icon_back_arrow.png',
+                scale: .8, color: Colors.black),
+            onPressed: () {
+              FocusScope.of(context).unfocus();
+              Navigator.pop(context);
+            }),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
+          reverse: true,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30),
             child: SizedBox(
@@ -320,7 +333,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                     SizedBox(
-                      height: 50,
+                      height: 49,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -456,7 +469,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                     SizedBox(
-                      height: 50,
+                      height: 48,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -571,37 +584,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const [
-                        Text('Al aceptar ', style: TextStyle(fontSize: 15)),
+                        Text('Al registrarte aceptas los ',
+                            style: TextStyle(fontSize: 15)),
                         Text(
                           'Terminos y Condiciones',
                           style: TextStyle(color: Colors.blue, fontSize: 15),
                         )
                       ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 20),
-                      child: SizedBox(
-                        width: double.infinity,
-                        height: 45,
-                        child: OutlinedButton(
-                          onPressed: () {
-                            submit();
-                            // Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //         builder: (context) => const LoginScreen()));
-                          },
-                          child: const Text('Registrarse',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w400)),
-                          style: OutlinedButton.styleFrom(
-                            backgroundColor: ColorSelect.kPrimaryColor,
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50),
-                            ),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 45,
+                      child: OutlinedButton(
+                        onPressed: () {
+                          submit();
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => const LoginScreen()));
+                        },
+                        child: const Text('Registrarse',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w400)),
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: ColorSelect.kPrimaryColor,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
                           ),
                         ),
                       ),

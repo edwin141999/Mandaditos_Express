@@ -28,4 +28,7 @@ class ColorSelect {
   // COLORES DE LOS CONTAINER
   static const kContainerGreen = Color(0xff41FA96);
   static const kContainerPink = Color(0xffFA4141);
+
+  //COLORES DE CARD
+  static const cardP = Color(0xffF2EEEE);
 }

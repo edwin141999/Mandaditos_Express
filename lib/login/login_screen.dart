@@ -1,12 +1,15 @@
+import 'dart:developer';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:mandaditos_express/dashboard/dashboard_screen.dart';
 import 'package:mandaditos_express/register/register_screen.dart';
+import 'package:mandaditos_express/repartidor/menu.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:flutter/cupertino.dart';
+// import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+// import 'package:flutter/cupertino.dart';
 
 // SERVER
 import 'package:http/http.dart' as http;
@@ -53,9 +56,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  Map<String, dynamic>? _userData;
-  AccessToken? _accessToken;
-  bool _checking = false;
+  // Map<String, dynamic>? _userData;
+  // AccessToken? _accessToken;
+  // bool _checking = false;
 
   bool _passwordVisible = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -95,46 +98,46 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
   }
 
-  _checkIfisLoggedIn() async {
-    final accessToken = await FacebookAuth.instance.accessToken;
-    setState(() {
-      _checking = false;
-    });
+  // _checkIfisLoggedIn() async {
+  // final accessToken = await FacebookAuth.instance.accessToken;
+  // setState(() {
+  //   _checking = false;
+  // });
 
-    if (accessToken != null) {
-      print(accessToken.toJson());
-      final userData = await FacebookAuth.instance.getUserData();
-      _accessToken = accessToken;
-      setState(() {
-        _userData = userData;
-      });
-    } else {
-      _loginFB();
-    }
-  }
+  // if (accessToken != null) {
+  //   print(accessToken.toJson());
+  //   final userData = await FacebookAuth.instance.getUserData();
+  //   _accessToken = accessToken;
+  //   setState(() {
+  //     _userData = userData;
+  //   });
+  // } else {
+  //   _loginFB();
+  // }
+  // }
 
-  _loginFB() async {
-    final LoginResult result = await FacebookAuth.instance.login();
-    if (result.status == LoginStatus.success) {
-      _accessToken = result.accessToken;
+  // _loginFB() async {
+  // final LoginResult result = await FacebookAuth.instance.login();
+  // if (result.status == LoginStatus.success) {
+  //   _accessToken = result.accessToken;
 
-      final userData = await FacebookAuth.instance.getUserData();
-      _userData = userData;
-    } else {
-      print(result.status);
-      print(result.message);
-    }
-    setState(() {
-      _checking = false;
-    });
-  }
+  //   final userData = await FacebookAuth.instance.getUserData();
+  //   _userData = userData;
+  // } else {
+  //   print(result.status);
+  //   print(result.message);
+  // }
+  //   setState(() {
+  //     _checking = false;
+  //   });
+  // }
 
-  _logoutFB() async {
-    await FacebookAuth.instance.logOut();
-    _accessToken = null;
-    _userData = null;
-    setState(() {});
-  }
+  // _logoutFB() async {
+  // await FacebookAuth.instance.logOut();
+  // _accessToken = null;
+  //   _userData = null;
+  //   setState(() {});
+  // }
 
   Future<void> loginwithDB() async {
     var url = Uri.parse('http://54.163.243.254/users/login');
@@ -156,35 +159,44 @@ class _LoginScreenState extends State<LoginScreen> {
                       backgroundColor: Colors.green[400],
                       elevation: 1,
                       content: const Text(
-                        'You are logged in',
+                        '¡Haz iniciado Sesion!',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
                   );
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        // print(response.body);
-                        return Dashboard(userInfo: userFromJson(response.body));
-                      },
-                    ),
-                  );
+                  if (responseMap['user']['user_type'] == 'Cliente') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return Dashboard(
+                              userInfo: userFromJson(response.body));
+                        },
+                      ),
+                    );
+                  } else {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return menuM(userInfo: userFromJson(response.body));
+                    }));
+                  }
                 } else {
                   if (responseMap.containsKey("message")) {
                     showDialog(
                         context: context,
                         builder: (ctx) => getAlertDialog(
-                            "Login failed", '${responseMap["message"]}', ctx));
+                            "Error de Inicio de Sesion",
+                            '${responseMap["message"]}',
+                            ctx));
                   }
                 }
               }).catchError((err) {
                 showDialog(
                     context: context,
                     builder: (ctx) =>
-                        getAlertDialog("Login failed", "Server error", ctx));
+                        getAlertDialog("Error", "Server error", ctx));
               })
             });
   }
@@ -246,7 +258,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           SizedBox(
-                            height: 85,
+                            height: 65,
                             child: Column(
                               children: [
                                 Column(
@@ -254,46 +266,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceAround,
                                   children: [
-                                    Container(
-                                      height: 45,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(50),
-                                        color: ColorSelect.kFacebookColor
-                                      ),
-                                      child: _checking
-                                      ? Center(
-                                        child: Column(mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: [
-                                            _userData != null
-                                                ? Text('name: ${_userData!['name']}')
-                                                : Container(),
-                                            _userData != null
-                                                ? Text('email: ${_userData!['email']}')
-                                                : Container(),
-                                            _userData != null
-                                            ? Container(
-                                                child: Image.network(
-                                                    _userData!['picture']['data']['url']),
-                                              )
-                                            : Container(),
-                                            const SizedBox(
-                                              height: 20,
-                                            ),
-                                            CupertinoButton(
-                                              color: Colors.blue,
-                                              child: Text(
-                                                _userData != null ? 'LOGOUT' : 'LOGIN',
-                                                style: TextStyle(color: Colors.white),
-                                              ),
-                                              onPressed: _userData != null ? _logoutFB : _loginFB
-                                            )
-                                          ],
-                                        )
-                                      )
-                                      : IconButton(
-                                        onPressed: () {
-                                           _checkIfisLoggedIn();
+                                    const Text('Contraseña',
+                                        style: TextStyle(
+                                            fontSize: 18, color: Colors.black)),
+                                    SizedBox(
+                                      height: 31,
+                                      child: TextFormField(
+                                        onSaved: (value) {
+                                          userData.password = value!;
                                         },
                                         icon: Image.asset(
                                           'assets/images/fb_logo.png',
@@ -351,20 +331,146 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                   ],
                                 ),
-                                const Padding(
-                                    padding: EdgeInsets.only(top: 10)),
-                                const SizedBox(
-                                  width: double.infinity,
-                                  child: Text('Recuperar contraseña',
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        color: ColorSelect.kSecondaryColor,
-                                      ),
-                                      textAlign: TextAlign.end),
-                                ),
+                                // const Padding(
+                                //     padding: EdgeInsets.only(top: 10)),
+                                // const SizedBox(
+                                //   width: double.infinity,
+                                //   child: Text('Recuperar contraseña',
+                                //       style: TextStyle(
+                                //         fontSize: 15,
+                                //         color: ColorSelect.kSecondaryColor,
+                                //       ),
+                                //       textAlign: TextAlign.end),
+                                // ),
                               ],
                             ),
                           ),
+                          // SizedBox(
+                          //   height: 85,
+                          //   child: Column(
+                          //     children: [
+                          //       Column(
+                          //         crossAxisAlignment: CrossAxisAlignment.start,
+                          //         mainAxisAlignment:
+                          //             MainAxisAlignment.spaceAround,
+                          //         children: [
+                          //           Container(
+                          //             height: 45,
+                          //             decoration: BoxDecoration(
+                          //                 borderRadius:
+                          //                     BorderRadius.circular(50),
+                          //                 color: ColorSelect.kFacebookColor),
+                          //             child: _checking
+                          //                 ? Center(
+                          //                     child: Column(
+                          //                     mainAxisAlignment:
+                          //                         MainAxisAlignment.center,
+                          //                     crossAxisAlignment:
+                          //                         CrossAxisAlignment.center,
+                          //                     children: [
+                          //                       _userData != null
+                          //                           ? Text(
+                          //                               'name: ${_userData!['name']}')
+                          //                           : Container(),
+                          //                       _userData != null
+                          //                           ? Text(
+                          //                               'email: ${_userData!['email']}')
+                          //                           : Container(),
+                          //                       _userData != null
+                          //                           ? Container(
+                          //                               child: Image.network(
+                          //                                   _userData![
+                          //                                           'picture'][
+                          //                                       'data']['url']),
+                          //                             )
+                          //                           : Container(),
+                          //                       const SizedBox(
+                          //                         height: 20,
+                          //                       ),
+                          //                       CupertinoButton(
+                          //                           color: Colors.blue,
+                          //                           child: Text(
+                          //                             _userData != null
+                          //                                 ? 'LOGOUT'
+                          //                                 : 'LOGIN',
+                          //                             style: const TextStyle(
+                          //                                 color: Colors.white),
+                          //                           ),
+                          //                           onPressed: _userData != null
+                          //                               ? _logoutFB
+                          //                               : _loginFB)
+                          //                     ],
+                          //                   ))
+                          //                 : IconButton(
+                          //                     onPressed: () {
+                          //                       _checkIfisLoggedIn();
+                          //                     },
+                          //                     icon: Image.asset(
+                          //                         'assets/images/fb_logo.png',
+                          //                         height: 45)),
+                          //           ),
+                          //           Container(
+                          //             height: 45,
+                          //             decoration: BoxDecoration(
+                          //                 borderRadius:
+                          //                     BorderRadius.circular(50),
+                          //                 color: Colors.red),
+                          //             child: _isLoggedIn
+                          //                 ? Column(
+                          //                     mainAxisAlignment:
+                          //                         MainAxisAlignment.center,
+                          //                     children: <Widget>[
+                          //                       Image.network(
+                          //                         _googleSignIn
+                          //                             .currentUser!.photoUrl
+                          //                             .toString(),
+                          //                         height: 50,
+                          //                         width: 50,
+                          //                       ),
+                          //                       Text(_googleSignIn
+                          //                           .currentUser!.displayName
+                          //                           .toString()),
+                          //                       Text(_googleSignIn
+                          //                           .currentUser!.email
+                          //                           .toString()),
+                          //                       OutlinedButton(
+                          //                         child: const Text("Logout"),
+                          //                         onPressed: () {
+                          //                           _logout();
+                          //                         },
+                          //                       )
+                          //                     ],
+                          //                   )
+                          //                 : IconButton(
+                          //                     onPressed: () {
+                          //                       setState(() {
+                          //                         _passwordVisible =
+                          //                             !_passwordVisible;
+                          //                       });
+                          //                     },
+                          //                     alignment: Alignment.topCenter,
+                          //                     icon: Icon(_passwordVisible
+                          //                         ? Icons.visibility
+                          //                         : Icons.visibility_off)),
+                          //           ),
+                          //           // ),
+                          //           // ),
+                          //         ],
+                          //       ),
+                          //       const Padding(
+                          //           padding: EdgeInsets.only(top: 10)),
+                          //       const SizedBox(
+                          //         width: double.infinity,
+                          //         child: Text('Recuperar contraseña',
+                          //             style: TextStyle(
+                          //               fontSize: 15,
+                          //               color: ColorSelect.kSecondaryColor,
+                          //             ),
+                          //             textAlign: TextAlign.end),
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
                           SizedBox(
                             width: double.infinity,
                             height: 45,
@@ -390,7 +496,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 const Text('O Inicia Sesion con',
-                                    style: TextStyle(fontSize: 15)),
+                                    style: TextStyle(fontSize: 17)),
                                 SizedBox(
                                   width: 120,
                                   child: Row(
@@ -461,15 +567,16 @@ class _LoginScreenState extends State<LoginScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 const Text('¿No tienes una cuenta?',
-                                    style: TextStyle(fontSize: 15)),
+                                    style: TextStyle(fontSize: 17)),
                                 RichText(
                                   text: TextSpan(
-                                    style: const TextStyle(fontSize: 15),
+                                    style: const TextStyle(fontSize: 16),
                                     children: <TextSpan>[
                                       TextSpan(
                                         text: 'Registrate aqui',
                                         style: const TextStyle(
-                                            color: ColorSelect.kSecondaryColor),
+                                            color: ColorSelect.kSecondaryColor,
+                                            fontWeight: FontWeight.bold),
                                         recognizer: TapGestureRecognizer()
                                           ..onTap = () => Navigator.push(
                                               context,

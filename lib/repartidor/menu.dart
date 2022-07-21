@@ -1,35 +1,42 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:mandaditos_express/models/userinfo.dart';
+import 'package:mandaditos_express/repartidor/pedidosP.dart';
+import 'package:mandaditos_express/repartidor/perfil.dart';
 
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 
+// SERVER
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:async';
+
 class menuM extends StatefulWidget {
-  //final User userInfo;
-  //const Dashboard({Key? key, required this.userInfo}) : super(key: key);
-  const menuM({Key? key}) : super(key: key);
+  final User userInfo;
+  const menuM({Key? key, required this.userInfo}) : super(key: key);
 
   @override
   State<menuM> createState() => _menuMState();
 }
 
 class _menuMState extends State<menuM> {
-  var calles = [];
-
-  String callesValue = '';
-  var textInfo = ['Mandados disponibles', 'Historial de Mandados'];
-  var imgInfo = [
-    'assets/images/icon_solicitar.png',
-    'assets/images/icon_pedidos.png'
-  ];
-  var colorInfo = [ColorSelect.kContainerGreen, ColorSelect.kContainerPink];
-
-  // @override
-  // void initState() {
-  //   for (var item in widget.userInfo.datatype) {
-  //     calles.add(item.direccion);
-  //   }
-  //   callesValue = widget.userInfo.datatype[0].direccion;
-  //   super.initState();
-  // }
+  var estado = '';
+  Future<void> actualizarEstado() async {
+    var url = Uri.parse('http://54.163.243.254:81/users/cambiarEstado');
+    var reqBody = {};
+    reqBody['id'] = widget.userInfo.datatype[0].id;
+    reqBody['estado'] = 'Disponible';
+    final resp = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(reqBody),
+    );
+    Map<String, dynamic> respBody = json.decode(resp.body);
+    // log(respBody['update']['estado'].toString());
+    estado = respBody['update']['estado'];
+    // log(resp.body);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,12 +56,12 @@ class _menuMState extends State<menuM> {
                   'assets/images/icon_profile.png',
                   color: Colors.black,
                 ),
-                //
-                // onTap: () {
-                //   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                //     return ProfileScreen(userInfo: widget.userInfo);
-                //   }));
-                // },
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    // return ProfileScreen(userInfo: widget.userInfo);
+                    return const Perfil();
+                  }));
+                },
               ),
             ),
           ),
@@ -68,35 +75,46 @@ class _menuMState extends State<menuM> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: 60,
+                  height: 90,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Hola', // ${widget.userInfo.user.firstName}', //usuario
+                        'Hola ${widget.userInfo.user.firstName}',
                         style: const TextStyle(fontSize: 22),
                       ),
-                      DropdownButton(
-                        items: calles.map((e) {
-                          return DropdownMenuItem(
-                            child: Text(e),
-                            value: e,
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            callesValue = value.toString();
-                          });
-                        },
-                        value: callesValue,
-                        underline: Container(),
-                        isDense: true,
-                        icon: const Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Colors.black,
-                          size: 20,
-                        ),
+                      Text(
+                        'Usted esta en: ${widget.userInfo.datatype[0].cityDrive}',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      Row(
+                        children: [
+                          Container(
+                            height: 22,
+                            width: 22,
+                            decoration: BoxDecoration(
+                              color: const Color(0xff28FB24),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            margin: const EdgeInsets.only(right: 10),
+                          ),
+                          FutureBuilder(
+                            future: actualizarEstado(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                    child: CircularProgressIndicator());
+                              } else {
+                                return Text(
+                                  'Estado: $estado',
+                                  style: const TextStyle(fontSize: 16),
+                                );
+                              }
+                            },
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -108,16 +126,35 @@ class _menuMState extends State<menuM> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(
-                        height: 410,
-                        child: ListView.builder(
-                          itemCount: textInfo.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return AccionesContainer(
-                                image: imgInfo[index],
-                                text: textInfo[index],
-                                colorContainer: colorInfo[index]);
+                        height: MediaQuery.of(context).size.height * 0.3,
+                        width: MediaQuery.of(context).size.width,
+                        child: AccionesContainer(
+                          text: 'Mandados disponibles',
+                          image: 'assets/images/icon_solicitar.png',
+                          colorContainer: ColorSelect.kContainerGreen,
+                          onTap: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return const pedidosP();
+                            }));
                           },
                         ),
+                        // child: ListView.builder(
+                        //   itemCount: textInfo.length,
+                        //   itemBuilder: (BuildContext context, int index) {
+                        //     return AccionesContainer(
+                        //       image: imgInfo[index],
+                        //       text: textInfo[index],
+                        //       colorContainer: colorInfo[index],
+                        //       onTap: () {
+                        //         Navigator.push(context,
+                        //             MaterialPageRoute(builder: (context) {
+                        //           return const pedidosP();
+                        //         }));
+                        //       },
+                        //     );
+                        //   },
+                        // ),
                       ),
                     ],
                   ),
@@ -134,26 +171,31 @@ class _menuMState extends State<menuM> {
 class AccionesContainer extends StatelessWidget {
   final String image, text;
   final Color colorContainer;
+  final Function() onTap;
   const AccionesContainer({
     Key? key,
     required this.image,
     required this.text,
     required this.colorContainer,
+    required this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          width: 160,
-          height: 130,
-          decoration: BoxDecoration(
-            color: colorContainer.withOpacity(.42),
-            borderRadius: BorderRadius.circular(17),
-            image: DecorationImage(image: AssetImage(image), scale: .8),
-          ),
-        ),
+        GestureDetector(
+            key: UniqueKey(),
+            child: Container(
+              width: 160,
+              height: 130,
+              decoration: BoxDecoration(
+                color: colorContainer.withOpacity(.42),
+                borderRadius: BorderRadius.circular(17),
+                image: DecorationImage(image: AssetImage(image), scale: .8),
+              ),
+            ),
+            onTap: onTap),
         Container(
           width: 140,
           margin: const EdgeInsets.only(bottom: 30),

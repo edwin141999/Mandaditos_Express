@@ -37,23 +37,40 @@ class Datatype {
   Datatype({
     required this.id,
     required this.userId,
-    required this.direccion,
+    this.direccion,
+    // required this.direccion,
+    required this.latitud,
+    required this.longitud,
+    this.cityDrive,
+    this.estado,
   });
 
   int id;
   int userId;
-  String direccion;
+  dynamic direccion;
+  String latitud;
+  String longitud;
+  dynamic cityDrive;
+  dynamic estado;
 
   factory Datatype.fromJson(Map<String, dynamic> json) => Datatype(
         id: json["id"],
         userId: json["user_id"],
         direccion: json["direccion"],
+        latitud: json["latitud"],
+        longitud: json["longitud"],
+        cityDrive: json["city_drive"],
+        estado: json["estado"],
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "user_id": userId,
         "direccion": direccion,
+        "latitud": latitud,
+        "longitud": longitud,
+        "city_drive": cityDrive,
+        "estado": estado,
       };
 }
 

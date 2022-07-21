@@ -150,6 +150,7 @@ class _EditarTarjetaState extends State<EditarTarjeta> {
             icon: Image.asset('assets/images/icon_back_arrow.png',
                 scale: .8, color: Colors.white),
             onPressed: () {
+              FocusScope.of(context).unfocus();
               Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -159,6 +160,7 @@ class _EditarTarjetaState extends State<EditarTarjeta> {
             }),
       ),
       body: SingleChildScrollView(
+        reverse: true,
         child: SafeArea(
             child: Stack(
           children: [
