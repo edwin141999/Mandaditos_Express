@@ -1,54 +1,65 @@
+// To parse this JSON data, do
+//
+//     final itemInfo = itemInfoFromJson(jsonString);
+
 import 'dart:convert';
-import 'dart:ffi';
 
-Item itemFromJson(String str) => Item.fromJson(json.decode(str));
-String itemToJson(Item data) => json.encode(data.toJson());
+ItemInfo itemInfoFromJson(String str) => ItemInfo.fromJson(json.decode(str));
 
-class Item {
-  Item({
-    required this.items,
+String itemInfoToJson(ItemInfo data) => json.encode(data.toJson());
+
+class ItemInfo {
+  ItemInfo({
+    required this.item,
   });
 
-  List<ItemClass> items;
+  Item item;
 
-  factory Item.fromJson(Map<String, dynamic> json) => Item(
-        items: List<ItemClass>.from(
-            json["items"].map((x) => ItemClass.fromJson(x))),
+  factory ItemInfo.fromJson(Map<String, dynamic> json) => ItemInfo(
+        item: Item.fromJson(json["item"]),
       );
 
   Map<String, dynamic> toJson() => {
-        "items": List<dynamic>.from(items.map((x) => x.toJson())),
+        "item": item.toJson(),
       };
 }
 
-class ItemClass {
-  ItemClass({
+class Item {
+  Item({
     required this.id,
     required this.tipoProducto,
-    required this.ubicacion,
+    required this.recogerUbicacion,
     required this.descripcion,
-    required this.precio,
+    required this.precioProducto,
+    required this.latitud,
+    required this.longitud,
   });
 
   int id;
   String tipoProducto;
-  String ubicacion;
+  String recogerUbicacion;
   String descripcion;
-  Float precio;
+  String precioProducto;
+  String latitud;
+  String longitud;
 
-  factory ItemClass.fromJson(Map<String, dynamic> json) => ItemClass(
-    id: json["id"],
-    tipoProducto: json["tipo_producto"],
-    ubicacion: json["recoger_ubicacion"],
-    descripcion: json["descripcion"],
-    precio: json["precio_producto"],
-  );
+  factory Item.fromJson(Map<String, dynamic> json) => Item(
+        id: json["id"],
+        tipoProducto: json["tipo_producto"],
+        recogerUbicacion: json["recoger_ubicacion"],
+        descripcion: json["descripcion"],
+        precioProducto: json["precio_producto"],
+        latitud: json["latitud"],
+        longitud: json["longitud"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "tipo_producto": tipoProducto,
-    "recoger_ubicacion": ubicacion,
-    "descripcion": descripcion,
-    "precio_producto": precio
-  };
+        "id": id,
+        "tipo_producto": tipoProducto,
+        "recoger_ubicacion": recogerUbicacion,
+        "descripcion": descripcion,
+        "precio_producto": precioProducto,
+        "latitud": latitud,
+        "longitud": longitud,
+      };
 }

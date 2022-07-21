@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mandaditos_express/repartidor/pedidosP.dart';
 import 'package:mandaditos_express/splash/splash_view.dart';
-import 'package:mandaditos_express/repartidor/confirmarP.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,6 +14,5 @@ class MyApp extends StatelessWidget {
         title: 'Mandaditos Express',
         debugShowCheckedModeBanner: false,
         home: SplashView());
-    // home: pedidosP());
   }
 }
