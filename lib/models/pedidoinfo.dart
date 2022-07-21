@@ -1,3 +1,6 @@
+// To parse this JSON data, do
+//
+//     final pedido = pedidoFromJson(jsonString);
 import 'dart:convert';
 
 Pedido pedidoFromJson(String str) => Pedido.fromJson(json.decode(str));

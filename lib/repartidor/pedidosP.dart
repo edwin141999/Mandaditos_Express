@@ -27,23 +27,14 @@ class _pedidosPState extends State<pedidosP> {
         await http.get(url, headers: {'Content-Type': 'application/json'});
 
     pedidosInfo = Pedido.fromJson(jsonDecode(resp.body));
-    //log(pedidosInfo.);
-
     return pedidoFromJson(resp.body);
-    //return pedidosInfo;
   }
 
-  // @override
-  // void initState() {
-  //   log('Hola');
-  //   //getMandados();
-  //   log('SIZE: ${pedidosInfo.pedidos.length}');
-  //   for (var pedido in pedidosInfo.pedidos) {
-  //     log('Hola2');
-  //     postItem(pedido.envioId);
-  //   }
-  //   super.initState();
-  // }
+  @override
+  void initState() {
+    getMandados();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +80,7 @@ class _ListaPedidos extends StatelessWidget {
   final List<PedidoElement> pe;
   //log(pe.length);
 
-  const _ListaPedidos(this.pe);
+//   const _ListaPedidos(this.pe);
 
   @override
   Widget build(BuildContext context) {
