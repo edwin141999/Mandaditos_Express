@@ -36,14 +36,6 @@ class Pedido extends _pedidoData {}
 
 class _ConfirmarPedido extends State<ConfirmarPedido> {
   Pedido pedidoData = Pedido();
-  // final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  // void submitPedido() async {
-  //   if (_formKey.currentState!.validate()) {
-  //     _formKey.currentState!.save();
-  //     generarPedido();
-  //   }
-  // }
 
   Future<void> generarPedido() async {
     var url = Uri.parse('http://54.163.243.254:81/users/mandadito');
@@ -227,10 +219,8 @@ class _ConfirmarPedido extends State<ConfirmarPedido> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      'Metodo de Pago',
-                      style: TextStyle(fontSize: 18),
-                    ),
+                    const Text('Metodo de Pago',
+                        style: TextStyle(fontSize: 18)),
                     TextButton(
                         onPressed: () {},
                         child: const Text(
@@ -293,106 +283,80 @@ class _ConfirmarPedido extends State<ConfirmarPedido> {
                   ),
                 ),
                 SizedBox(
-                    width: double.infinity,
-                    height: 45,
-                    child: OutlinedButton(
-                      child: const Text('Confirmar Pedido',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w400)),
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: ColorSelect.kPrimaryColor,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50),
-                        ),
+                  width: double.infinity,
+                  height: 45,
+                  child: OutlinedButton(
+                    child: const Text('Confirmar Pedido',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400)),
+                    style: OutlinedButton.styleFrom(
+                      backgroundColor: ColorSelect.kPrimaryColor,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
                       ),
-                      onPressed: () {
-                        generarPedido();
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) => AlertDialog(
-                            insetPadding: const EdgeInsets.symmetric(
-                                horizontal: 50, vertical: 125),
-                            content: Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  const Text(
-                                    'Tu pedido fue solicitado',
+                    ),
+                    onPressed: () {
+                      generarPedido();
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                          insetPadding: const EdgeInsets.symmetric(
+                              horizontal: 50, vertical: 125),
+                          content: Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  'Tu pedido fue solicitado',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const Text(
+                                    'Los repartidores cercanos podran aceptar tu solicitud de pedido, podras cancelar tu pedido antes de tiempo para reclamar un rembolso.'),
+                                const Text(
+                                    'Vea el mapa para localizar su posible repartidor.'),
+                                OutlinedButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => Dashboard(
+                                            userInfo: widget.userInfo),
+                                      ),
+                                    );
+                                  },
+                                  child: const Text(
+                                    'Regresar al Menu',
                                     style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w400),
                                   ),
-                                  const Text(
-                                      'Los repartidores cercanos podran aceptar tu solicitud de pedido, podras cancelar tu pedido antes de tiempo para reclamar un rembolso.'),
-                                  const Text(
-                                      'Vea el mapa para localizar su posible repartidor.'),
-                                  OutlinedButton(
-                                    onPressed: () {
-                                      Navigator.pushNamed(context, '');
-                                    },
-                                    child: const Text(
-                                      'Ver Recibo',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w400),
-                                    ), // Era originalmente ver mapa...
-                                    style: OutlinedButton.styleFrom(
-                                      minimumSize: Size(
-                                          MediaQuery.of(context).size.width,
-                                          40),
-                                      backgroundColor:
-                                          ColorSelect.kPrimaryColor,
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(50),
-                                        ),
+                                  style: OutlinedButton.styleFrom(
+                                    minimumSize: Size(
+                                        MediaQuery.of(context).size.width, 40),
+                                    backgroundColor: ColorSelect.kPrimaryColor,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(50),
                                       ),
                                     ),
                                   ),
-                                  OutlinedButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => Dashboard(
-                                              userInfo: widget.userInfo),
-                                        ),
-                                      );
-                                    },
-                                    child: const Text(
-                                      'Regresar a Home',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w400),
-                                    ), // Era originalmente ver mapa...
-                                    style: OutlinedButton.styleFrom(
-                                      minimumSize: Size(
-                                          MediaQuery.of(context).size.width,
-                                          40),
-                                      backgroundColor:
-                                          ColorSelect.kPrimaryColor,
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(50),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
-                        );
-                      },
-                    ))
+                        ),
+                      );
+                    },
+                  ),
+                )
               ],
             ),
           ),

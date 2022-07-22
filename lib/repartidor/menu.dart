@@ -135,7 +135,7 @@ class _menuMState extends State<menuM> {
                           onTap: () {
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
-                              return const pedidosP();
+                              return  pedidosP(userInfo: widget.userInfo);
                             }));
                           },
                         ),
