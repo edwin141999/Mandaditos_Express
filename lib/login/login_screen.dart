@@ -7,7 +7,7 @@ import 'package:mandaditos_express/register/register_screen.dart';
 import 'package:mandaditos_express/repartidor/menu.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+// import 'package:google_sign_in/google_sign_in.dart';
 // import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 // import 'package:flutter/cupertino.dart';
 
@@ -64,8 +64,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   UserData userData = UserData();
 
-  bool _isLoggedIn = false;
-  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
+  // bool _isLoggedIn = false;
+  // final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
 
   void submit() {
     if (_formKey.currentState!.validate()) {
@@ -74,23 +74,23 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  loginwithGoogle() async {
-    try {
-      await _googleSignIn.signIn();
-      setState(() {
-        _isLoggedIn = true;
-      });
-    } catch (err) {
-      rethrow;
-    }
-  }
+  // loginwithGoogle() async {
+  //   try {
+  //     await _googleSignIn.signIn();
+  //     setState(() {
+  //       _isLoggedIn = true;
+  //     });
+  //   } catch (err) {
+  //     rethrow;
+  //   }
+  // }
 
-  _logout() {
-    _googleSignIn.signOut();
-    setState(() {
-      _isLoggedIn = false;
-    });
-  }
+  // _logout() {
+  //   _googleSignIn.signOut();
+  //   setState(() {
+  //     _isLoggedIn = false;
+  //   });
+  // }
 
   @override
   void initState() {
@@ -146,10 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
         () => {
               http.post(
                 url,
-                body: {
-                  'email': userData.email,
-                  'password': userData.password,
-                },
+                body: {'email': userData.email, 'password': userData.password},
               ).then((response) {
                 Map<String, dynamic> responseMap = json.decode(response.body);
                 if (response.statusCode == 200) {
@@ -207,7 +204,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 45),
+            padding: const EdgeInsets.symmetric(horizontal: 40),
             child: SizedBox(
               height: MediaQuery.of(context).size.height * .92,
               child: Column(
@@ -215,23 +212,21 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   Image.asset('assets/images/Logo.png', height: 137),
                   SizedBox(
-                    height: 450,
+                    height: MediaQuery.of(context).size.height * .7,
                     child: Form(
                       key: _formKey,
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           SizedBox(
-                            height: 70,
+                            height: MediaQuery.of(context).size.height * .1,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
-                                const Text(
-                                  'Correo electronico',
-                                  style: TextStyle(
-                                      fontSize: 18, color: Colors.black),
-                                ),
+                                const Text('Correo electronico',
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.black)),
                                 SizedBox(
                                   height: 27,
                                   child: TextFormField(
@@ -327,77 +322,77 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                           ),
-                          SizedBox(
-                            height: 100,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                const Text('O Inicia Sesion con',
-                                    style: TextStyle(fontSize: 17)),
-                                SizedBox(
-                                  width: 120,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        height: 45,
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(50),
-                                            color: ColorSelect.kFacebookColor),
-                                        child: IconButton(
-                                            onPressed: () {},
-                                            icon: Image.asset(
-                                                'assets/images/fb_logo.png',
-                                                height: 25)),
-                                      ),
-                                      Container(
-                                        height: 45,
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(50),
-                                            color: Colors.red),
-                                        child: _isLoggedIn
-                                            ? Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: <Widget>[
-                                                  Image.network(
-                                                    _googleSignIn
-                                                        .currentUser!.photoUrl
-                                                        .toString(),
-                                                    height: 50,
-                                                    width: 50,
-                                                  ),
-                                                  Text(_googleSignIn
-                                                      .currentUser!.displayName
-                                                      .toString()),
-                                                  Text(_googleSignIn
-                                                      .currentUser!.email
-                                                      .toString()),
-                                                  OutlinedButton(
-                                                    child: const Text("Logout"),
-                                                    onPressed: () {
-                                                      _logout();
-                                                    },
-                                                  )
-                                                ],
-                                              )
-                                            : IconButton(
-                                                onPressed: () {
-                                                  loginwithGoogle();
-                                                },
-                                                icon: Image.asset(
-                                                    'assets/images/google_logo.png',
-                                                    height: 45)),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          // SizedBox(
+                          //   height: 100,
+                          //   child: Column(
+                          //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          //     children: [
+                          //       const Text('O Inicia Sesion con',
+                          //           style: TextStyle(fontSize: 17)),
+                          //       SizedBox(
+                          //         width: 120,
+                          //         child: Row(
+                          //           mainAxisAlignment:
+                          //               MainAxisAlignment.spaceBetween,
+                          //           children: [
+                          //             Container(
+                          //               height: 45,
+                          //               decoration: BoxDecoration(
+                          //                   borderRadius:
+                          //                       BorderRadius.circular(50),
+                          //                   color: ColorSelect.kFacebookColor),
+                          //               child: IconButton(
+                          //                   onPressed: () {},
+                          //                   icon: Image.asset(
+                          //                       'assets/images/fb_logo.png',
+                          //                       height: 25)),
+                          //             ),
+                          //             Container(
+                          //               height: 45,
+                          //               decoration: BoxDecoration(
+                          //                   borderRadius:
+                          //                       BorderRadius.circular(50),
+                          //                   color: Colors.red),
+                          //               child: _isLoggedIn
+                          //                   ? Column(
+                          //                       mainAxisAlignment:
+                          //                           MainAxisAlignment.center,
+                          //                       children: <Widget>[
+                          //                         Image.network(
+                          //                           _googleSignIn
+                          //                               .currentUser!.photoUrl
+                          //                               .toString(),
+                          //                           height: 50,
+                          //                           width: 50,
+                          //                         ),
+                          //                         Text(_googleSignIn
+                          //                             .currentUser!.displayName
+                          //                             .toString()),
+                          //                         Text(_googleSignIn
+                          //                             .currentUser!.email
+                          //                             .toString()),
+                          //                         OutlinedButton(
+                          //                           child: const Text("Logout"),
+                          //                           onPressed: () {
+                          //                             _logout();
+                          //                           },
+                          //                         )
+                          //                       ],
+                          //                     )
+                          //                   : IconButton(
+                          //                       onPressed: () {
+                          //                         loginwithGoogle();
+                          //                       },
+                          //                       icon: Image.asset(
+                          //                           'assets/images/google_logo.png',
+                          //                           height: 45)),
+                          //             ),
+                          //           ],
+                          //         ),
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
                           SizedBox(
                             height: 40,
                             child: Column(

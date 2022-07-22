@@ -60,7 +60,7 @@ class PedidoElement {
         clienteId: json["cliente_id"],
         fechaSolicitada: DateTime.parse(json["fecha_solicitada"]),
         horaSolicitada: DateTime.parse(json["hora_solicitada"]),
-        horaEntregada: json["hora_entregada"],
+        horaEntregada: (json["hora_entregada"]),
         entregaEstimada: json["entrega_estimada"],
         metodoPago: json["metodo_pago"],
         subtotal: json["subtotal"],

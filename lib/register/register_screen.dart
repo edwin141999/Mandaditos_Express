@@ -69,24 +69,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
     getAddressFromLatLong(position);
   }
 
-  late Timer timer;
-
   @override
   void initState() {
     // inicializarUbicacion();
     _passwordVisible = false;
     super.initState();
-    // timer = Timer.periodic(const Duration(seconds: 5), (Timer t) {
     log('Getting location...');
     inicializarUbicacion();
-    // });
   }
-
-  // @override
-  // void dispose() {
-  //   timer.cancel();
-  //   super.dispose();
-  // }
 
   Future<Position> _getGeoLocationPosition() async {
     bool serviceEnabled;
@@ -140,16 +130,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> register() async {
     var url = Uri.parse('http://54.163.243.254/users/register');
     var reqBody = {};
-    reqBody['first_name'] = userData.firstName;
-    reqBody['last_name'] = userData.lastName;
-    reqBody['email'] = userData.email;
-    reqBody['password'] = userData.password;
-    reqBody['phone_number'] = userData.phoneNumber;
-    reqBody['user_type'] = userData.userType;
+    if (userData.password != '' &&
+        userData.email != '' &&
+        userData.firstName != '' &&
+        userData.lastName != '' &&
+        userData.phoneNumber != '' &&
+        userData.userType != '') {
+      reqBody['first_name'] = userData.firstName;
+      reqBody['last_name'] = userData.lastName;
+      reqBody['email'] = userData.email;
+      reqBody['password'] = userData.password;
+      reqBody['phone_number'] = userData.phoneNumber;
+      reqBody['user_type'] = userData.userType;
+    }
+
     reqBody['direccion'] = userData.address;
     reqBody['latitud'] = userData.latitud;
     reqBody['longitud'] = userData.longitud;
     reqBody['city_drive'] = userData.cityDrive;
+    // log(reqBody.toString());
     var response = await http.post(url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(reqBody));
@@ -170,13 +169,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => const LoginScreen()));
-      } else {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return getAlertDialog('Error', 'Error al registrarse', context);
-          },
-        );
       }
     } catch (e) {
       showDialog(
@@ -403,7 +395,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       context: context,
                                       builder: (ctx) => getAlertDialog(
                                           "Requisitos Minimos",
-                                          "1 Mayuscula,\n1 Minuscula,\n1 Numero,\n1 caracter especial",
+                                          "1 Mayuscula,\n4 Minusculas,\n1 Numero,\n1 caracter especial",
                                           ctx));
                                 },
                                 child: Image.asset('assets/images/info_svg.png',
@@ -426,7 +418,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       backgroundColor: Colors.red,
                                       elevation: 1,
                                       content: Text(
-                                        'Introduce una contraseña correcta!',
+                                        'Introduce una contraseña con 1 Mayuscula, 4 Minusculas,1 Numero,1 caracter especial!',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                             color: Colors.white,
@@ -582,7 +574,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                           ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: const [
                         Text('Al registrarte aceptas los ',
                             style: TextStyle(fontSize: 15)),
