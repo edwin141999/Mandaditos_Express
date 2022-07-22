@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mandaditos_express/styles/colors/colors_view.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:http/http.dart' as http;
+import '../models/pedidoinfo.dart';
+import 'dart:convert';
+
 
 class reciboCompra extends StatefulWidget {
   const reciboCompra({Key? key}) : super(key: key);
@@ -9,224 +13,266 @@ class reciboCompra extends StatefulWidget {
 }
 
 class _reciboCompraState extends State<reciboCompra> {
-  bool _isObscure = true;
+  // Pedido pedidosInfo = Pedido(pedidos: []);
+
+  /*
+  Future<Pedido> getPedidos() async {
+    var url = Uri.parse('http://54.163.243.254:81/users/mostrarMandados');
+    final resp =
+        await http.get(url, headers: {'Content-Type': 'application/json'});
+    pedidosInfo = Pedido.fromJson(jsonDecode(resp.body));
+    return pedidoFromJson(resp.body);
+  }
+  */
+  
+  /*
+  @override
+  void initState() {
+    getPedidos();
+    super.initState();
+  }
+  */
+
   @override
   Widget build(BuildContext context) {
-    // Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        //preferredSize: Size.fromHeight(100),
-
-        // automaticallyImplyLeading: false,
-
-        // iconTheme: const IconThemeData(color: ColorSelect.paginatorNext),
-        leading: Container(
-          //padding: const EdgeInsets.only()),
-          child: Image.asset(
-            'assets/images/Logo.png',
-            height: 40,
-            width: 40,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Icon(
+            FontAwesomeIcons.arrowLeft,
+            color: Colors.black.withOpacity(0.7)
           ),
         ),
-        centerTitle: true,
-        title: const Text(
-          'Pedido #',
-          style: TextStyle(
-            color: Colors.black,
-          ),
-        ),
-        backgroundColor: ColorSelect.paginator,
-        actions: [
-          Container(
-            //width: 150,
-
-            //padding: const EdgeInsets.only(left: 20),
-            child: Image.asset(
-              'assets/images/cuenta.png',
-            ),
-          ),
-        ],
-      ),
-      body: Column(children: <Widget>[
-        Container(
-            padding: const EdgeInsets.only(right: 350),
-            child: IconButton(
-              onPressed: () {
-                // Navigator.pop(context);
-              },
-              icon: const Icon(
-                Icons.arrow_back,
-                color: Colors.black,
+        title: Container(
+          child: Row(
+            children:  [
+              Image.asset(
+                'assets/images/Logo.png',
+                height: 50,
+                width: 50,
               ),
-            )),
-        Row(children: [
-          Container(
-            padding: const EdgeInsets.only(left: 150, bottom: 110),
-            child: const Icon(
-              Icons.person,
-              color: Colors.black,
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.only(left: 10, bottom: 50),
-            child: const Text(
-              'Usuario: Juan Jose\n'
-              'Ave.Central.Ote\n'
-              'Entre 4ta y 5ta Oriente\n'
-              'Suchiapa, Chiapas',
-              textAlign: TextAlign.justify,
-              style: TextStyle(fontSize: 18, color: Colors.black),
-            ),
-          ),
-        ]),
-        Padding(
-          //padding: const EdgeInsets.all(0),
-          padding: const EdgeInsets.only(bottom: 50),
-
-          //
-          child: Table(
-//          defaultColumnWidth:
-//              FixedColumnWidth(MediaQuery.of(context).size.width / 3),
-            // border: TableBorder.all(
-            //     color: Colors.black26, width: 1, style: BorderStyle.none),
-            children: [
-              TableRow(children: [
-                TableCell(
-                    child: Center(
-                  child: Text(
-                    '                      \n'
-                    '   Producto     \n'
-                    '                         \n',
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        backgroundColor: Colors.blue),
-                  ),
-                )),
-                TableCell(
-                  child: Center(
-                      child: Text(
-                    '                      \n'
-                    '    Cantidad    \n'
-                    '                      \n',
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        backgroundColor: Colors.blue),
-                  )),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 35)
+              ),
+              const Text(
+                'Pedido: #1', 
+                style: TextStyle(
+                  color: Colors.black,
                 ),
-                TableCell(
-                    child: Center(
-                        child: Text(
-                  '                      \n'
-                  '     Precio      \n'
-                  '                      \n',
-                  style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      backgroundColor: Colors.blue),
-                ))),
-                TableCell(
-                    child: Center(
-                        child: Text(
-                  '                      \n'
-                  '   Subtotal    \n'
-                  '                      \n',
-                  style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      backgroundColor: Colors.blue),
-                ))),
-              ]),
-              TableRow(children: [
-                TableCell(
-                  child: Center(
-                      child: Text(
-                    '1. Producto_01\n',
-                  )),
-                  //verticalAlignment: TableCellVerticalAlignment.bottom,
-                ),
-                TableCell(
-                  //verticalAlignment: TableCellVerticalAlignment.middle,
-                  child: Center(child: Text('1')),
-                ),
-                TableCell(
-                  //verticalAlignment: TableCellVerticalAlignment.middle,
-                  child: Center(child: Text('10.00')),
-                ),
-                TableCell(
-                  child: Center(child: Text('10.00')),
-                  //verticalAlignment: TableCellVerticalAlignment.top,
-                ),
-              ]),
-              TableRow(children: [
-                TableCell(child: Center(child: Text('2. Producto_02\n'))),
-                TableCell(
-                  child: Center(child: Text('1')),
-                ),
-                TableCell(child: Center(child: Text('20.00'))),
-                TableCell(child: Center(child: Text('20.00'))),
-              ]),
-              TableRow(children: [
-                TableCell(child: Center(child: Text('3. Producto_03\n'))),
-                TableCell(
-                  child: Center(child: Text('1')),
-                ),
-                TableCell(child: Center(child: Text('30.00'))),
-                TableCell(child: Center(child: Text('30.00'))),
-              ]),
-              TableRow(children: [
-                TableCell(child: Center(child: Text('4. Producto_04\n'))),
-                TableCell(
-                  child: Center(child: Text('1')),
-                ),
-                TableCell(child: Center(child: Text('40.00'))),
-                TableCell(child: Center(child: Text('40.00'))),
-              ]),
-              TableRow(children: [
-                TableCell(child: Center(child: Text('5. Producto_05\n'))),
-                TableCell(
-                  child: Center(child: Text('1')),
-                ),
-                TableCell(child: Center(child: Text('50.00'))),
-                TableCell(child: Center(child: Text('50.00'))),
-              ])
+              ),
+              
+              Image.asset(
+                'assets/images/cuenta.png',
+                height: 50,
+                width: 50,
+              ),
             ],
-          ),
+          )
         ),
-        const Divider(
-          height: 1,
-          color: ColorSelect.txtBoHe,
-        ),
-        Container(
-          padding: const EdgeInsets.only(left: 200, top: 20),
-          child: const Text(
-            '  Total: 150.00      ',
-            style: TextStyle(
-                fontSize: 20,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                backgroundColor: Colors.blue),
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.only(right: 150, top: 50),
-          child: const Text(
-            'Repartidor: Manuel de Jesus\n'
-            'Fecha: 29 de Junio de 2022',
-            style: TextStyle(
-              fontSize: 15,
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const Divider (
               color: Colors.black,
-
-              //backgroundColor: Colors.blue
             ),
-          ),
+            Container(
+              margin: const EdgeInsets.only(top: 20),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.only(left: 140),
+                    child: const Icon(
+                      Icons.person,
+                      color: Colors.black,
+                      size: 30,
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(left: 15),
+                    child: const Text(
+                      'Usuario: Juan Jose\n'
+                      'Ave.Central.Ote\n'
+                      'Entre 4ta y 5ta Oriente\n'
+                      'Suchiapa, Chiapas',
+                      textAlign: TextAlign.justify,
+                      style: TextStyle(fontSize: 16, color: Colors.black),
+                    ),
+                  ),
+                ]
+              ),
+            ),
+            // Tabla
+            Container(
+              margin: const EdgeInsets.only(top: 20),
+              width: 350,
+              height: 225,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.all(10),
+                      child: Table(
+                        border: TableBorder.all(),
+                        children: const [
+                          TableRow(
+                            decoration: BoxDecoration(color: Color.fromARGB(255, 22, 87, 199)),
+                            children: [
+                              Text(
+                                'Producto',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)
+                              ),
+                              Text(
+                                'Cantidad',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)
+                              ),
+                              Text(
+                                'Precio',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)
+                              ),
+                              Text(
+                                'Subtotal',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)
+                              ),
+                            ]
+                          ),
+                          TableRow(
+                            decoration: BoxDecoration(color: Colors.white),
+                            children: [
+                              Text(
+                                'Coca-cola',
+                                textAlign: TextAlign.center
+                              ),
+                              Text(
+                                '3',
+                                textAlign: TextAlign.center
+                              ),
+                              Text(
+                                '20',
+                                textAlign: TextAlign.center
+                              ),
+                              Text(
+                                '60',
+                                textAlign: TextAlign.center
+                              ),
+                            ]
+                          ),
+                          TableRow(
+                            decoration: BoxDecoration(color: Colors.white),
+                            children: [
+                              Text(
+                                'Paquetaxo',
+                                textAlign: TextAlign.center
+                              ),
+                              Text(
+                                '2',
+                                textAlign: TextAlign.center
+                              ),
+                              Text(
+                                '15',
+                                textAlign: TextAlign.center
+                              ),
+                              Text(
+                                '30',
+                                textAlign: TextAlign.center
+                              ),
+                            ]
+                          ),
+                          TableRow(
+                            decoration: BoxDecoration(color: Colors.white),
+                            children: [
+                              Text(
+                                'Clorex',
+                                textAlign: TextAlign.center
+                              ),
+                              Text(
+                                '1',
+                                textAlign: TextAlign.center
+                              ),
+                              Text(
+                                '0.50',
+                                textAlign: TextAlign.center
+                              ),
+                              Text(
+                                '0.50',
+                                textAlign: TextAlign.center
+                              ),
+                            ]
+                          ),
+                          /*
+                          pedidos.map((pedidos){
+                            return TableRow(
+                              decoration: const BoxDecoration(color: Colors.white),
+                              children: [
+                                Text(
+                                  pedidos.nombre.toString(),
+                                  textAlign: TextAlign.center
+                                ),
+                                Text(
+                                  pedidos.cantidad.toString(),
+                                  textAlign: TextAlign.center
+                                ),
+                                Text(
+                                  pedidos.cantidad.toString(),
+                                  textAlign: TextAlign.center
+                                ),
+                                Text(
+                                  pedidos.precio.toString(),
+                                  textAlign: TextAlign.center
+                                ),
+                              ] 
+                            );
+                          }).toList()
+                          */
+                        ],
+                      )
+                    )
+                  ],
+                )
+              )
+            ),
+            const Divider (
+              color: Colors.black,
+            ),
+            Container(
+              margin: const EdgeInsets.only(left: 200),
+              width: 125,
+              height: 30,
+              color: Color.fromARGB(255, 22, 87, 199),
+              child: const Center(
+                child: Text(
+                  'Total: 91.50',
+                  style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                  ),
+                )
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.only(right: 150, top: 25),
+              child: const Text(
+                'Repartidor: Manuel de Jesus\n\n'
+                'Fecha: 29 de Junio de 2022',
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.black,
+                ),
+              ),
+            )
+          ],
         )
-      ]),
+      ),
     );
   }
 }
