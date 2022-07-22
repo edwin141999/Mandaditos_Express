@@ -41,12 +41,12 @@ class PedidoElement {
   });
 
   int id;
-  int deliveryId;
+  dynamic deliveryId;
   int envioId;
   int clienteId;
   DateTime fechaSolicitada;
   DateTime horaSolicitada;
-  DateTime horaEntregada;
+  dynamic horaEntregada;
   int entregaEstimada;
   String metodoPago;
   String subtotal;
@@ -60,7 +60,7 @@ class PedidoElement {
         clienteId: json["cliente_id"],
         fechaSolicitada: DateTime.parse(json["fecha_solicitada"]),
         horaSolicitada: DateTime.parse(json["hora_solicitada"]),
-        horaEntregada: DateTime.parse(json["hora_entregada"]),
+        horaEntregada: json["hora_entregada"],
         entregaEstimada: json["entrega_estimada"],
         metodoPago: json["metodo_pago"],
         subtotal: json["subtotal"],
@@ -75,7 +75,7 @@ class PedidoElement {
         "cliente_id": clienteId,
         "fecha_solicitada": fechaSolicitada.toIso8601String(),
         "hora_solicitada": horaSolicitada.toIso8601String(),
-        "hora_entregada": horaEntregada.toIso8601String(),
+        "hora_entregada": horaEntregada,
         "entrega_estimada": entregaEstimada,
         "metodo_pago": metodoPago,
         "subtotal": subtotal,
@@ -220,6 +220,8 @@ class Item {
     required this.recogerUbicacion,
     required this.descripcion,
     required this.precioProducto,
+    required this.latitud,
+    required this.longitud,
   });
 
   int id;
@@ -227,6 +229,8 @@ class Item {
   String recogerUbicacion;
   String descripcion;
   String precioProducto;
+  String latitud;
+  String longitud;
 
   factory Item.fromJson(Map<String, dynamic> json) => Item(
         id: json["id"],
@@ -234,6 +238,8 @@ class Item {
         recogerUbicacion: json["recoger_ubicacion"],
         descripcion: json["descripcion"],
         precioProducto: json["precio_producto"],
+        latitud: json["latitud"],
+        longitud: json["longitud"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -242,5 +248,7 @@ class Item {
         "recoger_ubicacion": recogerUbicacion,
         "descripcion": descripcion,
         "precio_producto": precioProducto,
+        "latitud": latitud,
+        "longitud": longitud,
       };
 }

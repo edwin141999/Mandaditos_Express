@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mandaditos_express/historial/usuario_historial.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
+import 'package:mandaditos_express/pages/solicitarPedido.dart';
 import 'package:mandaditos_express/profile/profile.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 
@@ -71,7 +73,7 @@ class _DashboardState extends State<Dashboard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Hola ${widget.userInfo.user.firstName}',
+                        'Hola ${widget.userInfo.user.firstName}!',
                         style: const TextStyle(fontSize: 22),
                       ),
                       Row(
@@ -112,15 +114,36 @@ class _DashboardState extends State<Dashboard> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(
-                        height: 410,
-                        child: ListView.builder(
-                          itemCount: textInfo.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return AccionesContainer(
-                                image: imgInfo[index],
-                                text: textInfo[index],
-                                colorContainer: colorInfo[index]);
-                          },
+                        height: 450,
+                        width: MediaQuery.of(context).size.width,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            AccionesContainer(
+                              image: imgInfo[0],
+                              text: textInfo[0],
+                              colorContainer: colorInfo[0],
+                              onTap: () {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return SolicitarPedido(
+                                      userInfo: widget.userInfo);
+                                }));
+                              },
+                            ),
+                            AccionesContainer(
+                              image: imgInfo[1],
+                              text: textInfo[1],
+                              colorContainer: colorInfo[1],
+                              onTap: () {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return const usuarioHitorial(title: 'Hola');
+                                }));
+                              },
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -138,24 +161,29 @@ class _DashboardState extends State<Dashboard> {
 class AccionesContainer extends StatelessWidget {
   final String image, text;
   final Color colorContainer;
+  final Function() onTap;
   const AccionesContainer({
     Key? key,
     required this.image,
     required this.text,
     required this.colorContainer,
+    required this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          width: 160,
-          height: 123,
-          decoration: BoxDecoration(
-            color: colorContainer.withOpacity(.42),
-            borderRadius: BorderRadius.circular(17),
-            image: DecorationImage(image: AssetImage(image), scale: .8),
+        GestureDetector(
+          onTap: onTap,
+          child: Container(
+            width: 160,
+            height: 123,
+            decoration: BoxDecoration(
+              color: colorContainer.withOpacity(.42),
+              borderRadius: BorderRadius.circular(17),
+              image: DecorationImage(image: AssetImage(image), scale: .8),
+            ),
           ),
         ),
         Container(
