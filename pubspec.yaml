@@ -43,6 +43,7 @@ dependencies:
     flutter_polyline_points: ^1.0.0
     geolocator: ^9.0.1
     flutter_phone_direct_caller: ^2.1.1
+    
 
 dev_dependencies:
     flutter_test:
