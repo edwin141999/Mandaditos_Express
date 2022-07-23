@@ -57,9 +57,9 @@ class _menuMState extends State<menuM> {
                   color: Colors.black,
                 ),
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    // return ProfileScreen(userInfo: widget.userInfo);
-                    return const Perfil();
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) {
+                    return Perfil(userInfo: widget.userInfo);
                   }));
                 },
               ),
@@ -133,28 +133,12 @@ class _menuMState extends State<menuM> {
                           image: 'assets/images/icon_solicitar.png',
                           colorContainer: ColorSelect.kContainerGreen,
                           onTap: () {
-                            Navigator.push(context,
+                            Navigator.pushReplacement(context,
                                 MaterialPageRoute(builder: (context) {
-                              return  pedidosP(userInfo: widget.userInfo);
+                              return pedidosP(userInfo: widget.userInfo);
                             }));
                           },
                         ),
-                        // child: ListView.builder(
-                        //   itemCount: textInfo.length,
-                        //   itemBuilder: (BuildContext context, int index) {
-                        //     return AccionesContainer(
-                        //       image: imgInfo[index],
-                        //       text: textInfo[index],
-                        //       colorContainer: colorInfo[index],
-                        //       onTap: () {
-                        //         Navigator.push(context,
-                        //             MaterialPageRoute(builder: (context) {
-                        //           return const pedidosP();
-                        //         }));
-                        //       },
-                        //     );
-                        //   },
-                        // ),
                       ),
                     ],
                   ),

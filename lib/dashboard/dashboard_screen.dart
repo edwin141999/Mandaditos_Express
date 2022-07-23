@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mandaditos_express/historial/usuario_historial.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
-import 'package:mandaditos_express/pages/solicitarPedido.dart';
+import 'package:mandaditos_express/pages/solicitar_pedido.dart';
 import 'package:mandaditos_express/profile/profile.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 
@@ -81,27 +81,8 @@ class _DashboardState extends State<Dashboard> {
                           const Text('Tu Direccion Actual: ',
                               style: TextStyle(
                                   fontSize: 17, fontWeight: FontWeight.bold)),
-                          DropdownButton(
-                            items: calles.map((e) {
-                              return DropdownMenuItem(
-                                child: Text(e),
-                                value: e,
-                              );
-                            }).toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                callesValue = value.toString();
-                              });
-                            },
-                            value: callesValue,
-                            underline: Container(),
-                            isDense: true,
-                            icon: const Icon(
-                              Icons.keyboard_arrow_down,
-                              color: Colors.black,
-                              size: 20,
-                            ),
-                          ),
+                          Text('${widget.userInfo.datatype[0].direccion}',
+                              style: const TextStyle(fontSize: 17)),
                         ],
                       ),
                     ],

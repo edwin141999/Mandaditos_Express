@@ -24,7 +24,7 @@ class ConfirmarPedido extends StatefulWidget {
   State<ConfirmarPedido> createState() => _ConfirmarPedido();
 }
 
-class _pedidoData {
+class _PedidoData {
   String envioID = '';
   String clienteID = '';
   String entregaEstimada = '';
@@ -32,7 +32,7 @@ class _pedidoData {
   String subtotal = '';
 }
 
-class Pedido extends _pedidoData {}
+class Pedido extends _PedidoData {}
 
 class _ConfirmarPedido extends State<ConfirmarPedido> {
   Pedido pedidoData = Pedido();
@@ -79,14 +79,14 @@ class _ConfirmarPedido extends State<ConfirmarPedido> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Direccion de Entrega: Actual',
+                      const Text('Direccion de Entrega',
                           style: TextStyle(fontSize: 18)),
                       Container(
                         width: MediaQuery.of(context).size.width,
                         height: 35,
                         margin: const EdgeInsets.only(top: 5, bottom: 15),
                         decoration: BoxDecoration(
-                          color: Colors.grey.withOpacity(0.5),
+                          color: ColorSelect.kColorDropdown,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Container(
@@ -109,7 +109,7 @@ class _ConfirmarPedido extends State<ConfirmarPedido> {
                         width: MediaQuery.of(context).size.width,
                         height: 235,
                         decoration: BoxDecoration(
-                          color: Colors.grey.withOpacity(0.5),
+                          color: ColorSelect.kColorDropdown,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         margin: const EdgeInsets.only(top: 5),
@@ -216,36 +216,27 @@ class _ConfirmarPedido extends State<ConfirmarPedido> {
                     ],
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('Metodo de Pago',
-                        style: TextStyle(fontSize: 18)),
-                    TextButton(
-                        onPressed: () {},
-                        child: const Text(
-                          'Cambiar',
-                          style: TextStyle(
-                              fontSize: 18, color: ColorSelect.kPrimaryColor),
-                        )),
-                  ],
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  margin: const EdgeInsets.symmetric(vertical: 10),
+                  child: const Text('Metodo de Pago',
+                      style: TextStyle(fontSize: 18)),
                 ),
                 Container(
                   height: 65,
                   decoration: BoxDecoration(
-                    color: Colors.grey.withOpacity(0.5),
+                    color: ColorSelect.kColorDropdown,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   margin: const EdgeInsets.only(bottom: 25),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Container(
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                              // image: AssetImage('assets/images/tarjeta.png'),
                               image: (widget.userInfo.metodoPago![0].metodo ==
                                       'Debito')
                                   ? const AssetImage(
@@ -323,7 +314,7 @@ class _ConfirmarPedido extends State<ConfirmarPedido> {
                                     'Vea el mapa para localizar su posible repartidor.'),
                                 OutlinedButton(
                                   onPressed: () {
-                                    Navigator.push(
+                                    Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => Dashboard(
