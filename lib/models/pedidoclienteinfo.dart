@@ -38,6 +38,7 @@ class Pedido {
     required this.entregaEstimada,
     required this.metodoPago,
     required this.subtotal,
+    required this.item,
   });
 
   int id;
@@ -50,6 +51,7 @@ class Pedido {
   int entregaEstimada;
   String metodoPago;
   String subtotal;
+  Item item;
 
   factory Pedido.fromJson(Map<String, dynamic> json) => Pedido(
         id: json["id"],
@@ -64,6 +66,7 @@ class Pedido {
         entregaEstimada: json["entrega_estimada"],
         metodoPago: json["metodo_pago"],
         subtotal: json["subtotal"],
+        item: Item.fromJson(json["item"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -77,5 +80,46 @@ class Pedido {
         "entrega_estimada": entregaEstimada,
         "metodo_pago": metodoPago,
         "subtotal": subtotal,
+        "item": item.toJson(),
+      };
+}
+
+class Item {
+  Item({
+    required this.id,
+    required this.tipoProducto,
+    required this.recogerUbicacion,
+    required this.descripcion,
+    required this.precioProducto,
+    required this.latitud,
+    required this.longitud,
+  });
+
+  int id;
+  String tipoProducto;
+  String recogerUbicacion;
+  String descripcion;
+  String precioProducto;
+  String latitud;
+  String longitud;
+
+  factory Item.fromJson(Map<String, dynamic> json) => Item(
+        id: json["id"],
+        tipoProducto: json["tipo_producto"],
+        recogerUbicacion: json["recoger_ubicacion"],
+        descripcion: json["descripcion"],
+        precioProducto: json["precio_producto"],
+        latitud: json["latitud"],
+        longitud: json["longitud"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "tipo_producto": tipoProducto,
+        "recoger_ubicacion": recogerUbicacion,
+        "descripcion": descripcion,
+        "precio_producto": precioProducto,
+        "latitud": latitud,
+        "longitud": longitud,
       };
 }

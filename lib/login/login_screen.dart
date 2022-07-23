@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:mandaditos_express/dashboard/dashboard_screen.dart';
 import 'package:mandaditos_express/register/register_screen.dart';
-import 'package:mandaditos_express/repartidor/menu.dart';
+import 'package:mandaditos_express/repartidor/dashboard_repartidor.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
 // import 'package:google_sign_in/google_sign_in.dart';
@@ -54,7 +54,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
   bool _passwordVisible = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   UserData userData = UserData();
@@ -104,7 +103,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   } else {
                     Navigator.pushReplacement(context,
                         MaterialPageRoute(builder: (context) {
-                      return menuM(userInfo: userFromJson(response.body));
+                      return DashboardRepartidor(
+                          userInfo: userFromJson(response.body));
                     }));
                   }
                 } else {

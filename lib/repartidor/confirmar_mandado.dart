@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -8,8 +10,8 @@ import 'package:mandaditos_express/models/pedidoinfo.dart';
 import 'package:http/http.dart' as http;
 import 'package:mandaditos_express/models/userinfo.dart';
 import 'package:mandaditos_express/repartidor/googlemapsrepartidor_controller.dart';
-import 'package:mandaditos_express/repartidor/pedidosP.dart';
-import 'package:mandaditos_express/repartidor/rutapedido.dart';
+import 'package:mandaditos_express/repartidor/mandados_disponibles.dart';
+import 'package:mandaditos_express/repartidor/ruta_mandado.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 
 AlertDialog getAlertDialog(title, content, onPressed) {
@@ -37,17 +39,23 @@ AlertDialog getAlertDialog(title, content, onPressed) {
   );
 }
 
-class confirmarP extends StatefulWidget {
+class ConfirmarMandado extends StatefulWidget {
   final PedidoElement pedidoInfo;
   final User userInfo;
-  const confirmarP({Key? key, required this.pedidoInfo, required this.userInfo})
-      : super(key: key);
+  final String lat, long;
+  const ConfirmarMandado({
+    Key? key,
+    required this.pedidoInfo,
+    required this.userInfo,
+    required this.lat,
+    required this.long,
+  }) : super(key: key);
 
   @override
-  State<confirmarP> createState() => _confirmarPState();
+  State<ConfirmarMandado> createState() => _ConfirmarMandadoState();
 }
 
-class _confirmarPState extends State<confirmarP> {
+class _ConfirmarMandadoState extends State<ConfirmarMandado> {
   var tipoPago = '';
   Future<void> getTarjeta() async {
     var url = Uri.parse('http://54.163.243.254:83/users/getTarjeta');
@@ -60,6 +68,17 @@ class _confirmarPState extends State<confirmarP> {
     );
     Map<String, dynamic> respBody = jsonDecode(resp.body);
     tipoPago = respBody['tarjeta']['metodo'];
+  }
+
+  Future<void> guardarUbicacionRepartidor() async {
+    var url = Uri.parse('http://54.163.243.254:81/users/actualizarUbicacion');
+    var reqBody = {};
+    reqBody['id'] = widget.userInfo.datatype[0].id;
+    reqBody['lat'] = widget.lat;
+    reqBody['long'] = widget.long;
+    await http.put(url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(reqBody));
   }
 
   Future<void> aceptarPedido() async {
@@ -83,16 +102,37 @@ class _confirmarPState extends State<confirmarP> {
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                    builder: (ctx) => pedidosP(userInfo: widget.userInfo)));
+                    builder: (ctx) =>
+                        MandadosDisponibles(userInfo: widget.userInfo)));
           },
         ),
       );
     } else if (resp.statusCode == 200) {
       Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => RutaPedido(
-                  pedidoInfo: widget.pedidoInfo, userInfo: widget.userInfo)));
+        context,
+        MaterialPageRoute(
+            builder: (context) => RutaMandado(
+                  pedidoInfo: widget.pedidoInfo,
+                  userInfo: widget.userInfo,
+                  lat: widget.lat,
+                  long: widget.long,
+                )),
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (ctx) => getAlertDialog(
+          'Lo sentimos',
+          'Hubo un Error en el Servidor',
+          () {
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (ctx) =>
+                        MandadosDisponibles(userInfo: widget.userInfo)));
+          },
+        ),
+      );
     }
   }
 
@@ -161,7 +201,13 @@ class _confirmarPState extends State<confirmarP> {
         leading: TextButton(
           onPressed: () {
             FocusScope.of(context).unfocus();
-            Navigator.pop(context);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    MandadosDisponibles(userInfo: widget.userInfo),
+              ),
+            );
           },
           child: Image.asset('assets/images/icon_back_arrow.png', scale: .8),
         ),
@@ -255,18 +301,17 @@ class _confirmarPState extends State<confirmarP> {
                   child: GoogleMap(
                     markers: _controllerMap.markers,
                     onMapCreated: _onMapCreated,
-                    // initialCameraPosition: _controllerMap.initialCameraPosition,
                     initialCameraPosition: CameraPosition(
-                      target: LatLng(
-                        double.parse(widget.pedidoInfo.item.latitud),
-                        double.parse(widget.pedidoInfo.item.longitud),
-                      ),
-                      zoom: 13,
-                    ),
+                        target: LatLng(double.parse(widget.lat),
+                            double.parse(widget.long)),
+                        zoom: 15),
                     myLocationButtonEnabled: false,
                     polylines: _controllerMap.polylines,
                     myLocationEnabled: true,
-                    // onTap: _controllerMap.onTap,
+                    gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+                      Factory<OneSequenceGestureRecognizer>(
+                          () => EagerGestureRecognizer())
+                    },
                   ),
                 ),
                 Container(
@@ -275,6 +320,7 @@ class _confirmarPState extends State<confirmarP> {
                   height: 55,
                   child: OutlinedButton(
                     onPressed: () {
+                      guardarUbicacionRepartidor();
                       aceptarPedido();
                     },
                     style: OutlinedButton.styleFrom(

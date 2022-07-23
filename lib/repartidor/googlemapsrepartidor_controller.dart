@@ -49,10 +49,16 @@ class GoogleMapsRepartidorController extends ChangeNotifier {
     notifyListeners();
   }
 
-  final initialCameraPosition = const CameraPosition(
-    target: LatLng(16.7432391, -93.1025722),
-    zoom: 15,
-  );
+  // final initialCameraPosition = const CameraPosition(
+  //   target: LatLng(16.7432391, -93.1025722),
+  //   zoom: 15,
+  // );
+  CameraPosition ubicacionRepartidor(lat, long) {
+    return CameraPosition(
+      target: LatLng(lat, long),
+      zoom: 15,
+    );
+  }
 
   void onTap(position, name, color, description) {
     final markerdId = MarkerId(_markers.length.toString());

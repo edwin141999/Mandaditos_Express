@@ -120,7 +120,7 @@ class _DashboardState extends State<Dashboard> {
                               onTap: () {
                                 Navigator.push(context,
                                     MaterialPageRoute(builder: (context) {
-                                  return const usuarioHitorial(title: 'Hola');
+                                  return UsuarioHitorial(userInfo: widget.userInfo);
                                 }));
                               },
                             ),

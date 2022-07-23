@@ -1,36 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:mandaditos_express/layouts/line.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:mandaditos_express/historial/usuario_historial.dart';
+import 'package:mandaditos_express/models/pedidoclienteinfo.dart';
+import 'package:mandaditos_express/models/userinfo.dart';
 
 import 'package:mandaditos_express/monitoreo/monitoreo_controller.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 
-class pedido_monitoreo_user extends StatefulWidget {
-  const pedido_monitoreo_user({key, required this.title});
-  final String title;
+class PedidoMonitoreo extends StatefulWidget {
+  final User userInfo;
+  final Pedido pedidoInfo;
+  const PedidoMonitoreo({
+    Key? key,
+    required this.userInfo,
+    required this.pedidoInfo,
+  }) : super(key: key);
 
   @override
-  State<pedido_monitoreo_user> createState() => _pedido_monitoreo_userstate();
+  State<PedidoMonitoreo> createState() => _PedidoMonitoreostate();
 }
 
-class _pedido_monitoreo_userstate extends State<pedido_monitoreo_user> {
-  final _controller = monitoreo_controller();
+class _PedidoMonitoreostate extends State<PedidoMonitoreo> {
+  final _controller = MonitoreoController();
   PolylinePoints polylinePoints = PolylinePoints();
   Map<PolylineId, Polyline> polylines = {};
   String googleAPiKey = "AIzaSyBy76EU-NQpNx2NAXxHZH2E-3lj3VNwhW4";
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _controller.addListener(() {
       setState(() {});
     });
-    var inicio = const LatLng(16.213305935125874, -95.20762635962714);
-    var destino = const LatLng(16.21240872256714, -95.20714242769476);
-    _controller.markerinico(inicio);
-    _controller.markerdestino(destino);
+    _controller.onTap(
+      LatLng(double.parse(widget.userInfo.datatype[0].latitud),
+          double.parse(widget.userInfo.datatype[0].longitud)),
+      'Tu ubicación',
+      double.parse('133'),
+      widget.userInfo.user.firstName + ' ' + widget.userInfo.user.lastName,
+    );
+    _controller.onTap(
+      LatLng(double.parse(widget.pedidoInfo.item.latitud),
+          double.parse(widget.pedidoInfo.item.longitud)),
+      'Tu ${widget.pedidoInfo.item.tipoProducto}',
+      double.parse('220'),
+      widget.pedidoInfo.item.descripcion,
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   void _getPolyline() async {
@@ -43,9 +65,9 @@ class _pedido_monitoreo_userstate extends State<pedido_monitoreo_user> {
       travelMode: TravelMode.driving,
     );
     if (result.points.isNotEmpty) {
-      result.points.forEach((PointLatLng point) {
+      for (var point in result.points) {
         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-      });
+      }
     } else {
       print(result.errorMessage);
     }
@@ -53,7 +75,7 @@ class _pedido_monitoreo_userstate extends State<pedido_monitoreo_user> {
   }
 
   _addPolyLine(List<LatLng> polylineCoordinates) {
-    PolylineId id = PolylineId("poly");
+    PolylineId id = const PolylineId("poly");
     Polyline polyline = Polyline(
       polylineId: id,
       color: Colors.blue,
@@ -71,56 +93,66 @@ class _pedido_monitoreo_userstate extends State<pedido_monitoreo_user> {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
-
     return Scaffold(
-        appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(80),
-            child: Container(
-              margin: const EdgeInsets.only(top: 40),
-              child: Row(children: <Widget>[
-                Center(
-                  child: Container(
-                    height: 50,
-                    width: 20,
-                    margin: const EdgeInsets.only(left: 10),
-                    child: Icon(Icons.arrow_back_ios),
-                  ),
-                ),
-                Container(
-                  height: 70,
-                  width: 70,
-                  margin: const EdgeInsets.only(left: 10),
-                  child: Image.asset("assets/images/Logo.png"),
-                ),
-              ]),
-            )),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            SizedBox(
-                width: width,
-                height: height * .6,
-                child: GoogleMap(
-                  onMapCreated: _controller.onMapCreated,
-                  initialCameraPosition: _controller.initialCameraPosition,
-                  zoomGesturesEnabled: true,
-                  zoomControlsEnabled: false,
-                  markers: _controller.markers,
-                  polylines: Set<Polyline>.of(polylines.values),
-                )),
-            Row(
-              children: <Widget>[
-                Container(
-                    margin: const EdgeInsets.only(top: 30, left: 150),
-                    child: ElevatedButton(
-                      onPressed: _callNumber,
-                      child: const Text("Llamar"),
-                    )),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        toolbarHeight: 80,
+        leading: TextButton(
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    UsuarioHitorial(userInfo: widget.userInfo),
+              ),
+            );
+          },
+          child: Image.asset('assets/images/icon_back_arrow.png', scale: .8),
+        ),
+        actions: [
+          Container(
+            width: MediaQuery.of(context).size.width * .8,
+            margin: const EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Image.asset('assets/images/Logo.png', scale: .8),
               ],
-            )
-          ],
-        ));
+            ),
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * .6,
+            child: GoogleMap(
+              onMapCreated: _controller.onMapCreated,
+              initialCameraPosition: _controller.ubicacionCliente(
+                double.parse(widget.userInfo.datatype[0].latitud),
+                double.parse(widget.userInfo.datatype[0].longitud),
+              ),
+              markers: _controller.markers,
+              myLocationEnabled: true,
+              // polylines: Set<Polyline>.of(polylines.values),
+            ),
+          ),
+          Row(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(top: 30, left: 150),
+                child: ElevatedButton(
+                  onPressed: _callNumber,
+                  child: const Text("Llamar"),
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
   }
 }

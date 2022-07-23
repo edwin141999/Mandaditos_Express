@@ -8,20 +8,26 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mandaditos_express/models/pedidoinfo.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
 import 'package:mandaditos_express/repartidor/googlemapsrepartidor_controller.dart';
-import 'package:mandaditos_express/repartidor/menu.dart';
+import 'package:mandaditos_express/repartidor/dashboard_repartidor.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 
-class RutaPedido extends StatefulWidget {
+class RutaMandado extends StatefulWidget {
   final PedidoElement pedidoInfo;
   final User userInfo;
-  const RutaPedido({Key? key, required this.pedidoInfo, required this.userInfo})
-      : super(key: key);
+  final String lat, long;
+  const RutaMandado({
+    Key? key,
+    required this.pedidoInfo,
+    required this.userInfo,
+    required this.lat,
+    required this.long,
+  }) : super(key: key);
 
   @override
-  State<RutaPedido> createState() => _RutaPedidoState();
+  State<RutaMandado> createState() => _RutaMandadoState();
 }
 
-class _RutaPedidoState extends State<RutaPedido> {
+class _RutaMandadoState extends State<RutaMandado> {
   final _controllerMap = GoogleMapsRepartidorController();
   final Completer<GoogleMapController> _controller = Completer();
   void _onMapCreated(GoogleMapController controller) {
@@ -111,13 +117,9 @@ class _RutaPedidoState extends State<RutaPedido> {
                   child: GoogleMap(
                     markers: _controllerMap.markers,
                     onMapCreated: _onMapCreated,
-                    // initialCameraPosition: _controllerMap.initialCameraPosition,
-                    initialCameraPosition: CameraPosition(
-                      target: LatLng(
-                        double.parse(widget.pedidoInfo.item.latitud),
-                        double.parse(widget.pedidoInfo.item.longitud),
-                      ),
-                      zoom: 13,
+                    initialCameraPosition: _controllerMap.ubicacionRepartidor(
+                      double.parse(widget.lat),
+                      double.parse(widget.long),
                     ),
                     myLocationButtonEnabled: false,
                     polylines: _controllerMap.polylines,
@@ -153,7 +155,8 @@ class _RutaPedidoState extends State<RutaPedido> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
-                                            menuM(userInfo: widget.userInfo),
+                                            DashboardRepartidor(
+                                                userInfo: widget.userInfo),
                                       ),
                                     );
                                   },

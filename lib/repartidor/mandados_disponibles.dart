@@ -1,26 +1,91 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 
 import 'package:mandaditos_express/models/pedidoinfo.dart';
 import 'package:http/http.dart' as http;
 import 'package:mandaditos_express/models/userinfo.dart';
-import 'package:mandaditos_express/repartidor/confirmarP.dart';
-import 'package:mandaditos_express/repartidor/menu.dart';
+import 'package:mandaditos_express/repartidor/confirmar_mandado.dart';
+import 'package:mandaditos_express/repartidor/dashboard_repartidor.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 
-class pedidosP extends StatefulWidget {
+class MandadosDisponibles extends StatefulWidget {
   final User userInfo;
-  const pedidosP({Key? key, required this.userInfo}) : super(key: key);
+  const MandadosDisponibles({Key? key, required this.userInfo})
+      : super(key: key);
 
   @override
-  State<pedidosP> createState() => _pedidosPState();
+  State<MandadosDisponibles> createState() => _MandadosDisponiblesState();
 }
 
-class _pedidosPState extends State<pedidosP> {
+class _MandadosDisponiblesState extends State<MandadosDisponibles> {
   Future<Pedido> getMandados() async {
     var url = Uri.parse('http://54.163.243.254:81/users/mostrarMandados');
     final resp =
         await http.get(url, headers: {'Content-Type': 'application/json'});
     return pedidoFromJson(resp.body);
+  }
+
+  //UBICACION ACTUAL
+  Future<Position> _getGeoLocationPosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      await Geolocator.openLocationSettings();
+      return Future.error('Location service are disabled');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permission are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions');
+    }
+
+    return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+  }
+
+  String address = 'search';
+  String location = 'Null';
+  String latitud = '0';
+  String longitud = '0';
+
+  Future<void> getAddressFromLatLong(Position position) async {
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(position.latitude, position.longitude);
+    Placemark place = placemarks[0];
+    address =
+        '${place.street}, ${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}';
+    location = 'Lat: ${position.latitude} - Long: ${position.longitude}';
+    latitud = position.latitude.toString();
+    longitud = position.longitude.toString();
+    setState(() {
+      latitud = position.latitude.toString();
+      longitud = position.longitude.toString();
+    });
+  }
+
+  void inicializarUbicacion() async {
+    Position position = await _getGeoLocationPosition();
+    latitud = position.latitude.toString();
+    longitud = position.longitude.toString();
+  }
+
+  @override
+  void initState() {
+    inicializarUbicacion();
+    super.initState();
   }
 
   @override
@@ -36,7 +101,8 @@ class _pedidosPState extends State<pedidosP> {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => menuM(userInfo: widget.userInfo),
+                builder: (context) =>
+                    DashboardRepartidor(userInfo: widget.userInfo),
               ),
             );
           },
@@ -54,7 +120,8 @@ class _pedidosPState extends State<pedidosP> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else {
-            return _ListaPedidos(snapshot.data.pedidos, widget.userInfo);
+            return _ListaPedidos(
+                snapshot.data.pedidos, widget.userInfo, latitud, longitud);
           }
         },
       ),
@@ -65,10 +132,13 @@ class _pedidosPState extends State<pedidosP> {
 class _ListaPedidos extends StatelessWidget {
   final List<PedidoElement> pe;
   final User userInfo;
-  const _ListaPedidos(this.pe, this.userInfo);
+  final String lat, long;
+  const _ListaPedidos(this.pe, this.userInfo, this.lat, this.long);
 
   @override
   Widget build(BuildContext context) {
+    log(lat);
+    log(long);
     if (pe.isNotEmpty) {
       return ListView.builder(
         itemCount: pe.length,
@@ -110,8 +180,12 @@ class _ListaPedidos extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) {
-                            return confirmarP(
-                                pedidoInfo: pe[i], userInfo: userInfo);
+                            return ConfirmarMandado(
+                              pedidoInfo: pe[i],
+                              userInfo: userInfo,
+                              lat: lat,
+                              long: long,
+                            );
                           },
                         ),
                       );

@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:mandaditos_express/login/login_screen.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
-import 'package:mandaditos_express/repartidor/menu.dart';
+import 'package:mandaditos_express/repartidor/dashboard_repartidor.dart';
 
 // SERVER
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 
-class Perfil extends StatefulWidget {
+class PerfilRepartidor extends StatefulWidget {
   final User userInfo;
-  const Perfil({Key? key, required this.userInfo}) : super(key: key);
+  const PerfilRepartidor({Key? key, required this.userInfo}) : super(key: key);
 
   @override
-  State<Perfil> createState() => _PerfilState();
+  State<PerfilRepartidor> createState() => _PerfilRepartidorState();
 }
 
-class _PerfilState extends State<Perfil> {
+class _PerfilRepartidorState extends State<PerfilRepartidor> {
   Future<void> actualizarEstado() async {
     var url = Uri.parse('http://54.163.243.254:81/users/cambiarEstado');
     var reqBody = {};
@@ -53,8 +53,8 @@ class _PerfilState extends State<Perfil> {
                     Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                menuM(userInfo: widget.userInfo)));
+                            builder: (context) => DashboardRepartidor(
+                                userInfo: widget.userInfo)));
                   },
                 ),
                 Text(
