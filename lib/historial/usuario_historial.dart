@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../layouts/line.dart';
+
 class usuarioHitorial extends StatefulWidget {
   const usuarioHitorial({key, required this.title});
 
@@ -67,7 +69,7 @@ class _usuarioHitorialState extends State<usuarioHitorial> {
             Container(
               child: CustomPaint(
                 size: Size(width, 0),
-                painter: Linea(),
+                painter: Line(),
               ),
             ),
             Row(
