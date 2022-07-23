@@ -1,13 +1,10 @@
-import 'dart:convert';
-import 'dart:developer';
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 import 'package:mandaditos_express/models/pedidoinfo.dart';
 import 'package:http/http.dart' as http;
 import 'package:mandaditos_express/models/userinfo.dart';
 import 'package:mandaditos_express/repartidor/confirmarP.dart';
+import 'package:mandaditos_express/repartidor/menu.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 
 class pedidosP extends StatefulWidget {
@@ -36,7 +33,12 @@ class _pedidosPState extends State<pedidosP> {
         leading: TextButton(
           onPressed: () {
             FocusScope.of(context).unfocus();
-            Navigator.pop(context);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => menuM(userInfo: widget.userInfo),
+              ),
+            );
           },
           child: Image.asset('assets/images/icon_back_arrow.png', scale: .8),
         ),
@@ -67,10 +69,10 @@ class _ListaPedidos extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: pe.length,
-      itemBuilder: (BuildContext context, int i) {
-        if (pe[i].deliveryId == null) {
+    if (pe.isNotEmpty) {
+      return ListView.builder(
+        itemCount: pe.length,
+        itemBuilder: (BuildContext context, int i) {
           return Card(
             elevation: 1,
             margin: const EdgeInsets.all(15),
@@ -104,7 +106,7 @@ class _ListaPedidos extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20)),
                     onPressed: () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                           builder: (context) {
@@ -122,10 +124,39 @@ class _ListaPedidos extends StatelessWidget {
               ],
             ),
           );
-        } else {
-          return Container();
-        }
-      },
-    );
+        },
+      );
+    } else {
+      return Center(
+        child: Card(
+          elevation: 1,
+          margin: const EdgeInsets.all(15),
+          color: ColorSelect.cardP,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: SizedBox(
+            width: 200,
+            height: 150,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Image.asset('assets/images/mandado_vacio.png'),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * .6,
+                  child: const Center(
+                    child: Text(
+                      'No hay mandados disponibles por el momento',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 18, color: Colors.black),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
   }
 }

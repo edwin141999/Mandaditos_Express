@@ -14,7 +14,8 @@ import 'package:mandaditos_express/styles/colors/colors_view.dart';
 class RutaPedido extends StatefulWidget {
   final PedidoElement pedidoInfo;
   final User userInfo;
-  const RutaPedido({Key? key, required this.pedidoInfo, required this.userInfo}) : super(key: key);
+  const RutaPedido({Key? key, required this.pedidoInfo, required this.userInfo})
+      : super(key: key);
 
   @override
   State<RutaPedido> createState() => _RutaPedidoState();
@@ -148,7 +149,13 @@ class _RutaPedidoState extends State<RutaPedido> {
                                     'Acabas de entregar el pedido al cliente ${widget.pedidoInfo.cliente.users.firstName} ${widget.pedidoInfo.cliente.users.lastName}.'),
                                 OutlinedButton(
                                   onPressed: () {
-                                    menuM(userInfo: widget.userInfo);
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            menuM(userInfo: widget.userInfo),
+                                      ),
+                                    );
                                   },
                                   child: const Text(
                                     'Regresar al Menu',

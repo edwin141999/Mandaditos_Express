@@ -36,7 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Image.asset('assets/images/icon_back_arrow.png',
                       scale: .8),
                   onTap: () {
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
@@ -73,7 +73,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     widget: widget,
                     image: 'assets/images/icon_tarjeta.png',
                     title: 'Metodos de pago',
-                    onTap: () => Navigator.push(
+                    onTap: () => Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
@@ -85,7 +85,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     widget: widget,
                     image: 'assets/images/icon_cerrar_sesion.png',
                     title: 'Cerrar sesión',
-                    onTap: () => Navigator.push(
+                    onTap: () => Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                           builder: (context) => const LoginScreen()),

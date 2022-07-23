@@ -1,18 +1,41 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:mandaditos_express/models/pedidoinfo.dart';
 import 'package:http/http.dart' as http;
 import 'package:mandaditos_express/models/userinfo.dart';
 import 'package:mandaditos_express/repartidor/googlemapsrepartidor_controller.dart';
+import 'package:mandaditos_express/repartidor/pedidosP.dart';
 import 'package:mandaditos_express/repartidor/rutapedido.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
+
+AlertDialog getAlertDialog(title, content, onPressed) {
+  return AlertDialog(
+    title: Center(child: Text(title)),
+    content: Text(content),
+    actions: [
+      Center(
+        child: OutlinedButton(
+          onPressed: onPressed,
+          style: OutlinedButton.styleFrom(
+            backgroundColor: ColorSelect.kPrimaryColor,
+            elevation: 0,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+          ),
+          child: const Text(
+            'Regresar a los mandados disponibles',
+            style: TextStyle(
+                color: Colors.white, fontSize: 13, fontWeight: FontWeight.w400),
+          ),
+        ),
+      ),
+    ],
+  );
+}
 
 class confirmarP extends StatefulWidget {
   final PedidoElement pedidoInfo;
@@ -49,7 +72,28 @@ class _confirmarPState extends State<confirmarP> {
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(reqBody),
     );
-    log(resp.body);
+    Map<String, dynamic> responseMap = json.decode(resp.body);
+    if (resp.statusCode == 400) {
+      showDialog(
+        context: context,
+        builder: (ctx) => getAlertDialog(
+          'Lo sentimos',
+          responseMap['message'],
+          () {
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (ctx) => pedidosP(userInfo: widget.userInfo)));
+          },
+        ),
+      );
+    } else if (resp.statusCode == 200) {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => RutaPedido(
+                  pedidoInfo: widget.pedidoInfo, userInfo: widget.userInfo)));
+    }
   }
 
   //GOOGLE MAPS
@@ -232,15 +276,6 @@ class _confirmarPState extends State<confirmarP> {
                   child: OutlinedButton(
                     onPressed: () {
                       aceptarPedido();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => RutaPedido(
-                            pedidoInfo: widget.pedidoInfo,
-                            userInfo: widget.userInfo,
-                          ),
-                        ),
-                      );
                     },
                     style: OutlinedButton.styleFrom(
                       backgroundColor: ColorSelect.kPrimaryColor,
