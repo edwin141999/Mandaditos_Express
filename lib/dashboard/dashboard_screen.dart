@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mandaditos_express/historial/usuario_historial.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
+import 'package:mandaditos_express/pages/solicitarPedido.dart';
 import 'package:mandaditos_express/profile/profile.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 
@@ -45,10 +47,8 @@ class _DashboardState extends State<Dashboard> {
             child: SizedBox(
               width: 35,
               child: GestureDetector(
-                child: Image.asset(
-                  'assets/images/icon_profile.png',
-                  color: Colors.black,
-                ),
+                child: Image.asset('assets/images/icon_profile.png',
+                    color: Colors.black),
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return ProfileScreen(userInfo: widget.userInfo);
@@ -73,83 +73,77 @@ class _DashboardState extends State<Dashboard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Hola ${widget.userInfo.user.firstName}',
+                        'Hola ${widget.userInfo.user.firstName}!',
                         style: const TextStyle(fontSize: 22),
                       ),
-                      DropdownButton(
-                        items: calles.map((e) {
-                          return DropdownMenuItem(
-                            child: Text(e),
-                            value: e,
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            callesValue = value.toString();
-                          });
-                        },
-                        value: callesValue,
-                        underline: Container(),
-                        isDense: true,
-                        icon: const Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Colors.black,
-                          size: 20,
-                        ),
+                      Row(
+                        children: [
+                          const Text('Tu Direccion Actual: ',
+                              style: TextStyle(
+                                  fontSize: 17, fontWeight: FontWeight.bold)),
+                          DropdownButton(
+                            items: calles.map((e) {
+                              return DropdownMenuItem(
+                                child: Text(e),
+                                value: e,
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                callesValue = value.toString();
+                              });
+                            },
+                            value: callesValue,
+                            underline: Container(),
+                            isDense: true,
+                            icon: const Icon(
+                              Icons.keyboard_arrow_down,
+                              color: Colors.black,
+                              size: 20,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
                 const Padding(padding: EdgeInsets.only(top: 15)),
                 SizedBox(
-                  height: 50,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      const Text(
-                        '¿Desea algo?',
-                        style: TextStyle(fontSize: 15, color: Colors.black),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: SizedBox(
-                              height: 20,
-                              width: MediaQuery.of(context).size.width,
-                              child: const TextField(
-                                style: TextStyle(
-                                    fontSize: 17, color: Colors.black),
-                                decoration: InputDecoration(
-                                  hintStyle: TextStyle(
-                                      fontSize: 17,
-                                      color: Color.fromRGBO(139, 139, 139, 1)),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Image.asset('assets/images/search.png'),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
                   height: MediaQuery.of(context).size.height * 0.7,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(
-                        height: 410,
-                        child: ListView.builder(
-                          itemCount: textInfo.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return AccionesContainer(
-                                image: imgInfo[index],
-                                text: textInfo[index],
-                                colorContainer: colorInfo[index]);
-                          },
+                        height: 450,
+                        width: MediaQuery.of(context).size.width,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            AccionesContainer(
+                              image: imgInfo[0],
+                              text: textInfo[0],
+                              colorContainer: colorInfo[0],
+                              onTap: () {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return SolicitarPedido(
+                                      userInfo: widget.userInfo);
+                                }));
+                              },
+                            ),
+                            AccionesContainer(
+                              image: imgInfo[1],
+                              text: textInfo[1],
+                              colorContainer: colorInfo[1],
+                              onTap: () {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return const usuarioHitorial(title: 'Hola');
+                                }));
+                              },
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -167,29 +161,34 @@ class _DashboardState extends State<Dashboard> {
 class AccionesContainer extends StatelessWidget {
   final String image, text;
   final Color colorContainer;
+  final Function() onTap;
   const AccionesContainer({
     Key? key,
     required this.image,
     required this.text,
     required this.colorContainer,
+    required this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          width: 160,
-          height: 123,
-          decoration: BoxDecoration(
-            color: colorContainer.withOpacity(.42),
-            borderRadius: BorderRadius.circular(17),
-            image: DecorationImage(image: AssetImage(image), scale: .8),
+        GestureDetector(
+          onTap: onTap,
+          child: Container(
+            width: 160,
+            height: 123,
+            decoration: BoxDecoration(
+              color: colorContainer.withOpacity(.42),
+              borderRadius: BorderRadius.circular(17),
+              image: DecorationImage(image: AssetImage(image), scale: .8),
+            ),
           ),
         ),
         Container(
           width: 140,
-          margin: const EdgeInsets.only(bottom: 30),
+          margin: const EdgeInsets.only(bottom: 30, top: 10),
           child: Text(text,
               style: const TextStyle(fontSize: 22),
               textAlign: TextAlign.center),
