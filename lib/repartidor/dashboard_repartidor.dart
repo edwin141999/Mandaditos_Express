@@ -67,7 +67,6 @@ class _DashboardRepartidorState extends State<DashboardRepartidor> {
 
   void inicializarUbicacion() async {
     await _getGeoLocationPosition();
-    // log(position.toString());
   }
 
   @override
@@ -226,9 +225,8 @@ class AccionesContainer extends StatelessWidget {
               ),
             ),
             onTap: onTap),
-        Container(
+        SizedBox(
           width: 140,
-          margin: const EdgeInsets.only(bottom: 30),
           child: Text(text,
               style: const TextStyle(fontSize: 22),
               textAlign: TextAlign.center),

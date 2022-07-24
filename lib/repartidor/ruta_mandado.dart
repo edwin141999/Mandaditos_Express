@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer';
 
@@ -52,6 +54,68 @@ class _RutaMandadoState extends State<RutaMandado> {
     log(resp.body);
   }
 
+  Future<void> actualizarUbicacionRepartidor() async {
+    var url = Uri.parse('http://54.163.243.254:81/users/actualizarUbicacion');
+    var reqBody = {};
+    reqBody['id'] = widget.userInfo.datatype[0].id;
+    reqBody['lat'] = latitud;
+    reqBody['long'] = longitud;
+    await http.put(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(reqBody),
+    );
+  }
+
+  Future<Position> _getGeoLocationPosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      await Geolocator.openLocationSettings();
+      return Future.error('Location service are disabled');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permission are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions');
+    }
+
+    return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+  }
+
+  String address = 'search';
+  String location = 'Null';
+  String latitud = '0';
+  String longitud = '0';
+
+  Future<void> getAddressFromLatLong(Position position) async {
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(position.latitude, position.longitude);
+    Placemark place = placemarks[0];
+    address =
+        '${place.street}, ${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}';
+    location = 'Lat: ${position.latitude} - Long: ${position.longitude}';
+  }
+
+  void inicializarUbicacion() async {
+    Position position = await _getGeoLocationPosition();
+    latitud = position.latitude.toString();
+    longitud = position.longitude.toString();
+  }
+
+  late Timer timerRepartidor;
+
   @override
   void initState() {
     _controllerMap.onTap(
@@ -81,6 +145,12 @@ class _RutaMandadoState extends State<RutaMandado> {
         double.parse(widget.pedidoInfo.cliente.latitud),
         double.parse(widget.pedidoInfo.cliente.longitud),
       );
+    });
+    // FUNCION PARA ACTUALIZAR LA UBICACION DEL REPARTIDOR
+    timerRepartidor =
+        Timer.periodic(const Duration(seconds: 2), (Timer t2) async {
+      inicializarUbicacion();
+      actualizarUbicacionRepartidor();
     });
 
     super.initState();

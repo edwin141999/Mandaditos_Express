@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mandaditos_express/dashboard/dashboard_screen.dart';
 import 'package:mandaditos_express/models/pedidoclienteinfo.dart';
+import 'package:mandaditos_express/models/repartidorinfo.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
 
 //SERVER
@@ -16,7 +17,7 @@ AlertDialog getAlertDialog(title, content, ctx) {
     content: Text(content),
     actions: <Widget>[
       TextButton(
-        child: const Text('Close'),
+        child: const Text('Cerrar'),
         onPressed: () {
           Navigator.of(ctx).pop();
         },
@@ -31,6 +32,18 @@ class UsuarioHitorial extends StatefulWidget {
 
   @override
   State<UsuarioHitorial> createState() => _UsuarioHitorialState();
+}
+
+RepartidorInfo? repartidorInfo;
+
+Future<RepartidorInfo> datosRepartidor(int idRepartidor) async {
+  var url = Uri.parse('http://54.163.243.254:81/users/getRepartidor');
+  var reqBody = {};
+  reqBody['id'] = idRepartidor;
+  var response = await http.post(url,
+      headers: {'Content-Type': 'application/json'}, body: jsonEncode(reqBody));
+  repartidorInfo = RepartidorInfo.fromJson(json.decode(response.body));
+  return repartidorInfo!;
 }
 
 class _UsuarioHitorialState extends State<UsuarioHitorial> {
@@ -202,7 +215,7 @@ class _UsuarioHitorialState extends State<UsuarioHitorial> {
                         return ListView.builder(
                           itemCount: snapshot.data!.pedidos.length,
                           itemBuilder: (BuildContext context, int index) {
-                            if (snapshot.data!.pedidos[index].deliveryId ==
+                            if (snapshot.data!.pedidos[index].horaEntregada ==
                                 null) {
                               return PedidosActivos(
                                 tipoProducto: snapshot
@@ -299,17 +312,23 @@ class PedidosActivos extends StatelessWidget {
                     context: context,
                     builder: (ctx) => getAlertDialog(
                         "Oops!",
-                        'Aun ningun repartidor ha aceptado en relizar su mandado, vuelva a internarlo en unos minutos',
+                        'Aún ningun repartidor ha aceptado en relizar su mandado, vuelva a intentarlo en unos minutos',
                         ctx),
                   );
                 } else {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PedidoMonitoreo(
-                          pedidoInfo: pedidos, userInfo: userInfo),
-                    ),
-                  );
+                  datosRepartidor(int.parse(pedidos.deliveryId.toString()));
+                  Future.delayed(const Duration(seconds: 2), () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PedidoMonitoreo(
+                            pedidoInfo: pedidos,
+                            userInfo: userInfo,
+                            repartidor: repartidorInfo!
+                            ),
+                      ),
+                    );
+                  });
                 }
               },
               style: OutlinedButton.styleFrom(
@@ -385,7 +404,7 @@ class MuestraPedidos extends StatelessWidget {
             ),
           ),
           const Expanded(
-            child: Divider(color: Colors.black, height: 1, thickness: 2),
+            child: Divider(color: Colors.black, height: 1, thickness: 3),
           )
         ],
       ),

@@ -1,8 +1,16 @@
+//SERVER
+import 'dart:developer';
+
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:mandaditos_express/historial/usuario_historial.dart';
 import 'package:mandaditos_express/models/pedidoclienteinfo.dart';
+import 'package:mandaditos_express/models/repartidorinfo.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
 
 import 'package:mandaditos_express/monitoreo/monitoreo_controller.dart';
@@ -11,21 +19,38 @@ import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 class PedidoMonitoreo extends StatefulWidget {
   final User userInfo;
   final Pedido pedidoInfo;
+  final RepartidorInfo repartidor;
   const PedidoMonitoreo({
     Key? key,
     required this.userInfo,
     required this.pedidoInfo,
+    required this.repartidor,
   }) : super(key: key);
 
   @override
   State<PedidoMonitoreo> createState() => _PedidoMonitoreostate();
 }
 
+RepartidorInfo? repartidorInfo;
+
+Future<RepartidorInfo> datosRepartidor(int idRepartidor) async {
+  var url = Uri.parse('http://54.163.243.254:81/users/getRepartidor');
+  var reqBody = {};
+  reqBody['id'] = idRepartidor;
+  var response = await http.post(url,
+      headers: {'Content-Type': 'application/json'}, body: jsonEncode(reqBody));
+  log(response.body);
+  repartidorInfo = RepartidorInfo.fromJson(json.decode(response.body));
+  return repartidorInfo!;
+}
+
 class _PedidoMonitoreostate extends State<PedidoMonitoreo> {
   final _controller = MonitoreoController();
   PolylinePoints polylinePoints = PolylinePoints();
   Map<PolylineId, Polyline> polylines = {};
-  String googleAPiKey = "AIzaSyBy76EU-NQpNx2NAXxHZH2E-3lj3VNwhW4";
+
+  late Timer timerDatos;
+  late Timer timerGPS;
 
   @override
   void initState() {
@@ -47,48 +72,42 @@ class _PedidoMonitoreostate extends State<PedidoMonitoreo> {
       double.parse('220'),
       widget.pedidoInfo.item.descripcion,
     );
+    _controller.ubicacionRepartidor(
+      LatLng(
+        double.parse(widget.repartidor.repartidor.latitud),
+        double.parse(widget.repartidor.repartidor.longitud),
+      ),
+      'Repartidor',
+      '',
+    );
+    setState(() {
+      timerDatos = Timer.periodic(const Duration(seconds: 2), (Timer t2) async {
+        datosRepartidor(widget.repartidor.repartidor.id);
+      });
+      timerGPS = Timer.periodic(const Duration(seconds: 4), (Timer t) {
+        _controller.ubicacionRepartidor(
+          LatLng(
+            double.parse(repartidorInfo!.repartidor.latitud),
+            double.parse(repartidorInfo!.repartidor.longitud),
+          ),
+          'Repartidor',
+          '',
+        );
+      });
+    });
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    timerDatos.cancel();
+    timerGPS.cancel();
     super.dispose();
-  }
-
-  void _getPolyline() async {
-    List<LatLng> polylineCoordinates = [];
-
-    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      googleAPiKey,
-      const PointLatLng(16.213305935125874, -95.20762635962714),
-      const PointLatLng(16.21240872256714, -95.20714242769476),
-      travelMode: TravelMode.driving,
-    );
-    if (result.points.isNotEmpty) {
-      for (var point in result.points) {
-        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-      }
-    } else {
-      print(result.errorMessage);
-    }
-    _addPolyLine(polylineCoordinates);
-  }
-
-  _addPolyLine(List<LatLng> polylineCoordinates) {
-    PolylineId id = const PolylineId("poly");
-    Polyline polyline = Polyline(
-      polylineId: id,
-      color: Colors.blue,
-      points: polylineCoordinates,
-      width: 8,
-    );
-    polylines[id] = polyline;
-    setState(() {});
   }
 
   _callNumber() async {
     const number = '+52  994 263 9815'; //set the number here
-    bool? res = await FlutterPhoneDirectCaller.callNumber(number);
+    await FlutterPhoneDirectCaller.callNumber(number);
   }
 
   @override
@@ -137,7 +156,7 @@ class _PedidoMonitoreostate extends State<PedidoMonitoreo> {
               ),
               markers: _controller.markers,
               myLocationEnabled: true,
-              // polylines: Set<Polyline>.of(polylines.values),
+              myLocationButtonEnabled: false,
             ),
           ),
           Row(
