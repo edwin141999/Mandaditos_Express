@@ -23,7 +23,7 @@ class DashboardRepartidor extends StatefulWidget {
 class _DashboardRepartidorState extends State<DashboardRepartidor> {
   var estado = '';
   Future<void> actualizarEstado() async {
-    var url = Uri.parse('http://54.163.243.254:81/users/cambiarEstado');
+    var url = Uri.parse('http://34.193.105.11/users/cambiarEstado');
     var reqBody = {};
     reqBody['id'] = widget.userInfo.datatype[0].id;
     reqBody['estado'] = 'Disponible';

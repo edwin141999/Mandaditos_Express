@@ -119,7 +119,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Future<void> register() async {
-    var url = Uri.parse('http://54.163.243.254/users/register');
+    var url = Uri.parse('http://35.171.142.223/users/register');
     var reqBody = {};
     if (userData.password != '' &&
         userData.email != '' &&

@@ -50,7 +50,7 @@ class _SolicitarPedido extends State<SolicitarPedido> {
   }
 
   Future<void> generarItem() async {
-    var url = Uri.parse('http://54.163.243.254:81/users/item');
+    var url = Uri.parse('http://34.193.105.11/users/item');
     var reqBody = {};
     if (itemData.recogerUbicacion != '' && itemData.descripcion != '') {
       reqBody['recoger_ubicacion'] = itemData.recogerUbicacion;

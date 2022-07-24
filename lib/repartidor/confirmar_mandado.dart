@@ -58,7 +58,7 @@ class ConfirmarMandado extends StatefulWidget {
 class _ConfirmarMandadoState extends State<ConfirmarMandado> {
   var tipoPago = '';
   Future<void> getTarjeta() async {
-    var url = Uri.parse('http://54.163.243.254:83/users/getTarjeta');
+    var url = Uri.parse('http://3.95.107.222/users/getTarjeta');
     var reqBody = {};
     reqBody['id'] = int.parse(widget.pedidoInfo.metodoPago);
     final resp = await http.post(
@@ -71,7 +71,7 @@ class _ConfirmarMandadoState extends State<ConfirmarMandado> {
   }
 
   Future<void> guardarUbicacionRepartidor() async {
-    var url = Uri.parse('http://54.163.243.254:81/users/actualizarUbicacion');
+    var url = Uri.parse('http://34.193.105.11/users/actualizarUbicacion');
     var reqBody = {};
     reqBody['id'] = widget.userInfo.datatype[0].id;
     reqBody['lat'] = widget.lat;
@@ -82,7 +82,7 @@ class _ConfirmarMandadoState extends State<ConfirmarMandado> {
   }
 
   Future<void> aceptarPedido() async {
-    var url = Uri.parse('http://54.163.243.254:81/users/vincularRepartidor');
+    var url = Uri.parse('http://34.193.105.11/users/vincularRepartidor');
     var reqBody = {};
     reqBody['id'] = widget.pedidoInfo.id;
     reqBody['delivery_id'] = widget.userInfo.datatype[0].id;

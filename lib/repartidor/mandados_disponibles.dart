@@ -20,7 +20,7 @@ class MandadosDisponibles extends StatefulWidget {
 
 class _MandadosDisponiblesState extends State<MandadosDisponibles> {
   Future<Pedido> getMandados() async {
-    var url = Uri.parse('http://54.163.243.254:81/users/mostrarMandados');
+    var url = Uri.parse('http://34.193.105.11/users/mostrarMandados');
     final resp =
         await http.get(url, headers: {'Content-Type': 'application/json'});
     return pedidoFromJson(resp.body);

@@ -37,7 +37,7 @@ class HistorialUsuario extends StatefulWidget {
 RepartidorInfo? repartidorInfo;
 
 Future<RepartidorInfo> datosRepartidor(int idRepartidor) async {
-  var url = Uri.parse('http://54.163.243.254:81/users/getRepartidor');
+  var url = Uri.parse('http://34.193.105.11/users/getRepartidor');
   var reqBody = {};
   reqBody['id'] = idRepartidor;
   var response = await http.post(url,
@@ -51,7 +51,7 @@ class _HistorialUsuarioState extends State<HistorialUsuario> {
   PedidoCliente pedidosCliente = PedidoCliente(pedidos: []);
 
   Future<PedidoCliente> verMandadosCliente() async {
-    var url = Uri.parse('http://54.163.243.254:81/users/mandadosCliente');
+    var url = Uri.parse('http://34.193.105.11/users/mandadosCliente');
     var reqBody = {};
     reqBody['id'] = widget.userInfo.datatype[0].id;
     var response = await http.post(url, body: jsonEncode(reqBody));

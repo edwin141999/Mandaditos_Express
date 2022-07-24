@@ -59,7 +59,7 @@ class _RutaMandadoState extends State<RutaMandado> {
   }
 
   Future<void> entregarPedido() async {
-    var url = Uri.parse('http://54.163.243.254:81/users/entrega');
+    var url = Uri.parse('http://34.193.105.11/users/entrega');
     var reqBody = {};
     reqBody['id'] = widget.pedidoInfo.id;
     await http.put(
@@ -70,7 +70,7 @@ class _RutaMandadoState extends State<RutaMandado> {
   }
 
   Future<void> actualizarUbicacionRepartidor() async {
-    var url = Uri.parse('http://54.163.243.254:81/users/actualizarUbicacion');
+    var url = Uri.parse('http://34.193.105.11/users/actualizarUbicacion');
     var reqBody = {};
     reqBody['id'] = widget.userInfo.datatype[0].id;
     reqBody['lat'] = latitud;

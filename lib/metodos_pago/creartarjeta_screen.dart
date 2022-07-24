@@ -97,7 +97,7 @@ class _CreaTarjetaScreenState extends State<CreaTarjetaScreen> {
   CardData data = CardData();
 
   Future<void> crearTarjeta() async {
-    var url = Uri.parse('http://54.163.243.254:83/users/createTarjeta');
+    var url = Uri.parse('http://3.95.107.222/users/createTarjeta');
     var reqBody = {};
     reqBody['user_id'] = widget.userInfo.user.id;
     reqBody['cvv'] = data.cvv;

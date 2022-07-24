@@ -41,7 +41,7 @@ class _MetodosPagoScreenState extends State<MetodosPagoScreen> {
   var nombreBanco = [];
 
   Future<TarjetasInfo> getTarjetasCliente() async {
-    var url = Uri.parse('http://54.163.243.254:83/users/getTarjetas');
+    var url = Uri.parse('http://3.95.107.222/users/getTarjetas');
     var reqBody = {};
     reqBody['user_id'] = widget.userInfo.user.id;
     final resp = await http.post(url,

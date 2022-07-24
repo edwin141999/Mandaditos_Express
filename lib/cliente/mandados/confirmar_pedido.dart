@@ -24,7 +24,7 @@ class ConfirmarPedido extends StatefulWidget {
 
 class _ConfirmarPedido extends State<ConfirmarPedido> {
   Future<void> generarPedido() async {
-    var url = Uri.parse('http://54.163.243.254:81/users/mandadito');
+    var url = Uri.parse('http://34.193.105.11/users/mandadito');
     var reqBody = {};
     reqBody['envio_id'] = widget.item.item.id;
     reqBody['cliente_id'] = widget.userInfo.datatype[0].id;

@@ -69,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> loginwithDB() async {
-    var url = Uri.parse('http://54.163.243.254/users/login');
+    var url = Uri.parse('http://35.171.142.223/users/login');
     return await Future.delayed(
         const Duration(seconds: 2),
         () => {
