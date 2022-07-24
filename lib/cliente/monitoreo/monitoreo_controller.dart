@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:mandaditos_express/monitoreo/utils/asset_to_bytes.dart';
-import 'package:mandaditos_express/monitoreo/utils/map_style.dart';
+import 'package:mandaditos_express/cliente/monitoreo/utils/asset_to_bytes.dart';
+import 'package:mandaditos_express/cliente/monitoreo/utils/map_style.dart';
 
 class MonitoreoController extends ChangeNotifier {
   final Map<MarkerId, Marker> _markers = {};

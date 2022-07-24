@@ -8,12 +8,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:mandaditos_express/historial/usuario_historial.dart';
+import 'package:mandaditos_express/cliente/historial_usuario.dart';
 import 'package:mandaditos_express/models/pedidoclienteinfo.dart';
 import 'package:mandaditos_express/models/repartidorinfo.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
 
-import 'package:mandaditos_express/monitoreo/monitoreo_controller.dart';
+import 'package:mandaditos_express/cliente/monitoreo/monitoreo_controller.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 
 class PedidoMonitoreo extends StatefulWidget {
@@ -123,7 +123,7 @@ class _PedidoMonitoreostate extends State<PedidoMonitoreo> {
               context,
               MaterialPageRoute(
                 builder: (context) =>
-                    UsuarioHitorial(userInfo: widget.userInfo),
+                    HistorialUsuario(userInfo: widget.userInfo),
               ),
             );
           },

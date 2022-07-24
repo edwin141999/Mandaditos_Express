@@ -5,7 +5,7 @@ import 'package:mandaditos_express/metodos_pago/desencriptar.dart';
 import 'package:mandaditos_express/metodos_pago/editartarjeta_screen.dart';
 import 'package:mandaditos_express/models/tarjetasInfo.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
-import 'package:mandaditos_express/profile/profile.dart';
+import 'package:mandaditos_express/cliente/perfil_cliente.dart';
 import 'creartarjeta_screen.dart';
 
 // SERVER
@@ -90,7 +90,7 @@ class _MetodosPagoScreenState extends State<MetodosPagoScreen> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => ProfileScreen(
+                      builder: (context) => PerfilCliente(
                             userInfo: widget.userInfo,
                           )));
             }),

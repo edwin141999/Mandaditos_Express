@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:mandaditos_express/historial/usuario_historial.dart';
+import 'package:mandaditos_express/cliente/historial_usuario.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
-import 'package:mandaditos_express/pages/solicitar_pedido.dart';
-import 'package:mandaditos_express/profile/profile.dart';
+import 'package:mandaditos_express/cliente/mandados/solicitar_pedido.dart';
+import 'package:mandaditos_express/cliente/perfil_cliente.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 
 class Dashboard extends StatefulWidget {
@@ -25,7 +25,7 @@ class _DashboardState extends State<Dashboard> {
   ];
   var colorInfo = [ColorSelect.kContainerGreen, ColorSelect.kContainerPink];
 
-    Future<Position> _getGeoLocationPosition() async {
+  Future<Position> _getGeoLocationPosition() async {
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -91,7 +91,7 @@ class _DashboardState extends State<Dashboard> {
                     color: Colors.black),
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return ProfileScreen(userInfo: widget.userInfo);
+                    return PerfilCliente(userInfo: widget.userInfo);
                   }));
                 },
               ),
@@ -160,7 +160,8 @@ class _DashboardState extends State<Dashboard> {
                               onTap: () {
                                 Navigator.push(context,
                                     MaterialPageRoute(builder: (context) {
-                                  return UsuarioHitorial(userInfo: widget.userInfo);
+                                  return HistorialUsuario(
+                                      userInfo: widget.userInfo);
                                 }));
                               },
                             ),

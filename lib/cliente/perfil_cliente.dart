@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:mandaditos_express/dashboard/dashboard_screen.dart';
+import 'package:mandaditos_express/cliente/dashboard_cliente.dart';
 import 'package:mandaditos_express/login/login_screen.dart';
 import 'package:mandaditos_express/metodos_pago/metodospago_screen.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
 
-class ProfileScreen extends StatefulWidget {
+class PerfilCliente extends StatefulWidget {
   final User userInfo;
-  const ProfileScreen({Key? key, required this.userInfo}) : super(key: key);
+  const PerfilCliente({Key? key, required this.userInfo}) : super(key: key);
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<PerfilCliente> createState() => _PerfilClienteState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _PerfilClienteState extends State<PerfilCliente> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,7 +110,7 @@ class OpcionesPerfil extends StatelessWidget {
       required this.onTap})
       : super(key: key);
 
-  final ProfileScreen widget;
+  final PerfilCliente widget;
   final String image, title;
   final Function() onTap;
 

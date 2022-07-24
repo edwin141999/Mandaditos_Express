@@ -1,6 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:mandaditos_express/dashboard/dashboard_screen.dart';
+import 'package:mandaditos_express/cliente/dashboard_cliente.dart';
 import 'package:mandaditos_express/register/register_screen.dart';
 import 'package:mandaditos_express/repartidor/dashboard_repartidor.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';

@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:mandaditos_express/dashboard/dashboard_screen.dart';
+import 'package:mandaditos_express/cliente/dashboard_cliente.dart';
 import 'package:mandaditos_express/models/iteminfo.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';

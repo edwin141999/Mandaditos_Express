@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:mandaditos_express/dashboard/dashboard_screen.dart';
+import 'package:mandaditos_express/cliente/dashboard_cliente.dart';
 import 'package:mandaditos_express/models/iteminfo.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
-import 'package:mandaditos_express/pages/confirmar_pedido.dart';
-import 'package:mandaditos_express/pages/googlemaps_controller.dart';
+import 'package:mandaditos_express/cliente/mandados/confirmar_pedido.dart';
+import 'package:mandaditos_express/cliente/mandados/googlemaps_controller.dart';
 
 //SERVER
 import 'package:http/http.dart' as http;

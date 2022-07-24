@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mandaditos_express/dashboard/dashboard_screen.dart';
+import 'package:mandaditos_express/cliente/dashboard_cliente.dart';
 import 'package:mandaditos_express/models/pedidoclienteinfo.dart';
 import 'package:mandaditos_express/models/repartidorinfo.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 
-import 'package:mandaditos_express/monitoreo/pedido_monitoreo_user.dart';
+import 'package:mandaditos_express/cliente/monitoreo/pedido_monitoreo_user.dart';
 
 AlertDialog getAlertDialog(title, content, ctx) {
   return AlertDialog(
@@ -26,12 +26,12 @@ AlertDialog getAlertDialog(title, content, ctx) {
   );
 }
 
-class UsuarioHitorial extends StatefulWidget {
+class HistorialUsuario extends StatefulWidget {
   final User userInfo;
-  const UsuarioHitorial({Key? key, required this.userInfo}) : super(key: key);
+  const HistorialUsuario({Key? key, required this.userInfo}) : super(key: key);
 
   @override
-  State<UsuarioHitorial> createState() => _UsuarioHitorialState();
+  State<HistorialUsuario> createState() => _HistorialUsuarioState();
 }
 
 RepartidorInfo? repartidorInfo;
@@ -46,7 +46,7 @@ Future<RepartidorInfo> datosRepartidor(int idRepartidor) async {
   return repartidorInfo!;
 }
 
-class _UsuarioHitorialState extends State<UsuarioHitorial> {
+class _HistorialUsuarioState extends State<HistorialUsuario> {
   bool botonSeleccionado = false;
   PedidoCliente pedidosCliente = PedidoCliente(pedidos: []);
 
@@ -324,8 +324,7 @@ class PedidosActivos extends StatelessWidget {
                         builder: (context) => PedidoMonitoreo(
                             pedidoInfo: pedidos,
                             userInfo: userInfo,
-                            repartidor: repartidorInfo!
-                            ),
+                            repartidor: repartidorInfo!),
                       ),
                     );
                   });
