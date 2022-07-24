@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:mandaditos_express/metodos_pago/desencriptar.dart';
 import 'package:mandaditos_express/metodos_pago/editartarjeta_screen.dart';

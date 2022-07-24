@@ -15,9 +15,6 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  var calles = [];
-
-  String callesValue = '';
   var textInfo = ['Solicitar un mandadito', 'Historial de pedidos'];
   var imgInfo = [
     'assets/images/icon_solicitar.png',
@@ -61,10 +58,6 @@ class _DashboardState extends State<Dashboard> {
     setState(() {
       inicializarUbicacion();
     });
-    for (var item in widget.userInfo.datatype) {
-      calles.add(item.direccion);
-    }
-    callesValue = widget.userInfo.datatype[0].direccion;
     super.initState();
   }
 

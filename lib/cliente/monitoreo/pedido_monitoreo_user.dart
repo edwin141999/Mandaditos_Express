@@ -1,6 +1,4 @@
 //SERVER
-import 'dart:developer';
-
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
@@ -39,7 +37,6 @@ Future<RepartidorInfo> datosRepartidor(int idRepartidor) async {
   reqBody['id'] = idRepartidor;
   var response = await http.post(url,
       headers: {'Content-Type': 'application/json'}, body: jsonEncode(reqBody));
-  log(response.body);
   repartidorInfo = RepartidorInfo.fromJson(json.decode(response.body));
   return repartidorInfo!;
 }
@@ -145,9 +142,13 @@ class _PedidoMonitoreostate extends State<PedidoMonitoreo> {
       ),
       body: Column(
         children: [
+          Container(
+            margin: const EdgeInsets.only(top: 3),
+            child: const Divider(color: Colors.black, height: 1, thickness: 2),
+          ),
           SizedBox(
             width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height * .6,
+            height: MediaQuery.of(context).size.height * .84,
             child: GoogleMap(
               onMapCreated: _controller.onMapCreated,
               initialCameraPosition: _controller.ubicacionCliente(
@@ -159,17 +160,17 @@ class _PedidoMonitoreostate extends State<PedidoMonitoreo> {
               myLocationButtonEnabled: false,
             ),
           ),
-          Row(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(top: 30, left: 150),
-                child: ElevatedButton(
-                  onPressed: _callNumber,
-                  child: const Text("Llamar"),
-                ),
-              ),
-            ],
-          )
+          // Row(
+          //   children: [
+          //     Container(
+          //       margin: const EdgeInsets.only(top: 30, left: 150),
+          //       child: ElevatedButton(
+          //         onPressed: _callNumber,
+          //         child: const Text("Llamar"),
+          //       ),
+          //     ),
+          //   ],
+          // )
         ],
       ),
     );

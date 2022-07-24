@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -137,8 +135,6 @@ class _ListaPedidos extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log(lat);
-    log(long);
     if (pe.isNotEmpty) {
       return ListView.builder(
         itemCount: pe.length,
@@ -161,7 +157,7 @@ class _ListaPedidos extends StatelessWidget {
                   child: Text(
                     '\n${pe[i].cliente.users.firstName} ${pe[i].cliente.users.lastName}\n'
                     '\n${pe[i].item.tipoProducto}\n'
-                    '\n${pe[i].horaSolicitada.toString().substring(11, 16)} AM/PM\n'
+                    '\n${pe[i].horaSolicitada.toString().substring(11, 16)}\n'
                     '\nTotal: \$ ${pe[i].subtotal}\n',
                     style: const TextStyle(
                       fontSize: 15,

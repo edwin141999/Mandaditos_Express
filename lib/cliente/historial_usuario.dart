@@ -157,6 +157,10 @@ class _HistorialUsuarioState extends State<HistorialUsuario> {
       body: SafeArea(
         child: Column(
           children: [
+            Container(
+                margin: const EdgeInsets.only(top: 3),
+                child: const Divider(
+                    color: Colors.black, height: 1, thickness: 2)),
             SizedBox(
               height: 150,
               width: MediaQuery.of(context).size.width,

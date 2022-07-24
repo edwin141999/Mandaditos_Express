@@ -1,7 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:mandaditos_express/cliente/dashboard_cliente.dart';
+import 'package:mandaditos_express/cliente/historial_usuario.dart';
 import 'package:mandaditos_express/models/iteminfo.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
@@ -24,19 +22,7 @@ class ConfirmarPedido extends StatefulWidget {
   State<ConfirmarPedido> createState() => _ConfirmarPedido();
 }
 
-class _PedidoData {
-  String envioID = '';
-  String clienteID = '';
-  String entregaEstimada = '';
-  String metodoPago = '';
-  String subtotal = '';
-}
-
-class Pedido extends _PedidoData {}
-
 class _ConfirmarPedido extends State<ConfirmarPedido> {
-  Pedido pedidoData = Pedido();
-
   Future<void> generarPedido() async {
     var url = Uri.parse('http://54.163.243.254:81/users/mandadito');
     var reqBody = {};
@@ -45,12 +31,11 @@ class _ConfirmarPedido extends State<ConfirmarPedido> {
     reqBody['entrega_estimada'] = 30;
     reqBody['metodo_pago'] = '${widget.userInfo.metodoPago![0].id}';
     reqBody['subtotal'] = '50';
-    final resp = await http.post(
+    await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
       body: json.encode(reqBody),
     );
-    log(resp.body);
   }
 
   @override
@@ -309,29 +294,32 @@ class _ConfirmarPedido extends State<ConfirmarPedido> {
                                   ),
                                 ),
                                 const Text(
-                                    'Los repartidores cercanos podran aceptar tu solicitud de pedido, podras cancelar tu pedido antes de tiempo para reclamar un rembolso.'),
+                                    'Los repartidores cercanos podran aceptar tu solicitud de pedido en unos minutos.'),
                                 const Text(
-                                    'Vea el mapa para localizar su posible repartidor.'),
+                                    'Vea el mapa para localizar su posible repartidor en su historial de pedidos.'),
                                 OutlinedButton(
                                   onPressed: () {
                                     Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => Dashboard(
+                                        builder: (context) => HistorialUsuario(
                                             userInfo: widget.userInfo),
                                       ),
                                     );
                                   },
-                                  child: const Text(
-                                    'Regresar al Menu',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w400),
+                                  child: const Center(
+                                    child: Text(
+                                      'Ir al historial de pedidos',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w400),
+                                    ),
                                   ),
                                   style: OutlinedButton.styleFrom(
                                     minimumSize: Size(
-                                        MediaQuery.of(context).size.width, 40),
+                                        MediaQuery.of(context).size.width, 50),
                                     backgroundColor: ColorSelect.kPrimaryColor,
                                     shape: const RoundedRectangleBorder(
                                       borderRadius: BorderRadius.all(

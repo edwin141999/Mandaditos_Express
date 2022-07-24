@@ -175,6 +175,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         backgroundColor: const Color(0xffffffff),
         toolbarHeight: 40,
         automaticallyImplyLeading: false, // No back button
+        elevation: 0,
         leading: IconButton(
             icon: Image.asset('assets/images/icon_back_arrow.png',
                 scale: .8, color: Colors.black),
@@ -189,8 +190,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
           reverse: true,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: SizedBox(
+            child: Container(
               height: MediaQuery.of(context).size.height * 0.9,
+              color: const Color(0xffffffff),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -563,22 +565,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ],
                             ),
                           ),
-                    ListTile(
-                      title: RichText(
-                        text: const TextSpan(
-                          style: TextStyle(fontSize: 15),
-                          children: <TextSpan>[
-                            TextSpan(
-                                text: 'Al registrarme, acepto los ',
-                                style: TextStyle(color: Colors.black)),
-                            TextSpan(
-                              text: 'terminos y condiciones ',
-                              style: TextStyle(color: Colors.blue),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    // ListTile(
+                    //   title: RichText(
+                    //     text: const TextSpan(
+                    //       style: TextStyle(fontSize: 15),
+                    //       children: <TextSpan>[
+                    //         TextSpan(
+                    //             text: 'Al registrarme, acepto los ',
+                    //             style: TextStyle(color: Colors.black)),
+                    //         TextSpan(
+                    //           text: 'terminos y condiciones ',
+                    //           style: TextStyle(color: Colors.blue),
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                     SizedBox(
                       width: double.infinity,
                       height: 45,

@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -32,12 +32,28 @@ class RutaMandado extends StatefulWidget {
 class _RutaMandadoState extends State<RutaMandado> {
   final _controllerMap = GoogleMapsRepartidorController();
   final Completer<GoogleMapController> _controller = Completer();
+  late Timer timer;
   void _onMapCreated(GoogleMapController controller) {
+    timer = Timer.periodic(const Duration(seconds: 2), (timer) {
+      log('ACTUALIZANDO MAPA');
+      controller.moveCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: LatLng(
+              double.parse(latitud),
+              double.parse(longitud),
+            ),
+            zoom: 17,
+          ),
+        ),
+      );
+    });
     _controller.complete(controller);
   }
 
   Future<void> _disposeController() async {
     _controller.future.then((GoogleMapController controller) {
+      timer.cancel();
       controller.dispose();
     });
   }
@@ -46,12 +62,11 @@ class _RutaMandadoState extends State<RutaMandado> {
     var url = Uri.parse('http://54.163.243.254:81/users/entrega');
     var reqBody = {};
     reqBody['id'] = widget.pedidoInfo.id;
-    final resp = await http.put(
+    await http.put(
       url,
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(reqBody),
     );
-    log(resp.body);
   }
 
   Future<void> actualizarUbicacionRepartidor() async {
@@ -118,6 +133,7 @@ class _RutaMandadoState extends State<RutaMandado> {
 
   @override
   void initState() {
+    //CLIENTE
     _controllerMap.onTap(
       LatLng(
         double.parse(widget.pedidoInfo.cliente.latitud),
@@ -129,6 +145,7 @@ class _RutaMandadoState extends State<RutaMandado> {
           ' ' +
           widget.pedidoInfo.cliente.users.lastName,
     );
+    //PEDIDO
     _controllerMap.onTap(
       LatLng(
         double.parse(widget.pedidoInfo.item.latitud),
@@ -138,14 +155,14 @@ class _RutaMandadoState extends State<RutaMandado> {
       double.parse('220'),
       widget.pedidoInfo.item.descripcion,
     );
-    setState(() {
-      _controllerMap.createPolylines(
-        double.parse(widget.pedidoInfo.item.latitud),
-        double.parse(widget.pedidoInfo.item.longitud),
-        double.parse(widget.pedidoInfo.cliente.latitud),
-        double.parse(widget.pedidoInfo.cliente.longitud),
-      );
-    });
+    // setState(() {
+    //   _controllerMap.createPolylines(
+    //     double.parse(widget.pedidoInfo.item.latitud),
+    //     double.parse(widget.pedidoInfo.item.longitud),
+    //     double.parse(widget.pedidoInfo.cliente.latitud),
+    //     double.parse(widget.pedidoInfo.cliente.longitud),
+    //   );
+    // });
     // FUNCION PARA ACTUALIZAR LA UBICACION DEL REPARTIDOR
     timerRepartidor =
         Timer.periodic(const Duration(seconds: 2), (Timer t2) async {
@@ -218,9 +235,10 @@ class _RutaMandadoState extends State<RutaMandado> {
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                    'Acabas de entregar el pedido al cliente ${widget.pedidoInfo.cliente.users.firstName} ${widget.pedidoInfo.cliente.users.lastName}.'),
+                                    'Acabas de entregar el pedido a ${widget.pedidoInfo.cliente.users.firstName} ${widget.pedidoInfo.cliente.users.lastName}.'),
                                 OutlinedButton(
                                   onPressed: () {
+                                    _disposeController();
                                     Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(

@@ -21,9 +21,9 @@ class _PerfilClienteState extends State<PerfilCliente> {
         elevation: 0,
         toolbarHeight: 223,
         automaticallyImplyLeading: false,
-        flexibleSpace: Image.asset(
-          'assets/images/profile_logo.png',
-          fit: BoxFit.contain,
+        flexibleSpace: SafeArea(
+          child: Image.asset('assets/images/profile_logo.png',
+              fit: BoxFit.contain),
         ),
         actions: [
           SizedBox(

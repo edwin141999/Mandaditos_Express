@@ -111,12 +111,13 @@ class _ConfirmarMandadoState extends State<ConfirmarMandado> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) => RutaMandado(
-                  pedidoInfo: widget.pedidoInfo,
-                  userInfo: widget.userInfo,
-                  lat: widget.lat,
-                  long: widget.long,
-                )),
+          builder: (context) => RutaMandado(
+            pedidoInfo: widget.pedidoInfo,
+            userInfo: widget.userInfo,
+            lat: widget.lat,
+            long: widget.long,
+          ),
+        ),
       );
     } else {
       showDialog(
@@ -126,10 +127,12 @@ class _ConfirmarMandadoState extends State<ConfirmarMandado> {
           'Hubo un Error en el Servidor',
           () {
             Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (ctx) =>
-                        MandadosDisponibles(userInfo: widget.userInfo)));
+              context,
+              MaterialPageRoute(
+                builder: (ctx) =>
+                    MandadosDisponibles(userInfo: widget.userInfo),
+              ),
+            );
           },
         ),
       );
@@ -140,6 +143,17 @@ class _ConfirmarMandadoState extends State<ConfirmarMandado> {
   final _controllerMap = GoogleMapsRepartidorController();
   final Completer<GoogleMapController> _controller = Completer();
   void _onMapCreated(GoogleMapController controller) {
+    controller.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: LatLng(
+            double.parse(widget.lat),
+            double.parse(widget.long),
+          ),
+          zoom: 14,
+        ),
+      ),
+    );
     _controller.complete(controller);
   }
 
@@ -171,14 +185,14 @@ class _ConfirmarMandadoState extends State<ConfirmarMandado> {
       double.parse('220'),
       widget.pedidoInfo.item.descripcion,
     );
-    setState(() {
-      _controllerMap.createPolylines(
-        double.parse(widget.pedidoInfo.item.latitud),
-        double.parse(widget.pedidoInfo.item.longitud),
-        double.parse(widget.pedidoInfo.cliente.latitud),
-        double.parse(widget.pedidoInfo.cliente.longitud),
-      );
-    });
+    // setState(() {
+    //   _controllerMap.createPolylines(
+    //     double.parse(widget.pedidoInfo.item.latitud),
+    //     double.parse(widget.pedidoInfo.item.longitud),
+    //     double.parse(widget.pedidoInfo.cliente.latitud),
+    //     double.parse(widget.pedidoInfo.cliente.longitud),
+    //   );
+    // });
 
     super.initState();
   }
@@ -261,39 +275,39 @@ class _ConfirmarMandadoState extends State<ConfirmarMandado> {
                     ),
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.only(top: 10),
-                  // width: double.infinity ,
-                  width: MediaQuery.of(context).size.width * .5,
-                  height: 55,
-                  child: OutlinedButton(
-                    onPressed: () {
-                      setState(() {
-                        _controllerMap.createPolylines(
-                          double.parse(widget.pedidoInfo.item.latitud),
-                          double.parse(widget.pedidoInfo.item.longitud),
-                          double.parse(widget.pedidoInfo.cliente.latitud),
-                          double.parse(widget.pedidoInfo.cliente.longitud),
-                        );
-                      });
-                    },
-                    style: OutlinedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                    ),
-                    child: Text(
-                      'Mostrar ruta'.toUpperCase(),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                ),
+                // Container(
+                //   padding: const EdgeInsets.only(top: 10),
+                //   // width: double.infinity ,
+                //   width: MediaQuery.of(context).size.width * .5,
+                //   height: 55,
+                //   child: OutlinedButton(
+                //     onPressed: () {
+                //       setState(() {
+                //         _controllerMap.createPolylines(
+                //           double.parse(widget.pedidoInfo.item.latitud),
+                //           double.parse(widget.pedidoInfo.item.longitud),
+                //           double.parse(widget.pedidoInfo.cliente.latitud),
+                //           double.parse(widget.pedidoInfo.cliente.longitud),
+                //         );
+                //       });
+                //     },
+                //     style: OutlinedButton.styleFrom(
+                //       backgroundColor: Colors.red,
+                //       elevation: 0,
+                //       shape: RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.circular(50),
+                //       ),
+                //     ),
+                //     child: Text(
+                //       'Mostrar ruta'.toUpperCase(),
+                //       style: const TextStyle(
+                //         color: Colors.white,
+                //         fontSize: 18,
+                //         fontWeight: FontWeight.w400,
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 Container(
                   width: MediaQuery.of(context).size.width,
                   height: 320,
@@ -301,10 +315,10 @@ class _ConfirmarMandadoState extends State<ConfirmarMandado> {
                   child: GoogleMap(
                     markers: _controllerMap.markers,
                     onMapCreated: _onMapCreated,
-                    initialCameraPosition: CameraPosition(
-                        target: LatLng(double.parse(widget.lat),
-                            double.parse(widget.long)),
-                        zoom: 15),
+                    initialCameraPosition: const CameraPosition(
+                      target: LatLng(0, 0),
+                      zoom: 15,
+                    ),
                     myLocationButtonEnabled: false,
                     polylines: _controllerMap.polylines,
                     myLocationEnabled: true,

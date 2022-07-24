@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
@@ -69,7 +71,25 @@ class _SolicitarPedido extends State<SolicitarPedido> {
         ),
       );
     }
-    reqBody['tipo_producto'] = itemData.tipoProducto;
+
+    if (itemData.tipoProducto == 'Comida / Consumible' &&
+        itemData.precioProducto == '') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          duration: Duration(seconds: 3),
+          backgroundColor: Colors.red,
+          elevation: 1,
+          content: Text(
+            '¡Algunos campos estan vacios!',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+        ),
+      );
+    } else {
+      reqBody['tipo_producto'] = itemData.tipoProducto;
+    }
+
     reqBody['precio_producto'] = itemData.precioProducto;
     final resp = await http.post(url,
         headers: {'Content-Type': 'application/json'},
@@ -254,6 +274,7 @@ class _SolicitarPedido extends State<SolicitarPedido> {
                                   onSaved: (text) {
                                     itemData.precioProducto = text!;
                                   },
+                                  keyboardType: TextInputType.number,
                                   style: const TextStyle(
                                       fontSize: 17, color: Colors.black),
                                   decoration: const InputDecoration(
@@ -311,6 +332,12 @@ class _SolicitarPedido extends State<SolicitarPedido> {
                           _controllerMap.initialCameraPosition,
                       myLocationButtonEnabled: false,
                       onTap: _controllerMap.onTap,
+                      gestureRecognizers: <
+                          Factory<OneSequenceGestureRecognizer>>{
+                        Factory<OneSequenceGestureRecognizer>(
+                          () => EagerGestureRecognizer(),
+                        )
+                      },
                     ),
                   ),
                   SizedBox(
