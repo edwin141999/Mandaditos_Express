@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mandaditos_express/splash/splash_view.dart';
-import 'package:mandaditos_express/repartidor/confirmarP.dart';
 
 void main() {
   runApp(const MyApp());

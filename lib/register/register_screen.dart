@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
@@ -71,10 +69,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   void initState() {
-    // inicializarUbicacion();
     _passwordVisible = false;
     super.initState();
-    log('Getting location...');
     inicializarUbicacion();
   }
 
@@ -111,8 +107,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> getAddressFromLatLong(Position position) async {
     List<Placemark> placemarks =
         await placemarkFromCoordinates(position.latitude, position.longitude);
-    log('UBICACION');
-    // log(placemarks.toString());
     Placemark place = placemarks[0];
     address =
         '${place.street}, ${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}';
@@ -121,14 +115,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
     userData.longitud = position.longitude.toString();
     userData.address = place.street.toString();
     userData.cityDrive = place.locality.toString();
-    setState(() {
-      log(address);
-      log(location);
-    });
+    setState(() {});
   }
 
   Future<void> register() async {
-    var url = Uri.parse('http://54.163.243.254/users/register');
+    var url = Uri.parse('http://35.171.142.223/users/register');
     var reqBody = {};
     if (userData.password != '' &&
         userData.email != '' &&
@@ -148,7 +139,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     reqBody['latitud'] = userData.latitud;
     reqBody['longitud'] = userData.longitud;
     reqBody['city_drive'] = userData.cityDrive;
-    // log(reqBody.toString());
     var response = await http.post(url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(reqBody));
@@ -167,7 +157,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           ),
         );
-        Navigator.push(context,
+        Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => const LoginScreen()));
       }
     } catch (e) {
@@ -176,7 +166,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
           builder: (context) =>
               getAlertDialog('Error', 'Error del Servidor', context));
     }
-    log(response.body);
   }
 
   @override
@@ -186,12 +175,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
         backgroundColor: const Color(0xffffffff),
         toolbarHeight: 40,
         automaticallyImplyLeading: false, // No back button
+        elevation: 0,
         leading: IconButton(
             icon: Image.asset('assets/images/icon_back_arrow.png',
                 scale: .8, color: Colors.black),
             onPressed: () {
               FocusScope.of(context).unfocus();
-              Navigator.pop(context);
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()));
             }),
       ),
       body: SafeArea(
@@ -199,8 +190,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
           reverse: true,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: SizedBox(
+            child: Container(
               height: MediaQuery.of(context).size.height * 0.9,
+              color: const Color(0xffffffff),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -573,16 +565,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ],
                             ),
                           ),
-                    Row(
-                      children: const [
-                        Text('Al registrarte aceptas los ',
-                            style: TextStyle(fontSize: 15)),
-                        Text(
-                          'Terminos y Condiciones',
-                          style: TextStyle(color: Colors.blue, fontSize: 15),
-                        )
-                      ],
-                    ),
+                    // ListTile(
+                    //   title: RichText(
+                    //     text: const TextSpan(
+                    //       style: TextStyle(fontSize: 15),
+                    //       children: <TextSpan>[
+                    //         TextSpan(
+                    //             text: 'Al registrarme, acepto los ',
+                    //             style: TextStyle(color: Colors.black)),
+                    //         TextSpan(
+                    //           text: 'terminos y condiciones ',
+                    //           style: TextStyle(color: Colors.blue),
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                     SizedBox(
                       width: double.infinity,
                       height: 45,

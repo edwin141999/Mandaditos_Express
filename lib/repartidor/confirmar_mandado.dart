@@ -1,44 +1,64 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:mandaditos_express/models/pedidoinfo.dart';
 import 'package:http/http.dart' as http;
 import 'package:mandaditos_express/models/userinfo.dart';
 import 'package:mandaditos_express/repartidor/googlemapsrepartidor_controller.dart';
-import 'package:mandaditos_express/repartidor/rutapedido.dart';
+import 'package:mandaditos_express/repartidor/mandados_disponibles.dart';
+import 'package:mandaditos_express/repartidor/ruta_mandado.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 
-class confirmarP extends StatefulWidget {
-  final PedidoElement pedidoInfo;
-  final User userInfo;
-  const confirmarP({Key? key, required this.pedidoInfo, required this.userInfo})
-      : super(key: key);
-
-  @override
-  State<confirmarP> createState() => _confirmarPState();
+AlertDialog getAlertDialog(title, content, onPressed) {
+  return AlertDialog(
+    title: Center(child: Text(title)),
+    content: Text(content),
+    actions: [
+      Center(
+        child: OutlinedButton(
+          onPressed: onPressed,
+          style: OutlinedButton.styleFrom(
+            backgroundColor: ColorSelect.kPrimaryColor,
+            elevation: 0,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+          ),
+          child: const Text(
+            'Regresar a los mandados disponibles',
+            style: TextStyle(
+                color: Colors.white, fontSize: 13, fontWeight: FontWeight.w400),
+          ),
+        ),
+      ),
+    ],
+  );
 }
 
-class _confirmarPState extends State<confirmarP> {
-  // Future<Pedido> getMandados() async {
-  //   var url = Uri.parse('http://54.163.243.254:81/users/mostrarMandados');
+class ConfirmarMandado extends StatefulWidget {
+  final PedidoElement pedidoInfo;
+  final User userInfo;
+  final String lat, long;
+  const ConfirmarMandado({
+    Key? key,
+    required this.pedidoInfo,
+    required this.userInfo,
+    required this.lat,
+    required this.long,
+  }) : super(key: key);
 
-  //   final resp =
-  //       await http.get(url, headers: {'Content-Type': 'application/json'});
+  @override
+  State<ConfirmarMandado> createState() => _ConfirmarMandadoState();
+}
 
-  //   //pedidosInfo = Pedido.fromJson(jsonDecode(resp.body));
-
-  //   return pedidoFromJson(resp.body);
-  //   //return pedidosInfo;
-
+class _ConfirmarMandadoState extends State<ConfirmarMandado> {
   var tipoPago = '';
   Future<void> getTarjeta() async {
-    var url = Uri.parse('http://54.163.243.254:83/users/getTarjeta');
+    var url = Uri.parse('http://3.95.107.222/users/getTarjeta');
     var reqBody = {};
     reqBody['id'] = int.parse(widget.pedidoInfo.metodoPago);
     final resp = await http.post(
@@ -50,8 +70,19 @@ class _confirmarPState extends State<confirmarP> {
     tipoPago = respBody['tarjeta']['metodo'];
   }
 
+  Future<void> guardarUbicacionRepartidor() async {
+    var url = Uri.parse('http://34.193.105.11/users/actualizarUbicacion');
+    var reqBody = {};
+    reqBody['id'] = widget.userInfo.datatype[0].id;
+    reqBody['lat'] = widget.lat;
+    reqBody['long'] = widget.long;
+    await http.put(url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(reqBody));
+  }
+
   Future<void> aceptarPedido() async {
-    var url = Uri.parse('http://54.163.243.254:81/users/vincularRepartidor');
+    var url = Uri.parse('http://34.193.105.11/users/vincularRepartidor');
     var reqBody = {};
     reqBody['id'] = widget.pedidoInfo.id;
     reqBody['delivery_id'] = widget.userInfo.datatype[0].id;
@@ -60,13 +91,69 @@ class _confirmarPState extends State<confirmarP> {
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(reqBody),
     );
-    log(resp.body);
+    Map<String, dynamic> responseMap = json.decode(resp.body);
+    if (resp.statusCode == 400) {
+      showDialog(
+        context: context,
+        builder: (ctx) => getAlertDialog(
+          'Lo sentimos',
+          responseMap['message'],
+          () {
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (ctx) =>
+                        MandadosDisponibles(userInfo: widget.userInfo)));
+          },
+        ),
+      );
+    } else if (resp.statusCode == 200) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RutaMandado(
+            pedidoInfo: widget.pedidoInfo,
+            userInfo: widget.userInfo,
+            lat: widget.lat,
+            long: widget.long,
+          ),
+        ),
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (ctx) => getAlertDialog(
+          'Lo sentimos',
+          'Hubo un Error en el Servidor',
+          () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (ctx) =>
+                    MandadosDisponibles(userInfo: widget.userInfo),
+              ),
+            );
+          },
+        ),
+      );
+    }
   }
 
   //GOOGLE MAPS
   final _controllerMap = GoogleMapsRepartidorController();
   final Completer<GoogleMapController> _controller = Completer();
   void _onMapCreated(GoogleMapController controller) {
+    controller.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: LatLng(
+            double.parse(widget.lat),
+            double.parse(widget.long),
+          ),
+          zoom: 14,
+        ),
+      ),
+    );
     _controller.complete(controller);
   }
 
@@ -98,14 +185,14 @@ class _confirmarPState extends State<confirmarP> {
       double.parse('220'),
       widget.pedidoInfo.item.descripcion,
     );
-    setState(() {
-      _controllerMap.createPolylines(
-        double.parse(widget.pedidoInfo.item.latitud),
-        double.parse(widget.pedidoInfo.item.longitud),
-        double.parse(widget.pedidoInfo.cliente.latitud),
-        double.parse(widget.pedidoInfo.cliente.longitud),
-      );
-    });
+    // setState(() {
+    //   _controllerMap.createPolylines(
+    //     double.parse(widget.pedidoInfo.item.latitud),
+    //     double.parse(widget.pedidoInfo.item.longitud),
+    //     double.parse(widget.pedidoInfo.cliente.latitud),
+    //     double.parse(widget.pedidoInfo.cliente.longitud),
+    //   );
+    // });
 
     super.initState();
   }
@@ -128,7 +215,13 @@ class _confirmarPState extends State<confirmarP> {
         leading: TextButton(
           onPressed: () {
             FocusScope.of(context).unfocus();
-            Navigator.pop(context);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    MandadosDisponibles(userInfo: widget.userInfo),
+              ),
+            );
           },
           child: Image.asset('assets/images/icon_back_arrow.png', scale: .8),
         ),
@@ -182,39 +275,39 @@ class _confirmarPState extends State<confirmarP> {
                     ),
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.only(top: 10),
-                  // width: double.infinity ,
-                  width: MediaQuery.of(context).size.width * .5,
-                  height: 55,
-                  child: OutlinedButton(
-                    onPressed: () {
-                      setState(() {
-                        _controllerMap.createPolylines(
-                          double.parse(widget.pedidoInfo.item.latitud),
-                          double.parse(widget.pedidoInfo.item.longitud),
-                          double.parse(widget.pedidoInfo.cliente.latitud),
-                          double.parse(widget.pedidoInfo.cliente.longitud),
-                        );
-                      });
-                    },
-                    style: OutlinedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                    ),
-                    child: Text(
-                      'Mostrar ruta'.toUpperCase(),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                ),
+                // Container(
+                //   padding: const EdgeInsets.only(top: 10),
+                //   // width: double.infinity ,
+                //   width: MediaQuery.of(context).size.width * .5,
+                //   height: 55,
+                //   child: OutlinedButton(
+                //     onPressed: () {
+                //       setState(() {
+                //         _controllerMap.createPolylines(
+                //           double.parse(widget.pedidoInfo.item.latitud),
+                //           double.parse(widget.pedidoInfo.item.longitud),
+                //           double.parse(widget.pedidoInfo.cliente.latitud),
+                //           double.parse(widget.pedidoInfo.cliente.longitud),
+                //         );
+                //       });
+                //     },
+                //     style: OutlinedButton.styleFrom(
+                //       backgroundColor: Colors.red,
+                //       elevation: 0,
+                //       shape: RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.circular(50),
+                //       ),
+                //     ),
+                //     child: Text(
+                //       'Mostrar ruta'.toUpperCase(),
+                //       style: const TextStyle(
+                //         color: Colors.white,
+                //         fontSize: 18,
+                //         fontWeight: FontWeight.w400,
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 Container(
                   width: MediaQuery.of(context).size.width,
                   height: 320,
@@ -222,18 +315,17 @@ class _confirmarPState extends State<confirmarP> {
                   child: GoogleMap(
                     markers: _controllerMap.markers,
                     onMapCreated: _onMapCreated,
-                    // initialCameraPosition: _controllerMap.initialCameraPosition,
-                    initialCameraPosition: CameraPosition(
-                      target: LatLng(
-                        double.parse(widget.pedidoInfo.item.latitud),
-                        double.parse(widget.pedidoInfo.item.longitud),
-                      ),
-                      zoom: 13,
+                    initialCameraPosition: const CameraPosition(
+                      target: LatLng(0, 0),
+                      zoom: 15,
                     ),
                     myLocationButtonEnabled: false,
                     polylines: _controllerMap.polylines,
                     myLocationEnabled: true,
-                    // onTap: _controllerMap.onTap,
+                    gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+                      Factory<OneSequenceGestureRecognizer>(
+                          () => EagerGestureRecognizer())
+                    },
                   ),
                 ),
                 Container(
@@ -242,16 +334,8 @@ class _confirmarPState extends State<confirmarP> {
                   height: 55,
                   child: OutlinedButton(
                     onPressed: () {
+                      guardarUbicacionRepartidor();
                       aceptarPedido();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => RutaPedido(
-                            pedidoInfo: widget.pedidoInfo,
-                            userInfo: widget.userInfo,
-                          ),
-                        ),
-                      );
                     },
                     style: OutlinedButton.styleFrom(
                       backgroundColor: ColorSelect.kPrimaryColor,

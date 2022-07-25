@@ -95,7 +95,7 @@ class _EditarTarjetaState extends State<EditarTarjeta> {
   EditCard data = EditCard();
 
   Future<void> editarTarjeta() async {
-    var url = Uri.parse('http://54.163.243.254:83/users/updateTarjeta');
+    var url = Uri.parse('http://3.95.107.222/users/updateTarjeta');
     var reqBody = {};
     reqBody["id"] = widget.tarjeta.id;
     reqBody["nombre_tarjeta"] = data.nombreCompleto;
@@ -110,7 +110,7 @@ class _EditarTarjetaState extends State<EditarTarjeta> {
   }
 
   Future<void> deleteTarjeta() async {
-    var url = Uri.parse('http://54.163.243.254:83/users/deleteTarjeta');
+    var url = Uri.parse('http://3.95.107.222/users/deleteTarjeta');
     var reqBody = {};
     reqBody["id"] = widget.tarjeta.id;
     final resp = await http.delete(

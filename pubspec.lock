@@ -104,6 +104,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.4"
+  flutter_phone_direct_caller:
+    dependency: "direct main"
+    description:
+      name: flutter_phone_direct_caller
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.1"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -162,7 +169,7 @@ packages:
       name: geolocator_android
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.0.1"
+    version: "4.0.2"
   geolocator_apple:
     dependency: transitive
     description:
@@ -205,41 +212,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.0"
-  google_sign_in:
-    dependency: "direct main"
-    description:
-      name: google_sign_in
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "5.4.0"
-  google_sign_in_android:
-    dependency: transitive
-    description:
-      name: google_sign_in_android
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "6.0.1"
-  google_sign_in_ios:
-    dependency: transitive
-    description:
-      name: google_sign_in_ios
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "5.4.0"
-  google_sign_in_platform_interface:
-    dependency: transitive
-    description:
-      name: google_sign_in_platform_interface
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.2.0"
-  google_sign_in_web:
-    dependency: transitive
-    description:
-      name: google_sign_in_web
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.10.2"
   http:
     dependency: "direct main"
     description:
@@ -289,6 +261,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.7.0"
+  nested:
+    dependency: transitive
+    description:
+      name: nested
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   path:
     dependency: transitive
     description:
@@ -310,13 +289,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.2"
-  quiver:
-    dependency: transitive
+  provider:
+    dependency: "direct main"
     description:
-      name: quiver
+      name: provider
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.1.0"
+    version: "6.0.3"
   sky_engine:
     dependency: transitive
     description: flutter

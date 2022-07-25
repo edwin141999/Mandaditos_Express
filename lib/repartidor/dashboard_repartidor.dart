@@ -1,9 +1,8 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
-import 'package:mandaditos_express/repartidor/pedidosP.dart';
-import 'package:mandaditos_express/repartidor/perfil.dart';
+import 'package:mandaditos_express/repartidor/mandados_disponibles.dart';
+import 'package:mandaditos_express/repartidor/perfil_repartidor.dart';
 
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 
@@ -12,18 +11,19 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 
-class menuM extends StatefulWidget {
+class DashboardRepartidor extends StatefulWidget {
   final User userInfo;
-  const menuM({Key? key, required this.userInfo}) : super(key: key);
+  const DashboardRepartidor({Key? key, required this.userInfo})
+      : super(key: key);
 
   @override
-  State<menuM> createState() => _menuMState();
+  State<DashboardRepartidor> createState() => _DashboardRepartidorState();
 }
 
-class _menuMState extends State<menuM> {
+class _DashboardRepartidorState extends State<DashboardRepartidor> {
   var estado = '';
   Future<void> actualizarEstado() async {
-    var url = Uri.parse('http://54.163.243.254:81/users/cambiarEstado');
+    var url = Uri.parse('http://34.193.105.11/users/cambiarEstado');
     var reqBody = {};
     reqBody['id'] = widget.userInfo.datatype[0].id;
     reqBody['estado'] = 'Disponible';
@@ -33,9 +33,51 @@ class _menuMState extends State<menuM> {
       body: json.encode(reqBody),
     );
     Map<String, dynamic> respBody = json.decode(resp.body);
-    // log(respBody['update']['estado'].toString());
     estado = respBody['update']['estado'];
-    // log(resp.body);
+  }
+
+  Future<Position> _getGeoLocationPosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      await Geolocator.openLocationSettings();
+      return Future.error('Location service are disabled');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permission are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions');
+    }
+
+    return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+  }
+
+  void inicializarUbicacion() async {
+    await _getGeoLocationPosition();
+  }
+
+  @override
+  void initState() {
+    setState(() {
+      inicializarUbicacion();
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -57,9 +99,9 @@ class _menuMState extends State<menuM> {
                   color: Colors.black,
                 ),
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    // return ProfileScreen(userInfo: widget.userInfo);
-                    return const Perfil();
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) {
+                    return PerfilRepartidor(userInfo: widget.userInfo);
                   }));
                 },
               ),
@@ -133,28 +175,13 @@ class _menuMState extends State<menuM> {
                           image: 'assets/images/icon_solicitar.png',
                           colorContainer: ColorSelect.kContainerGreen,
                           onTap: () {
-                            Navigator.push(context,
+                            Navigator.pushReplacement(context,
                                 MaterialPageRoute(builder: (context) {
-                              return  pedidosP(userInfo: widget.userInfo);
+                              return MandadosDisponibles(
+                                  userInfo: widget.userInfo);
                             }));
                           },
                         ),
-                        // child: ListView.builder(
-                        //   itemCount: textInfo.length,
-                        //   itemBuilder: (BuildContext context, int index) {
-                        //     return AccionesContainer(
-                        //       image: imgInfo[index],
-                        //       text: textInfo[index],
-                        //       colorContainer: colorInfo[index],
-                        //       onTap: () {
-                        //         Navigator.push(context,
-                        //             MaterialPageRoute(builder: (context) {
-                        //           return const pedidosP();
-                        //         }));
-                        //       },
-                        //     );
-                        //   },
-                        // ),
                       ),
                     ],
                   ),
@@ -196,9 +223,8 @@ class AccionesContainer extends StatelessWidget {
               ),
             ),
             onTap: onTap),
-        Container(
+        SizedBox(
           width: 140,
-          margin: const EdgeInsets.only(bottom: 30),
           child: Text(text,
               style: const TextStyle(fontSize: 22),
               textAlign: TextAlign.center),

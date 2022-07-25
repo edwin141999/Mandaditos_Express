@@ -1,15 +1,10 @@
-import 'dart:developer';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:mandaditos_express/dashboard/dashboard_screen.dart';
+import 'package:mandaditos_express/cliente/dashboard_cliente.dart';
 import 'package:mandaditos_express/register/register_screen.dart';
-import 'package:mandaditos_express/repartidor/menu.dart';
+import 'package:mandaditos_express/repartidor/dashboard_repartidor.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
-// import 'package:google_sign_in/google_sign_in.dart';
-// import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-// import 'package:flutter/cupertino.dart';
 
 // SERVER
 import 'package:http/http.dart' as http;
@@ -56,16 +51,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  // Map<String, dynamic>? _userData;
-  // AccessToken? _accessToken;
-  // bool _checking = false;
-
   bool _passwordVisible = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   UserData userData = UserData();
-
-  // bool _isLoggedIn = false;
-  // final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
 
   void submit() {
     if (_formKey.currentState!.validate()) {
@@ -74,73 +62,14 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  // loginwithGoogle() async {
-  //   try {
-  //     await _googleSignIn.signIn();
-  //     setState(() {
-  //       _isLoggedIn = true;
-  //     });
-  //   } catch (err) {
-  //     rethrow;
-  //   }
-  // }
-
-  // _logout() {
-  //   _googleSignIn.signOut();
-  //   setState(() {
-  //     _isLoggedIn = false;
-  //   });
-  // }
-
   @override
   void initState() {
     _passwordVisible = false;
     super.initState();
   }
 
-  // _checkIfisLoggedIn() async {
-  // final accessToken = await FacebookAuth.instance.accessToken;
-  // setState(() {
-  //   _checking = false;
-  // });
-
-  // if (accessToken != null) {
-  //   print(accessToken.toJson());
-  //   final userData = await FacebookAuth.instance.getUserData();
-  //   _accessToken = accessToken;
-  //   setState(() {
-  //     _userData = userData;
-  //   });
-  // } else {
-  //   _loginFB();
-  // }
-  // }
-
-  // _loginFB() async {
-  // final LoginResult result = await FacebookAuth.instance.login();
-  // if (result.status == LoginStatus.success) {
-  //   _accessToken = result.accessToken;
-
-  //   final userData = await FacebookAuth.instance.getUserData();
-  //   _userData = userData;
-  // } else {
-  //   print(result.status);
-  //   print(result.message);
-  // }
-  //   setState(() {
-  //     _checking = false;
-  //   });
-  // }
-
-  // _logoutFB() async {
-  // await FacebookAuth.instance.logOut();
-  // _accessToken = null;
-  //   _userData = null;
-  //   setState(() {});
-  // }
-
   Future<void> loginwithDB() async {
-    var url = Uri.parse('http://54.163.243.254/users/login');
+    var url = Uri.parse('http://35.171.142.223/users/login');
     return await Future.delayed(
         const Duration(seconds: 2),
         () => {
@@ -164,19 +93,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   );
                   if (responseMap['user']['user_type'] == 'Cliente') {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return Dashboard(
-                              userInfo: userFromJson(response.body));
-                        },
-                      ),
-                    );
-                  } else {
-                    Navigator.push(context,
+                    Navigator.pushReplacement(context,
                         MaterialPageRoute(builder: (context) {
-                      return menuM(userInfo: userFromJson(response.body));
+                      return Dashboard(userInfo: userFromJson(response.body));
+                    }));
+                  } else {
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) {
+                      return DashboardRepartidor(
+                          userInfo: userFromJson(response.body));
                     }));
                   }
                 } else {
@@ -192,8 +117,8 @@ class _LoginScreenState extends State<LoginScreen> {
               }).catchError((err) {
                 showDialog(
                     context: context,
-                    builder: (ctx) =>
-                        getAlertDialog("Error", "Server error", ctx));
+                    builder: (ctx) => getAlertDialog(
+                        "Error", "Error dentro del servidor", ctx));
               })
             });
   }
@@ -322,77 +247,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                           ),
-                          // SizedBox(
-                          //   height: 100,
-                          //   child: Column(
-                          //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          //     children: [
-                          //       const Text('O Inicia Sesion con',
-                          //           style: TextStyle(fontSize: 17)),
-                          //       SizedBox(
-                          //         width: 120,
-                          //         child: Row(
-                          //           mainAxisAlignment:
-                          //               MainAxisAlignment.spaceBetween,
-                          //           children: [
-                          //             Container(
-                          //               height: 45,
-                          //               decoration: BoxDecoration(
-                          //                   borderRadius:
-                          //                       BorderRadius.circular(50),
-                          //                   color: ColorSelect.kFacebookColor),
-                          //               child: IconButton(
-                          //                   onPressed: () {},
-                          //                   icon: Image.asset(
-                          //                       'assets/images/fb_logo.png',
-                          //                       height: 25)),
-                          //             ),
-                          //             Container(
-                          //               height: 45,
-                          //               decoration: BoxDecoration(
-                          //                   borderRadius:
-                          //                       BorderRadius.circular(50),
-                          //                   color: Colors.red),
-                          //               child: _isLoggedIn
-                          //                   ? Column(
-                          //                       mainAxisAlignment:
-                          //                           MainAxisAlignment.center,
-                          //                       children: <Widget>[
-                          //                         Image.network(
-                          //                           _googleSignIn
-                          //                               .currentUser!.photoUrl
-                          //                               .toString(),
-                          //                           height: 50,
-                          //                           width: 50,
-                          //                         ),
-                          //                         Text(_googleSignIn
-                          //                             .currentUser!.displayName
-                          //                             .toString()),
-                          //                         Text(_googleSignIn
-                          //                             .currentUser!.email
-                          //                             .toString()),
-                          //                         OutlinedButton(
-                          //                           child: const Text("Logout"),
-                          //                           onPressed: () {
-                          //                             _logout();
-                          //                           },
-                          //                         )
-                          //                       ],
-                          //                     )
-                          //                   : IconButton(
-                          //                       onPressed: () {
-                          //                         loginwithGoogle();
-                          //                       },
-                          //                       icon: Image.asset(
-                          //                           'assets/images/google_logo.png',
-                          //                           height: 45)),
-                          //             ),
-                          //           ],
-                          //         ),
-                          //       ),
-                          //     ],
-                          //   ),
-                          // ),
                           SizedBox(
                             height: 40,
                             child: Column(
@@ -410,11 +264,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                             color: ColorSelect.kSecondaryColor,
                                             fontWeight: FontWeight.bold),
                                         recognizer: TapGestureRecognizer()
-                                          ..onTap = () => Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const RegisterScreen())),
+                                          ..onTap =
+                                              () => Navigator.pushReplacement(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const RegisterScreen(),
+                                                    ),
+                                                  ),
                                       )
                                     ],
                                   ),

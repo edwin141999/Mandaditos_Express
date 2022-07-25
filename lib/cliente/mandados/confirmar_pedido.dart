@@ -1,7 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:mandaditos_express/dashboard/dashboard_screen.dart';
+import 'package:mandaditos_express/cliente/historial_usuario.dart';
 import 'package:mandaditos_express/models/iteminfo.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
@@ -24,33 +22,20 @@ class ConfirmarPedido extends StatefulWidget {
   State<ConfirmarPedido> createState() => _ConfirmarPedido();
 }
 
-class _pedidoData {
-  String envioID = '';
-  String clienteID = '';
-  String entregaEstimada = '';
-  String metodoPago = '';
-  String subtotal = '';
-}
-
-class Pedido extends _pedidoData {}
-
 class _ConfirmarPedido extends State<ConfirmarPedido> {
-  Pedido pedidoData = Pedido();
-
   Future<void> generarPedido() async {
-    var url = Uri.parse('http://54.163.243.254:81/users/mandadito');
+    var url = Uri.parse('http://34.193.105.11/users/mandadito');
     var reqBody = {};
     reqBody['envio_id'] = widget.item.item.id;
     reqBody['cliente_id'] = widget.userInfo.datatype[0].id;
     reqBody['entrega_estimada'] = 30;
     reqBody['metodo_pago'] = '${widget.userInfo.metodoPago![0].id}';
     reqBody['subtotal'] = '50';
-    final resp = await http.post(
+    await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
       body: json.encode(reqBody),
     );
-    log(resp.body);
   }
 
   @override
@@ -79,14 +64,14 @@ class _ConfirmarPedido extends State<ConfirmarPedido> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Direccion de Entrega: Actual',
+                      const Text('Direccion de Entrega',
                           style: TextStyle(fontSize: 18)),
                       Container(
                         width: MediaQuery.of(context).size.width,
                         height: 35,
                         margin: const EdgeInsets.only(top: 5, bottom: 15),
                         decoration: BoxDecoration(
-                          color: Colors.grey.withOpacity(0.5),
+                          color: ColorSelect.kColorDropdown,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Container(
@@ -109,7 +94,7 @@ class _ConfirmarPedido extends State<ConfirmarPedido> {
                         width: MediaQuery.of(context).size.width,
                         height: 235,
                         decoration: BoxDecoration(
-                          color: Colors.grey.withOpacity(0.5),
+                          color: ColorSelect.kColorDropdown,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         margin: const EdgeInsets.only(top: 5),
@@ -216,36 +201,27 @@ class _ConfirmarPedido extends State<ConfirmarPedido> {
                     ],
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('Metodo de Pago',
-                        style: TextStyle(fontSize: 18)),
-                    TextButton(
-                        onPressed: () {},
-                        child: const Text(
-                          'Cambiar',
-                          style: TextStyle(
-                              fontSize: 18, color: ColorSelect.kPrimaryColor),
-                        )),
-                  ],
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  margin: const EdgeInsets.symmetric(vertical: 10),
+                  child: const Text('Metodo de Pago',
+                      style: TextStyle(fontSize: 18)),
                 ),
                 Container(
                   height: 65,
                   decoration: BoxDecoration(
-                    color: Colors.grey.withOpacity(0.5),
+                    color: ColorSelect.kColorDropdown,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   margin: const EdgeInsets.only(bottom: 25),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Container(
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                              // image: AssetImage('assets/images/tarjeta.png'),
                               image: (widget.userInfo.metodoPago![0].metodo ==
                                       'Debito')
                                   ? const AssetImage(
@@ -318,29 +294,32 @@ class _ConfirmarPedido extends State<ConfirmarPedido> {
                                   ),
                                 ),
                                 const Text(
-                                    'Los repartidores cercanos podran aceptar tu solicitud de pedido, podras cancelar tu pedido antes de tiempo para reclamar un rembolso.'),
+                                    'Los repartidores cercanos podran aceptar tu solicitud de pedido en unos minutos.'),
                                 const Text(
-                                    'Vea el mapa para localizar su posible repartidor.'),
+                                    'Vea el mapa para localizar su posible repartidor en su historial de pedidos.'),
                                 OutlinedButton(
                                   onPressed: () {
-                                    Navigator.push(
+                                    Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => Dashboard(
+                                        builder: (context) => HistorialUsuario(
                                             userInfo: widget.userInfo),
                                       ),
                                     );
                                   },
-                                  child: const Text(
-                                    'Regresar al Menu',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w400),
+                                  child: const Center(
+                                    child: Text(
+                                      'Ir al historial de pedidos',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w400),
+                                    ),
                                   ),
                                   style: OutlinedButton.styleFrom(
                                     minimumSize: Size(
-                                        MediaQuery.of(context).size.width, 40),
+                                        MediaQuery.of(context).size.width, 50),
                                     backgroundColor: ColorSelect.kPrimaryColor,
                                     shape: const RoundedRectangleBorder(
                                       borderRadius: BorderRadius.all(

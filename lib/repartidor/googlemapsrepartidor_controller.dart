@@ -1,9 +1,4 @@
-import 'dart:async';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-// import 'package:flutter/widgets.dart' show ChangeNotifier;
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
@@ -27,7 +22,6 @@ class GoogleMapsRepartidorController extends ChangeNotifier {
       PointLatLng(destinationLatitude, destinationLongitude),
       travelMode: TravelMode.driving,
     );
-    log(result.errorMessage.toString());
     polylineCoordinates.clear();
     if (result.points.isNotEmpty) {
       for (var point in result.points) {
@@ -45,14 +39,15 @@ class GoogleMapsRepartidorController extends ChangeNotifier {
     // Adding the polyline to the map
     _polylines[polylineId] = polyline;
     Set<Polyline>.of(_polylines.values);
-    log(polylines.length.toString());
     notifyListeners();
   }
 
-  final initialCameraPosition = const CameraPosition(
-    target: LatLng(16.7432391, -93.1025722),
-    zoom: 15,
-  );
+  CameraPosition ubicacionRepartidor(lat, long) {
+    return CameraPosition(
+      target: LatLng(lat, long),
+      zoom: 17,
+    );
+  }
 
   void onTap(position, name, color, description) {
     final markerdId = MarkerId(_markers.length.toString());

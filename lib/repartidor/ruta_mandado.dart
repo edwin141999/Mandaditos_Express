@@ -1,52 +1,139 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'dart:developer';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mandaditos_express/models/pedidoinfo.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
 import 'package:mandaditos_express/repartidor/googlemapsrepartidor_controller.dart';
-import 'package:mandaditos_express/repartidor/menu.dart';
+import 'package:mandaditos_express/repartidor/dashboard_repartidor.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 
-class RutaPedido extends StatefulWidget {
+class RutaMandado extends StatefulWidget {
   final PedidoElement pedidoInfo;
   final User userInfo;
-  const RutaPedido({Key? key, required this.pedidoInfo, required this.userInfo}) : super(key: key);
+  final String lat, long;
+  const RutaMandado({
+    Key? key,
+    required this.pedidoInfo,
+    required this.userInfo,
+    required this.lat,
+    required this.long,
+  }) : super(key: key);
 
   @override
-  State<RutaPedido> createState() => _RutaPedidoState();
+  State<RutaMandado> createState() => _RutaMandadoState();
 }
 
-class _RutaPedidoState extends State<RutaPedido> {
+class _RutaMandadoState extends State<RutaMandado> {
   final _controllerMap = GoogleMapsRepartidorController();
   final Completer<GoogleMapController> _controller = Completer();
+  late Timer timer;
   void _onMapCreated(GoogleMapController controller) {
+    timer = Timer.periodic(const Duration(seconds: 2), (timer) {
+      log('ACTUALIZANDO MAPA');
+      controller.moveCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: LatLng(
+              double.parse(latitud),
+              double.parse(longitud),
+            ),
+            zoom: 17,
+          ),
+        ),
+      );
+    });
     _controller.complete(controller);
   }
 
   Future<void> _disposeController() async {
     _controller.future.then((GoogleMapController controller) {
+      timer.cancel();
       controller.dispose();
     });
   }
 
   Future<void> entregarPedido() async {
-    var url = Uri.parse('http://54.163.243.254:81/users/entrega');
+    var url = Uri.parse('http://34.193.105.11/users/entrega');
     var reqBody = {};
     reqBody['id'] = widget.pedidoInfo.id;
-    final resp = await http.put(
+    await http.put(
       url,
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(reqBody),
     );
-    log(resp.body);
   }
+
+  Future<void> actualizarUbicacionRepartidor() async {
+    var url = Uri.parse('http://34.193.105.11/users/actualizarUbicacion');
+    var reqBody = {};
+    reqBody['id'] = widget.userInfo.datatype[0].id;
+    reqBody['lat'] = latitud;
+    reqBody['long'] = longitud;
+    await http.put(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(reqBody),
+    );
+  }
+
+  Future<Position> _getGeoLocationPosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      await Geolocator.openLocationSettings();
+      return Future.error('Location service are disabled');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permission are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions');
+    }
+
+    return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+  }
+
+  String address = 'search';
+  String location = 'Null';
+  String latitud = '0';
+  String longitud = '0';
+
+  Future<void> getAddressFromLatLong(Position position) async {
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(position.latitude, position.longitude);
+    Placemark place = placemarks[0];
+    address =
+        '${place.street}, ${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}';
+    location = 'Lat: ${position.latitude} - Long: ${position.longitude}';
+  }
+
+  void inicializarUbicacion() async {
+    Position position = await _getGeoLocationPosition();
+    latitud = position.latitude.toString();
+    longitud = position.longitude.toString();
+  }
+
+  late Timer timerRepartidor;
 
   @override
   void initState() {
+    //CLIENTE
     _controllerMap.onTap(
       LatLng(
         double.parse(widget.pedidoInfo.cliente.latitud),
@@ -58,6 +145,7 @@ class _RutaPedidoState extends State<RutaPedido> {
           ' ' +
           widget.pedidoInfo.cliente.users.lastName,
     );
+    //PEDIDO
     _controllerMap.onTap(
       LatLng(
         double.parse(widget.pedidoInfo.item.latitud),
@@ -67,13 +155,19 @@ class _RutaPedidoState extends State<RutaPedido> {
       double.parse('220'),
       widget.pedidoInfo.item.descripcion,
     );
-    setState(() {
-      _controllerMap.createPolylines(
-        double.parse(widget.pedidoInfo.item.latitud),
-        double.parse(widget.pedidoInfo.item.longitud),
-        double.parse(widget.pedidoInfo.cliente.latitud),
-        double.parse(widget.pedidoInfo.cliente.longitud),
-      );
+    // setState(() {
+    //   _controllerMap.createPolylines(
+    //     double.parse(widget.pedidoInfo.item.latitud),
+    //     double.parse(widget.pedidoInfo.item.longitud),
+    //     double.parse(widget.pedidoInfo.cliente.latitud),
+    //     double.parse(widget.pedidoInfo.cliente.longitud),
+    //   );
+    // });
+    // FUNCION PARA ACTUALIZAR LA UBICACION DEL REPARTIDOR
+    timerRepartidor =
+        Timer.periodic(const Duration(seconds: 2), (Timer t2) async {
+      inicializarUbicacion();
+      actualizarUbicacionRepartidor();
     });
 
     super.initState();
@@ -110,13 +204,9 @@ class _RutaPedidoState extends State<RutaPedido> {
                   child: GoogleMap(
                     markers: _controllerMap.markers,
                     onMapCreated: _onMapCreated,
-                    // initialCameraPosition: _controllerMap.initialCameraPosition,
-                    initialCameraPosition: CameraPosition(
-                      target: LatLng(
-                        double.parse(widget.pedidoInfo.item.latitud),
-                        double.parse(widget.pedidoInfo.item.longitud),
-                      ),
-                      zoom: 13,
+                    initialCameraPosition: _controllerMap.ubicacionRepartidor(
+                      double.parse(widget.lat),
+                      double.parse(widget.long),
                     ),
                     myLocationButtonEnabled: false,
                     polylines: _controllerMap.polylines,
@@ -145,10 +235,18 @@ class _RutaPedidoState extends State<RutaPedido> {
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                    'Acabas de entregar el pedido al cliente ${widget.pedidoInfo.cliente.users.firstName} ${widget.pedidoInfo.cliente.users.lastName}.'),
+                                    'Acabas de entregar el pedido a ${widget.pedidoInfo.cliente.users.firstName} ${widget.pedidoInfo.cliente.users.lastName}.'),
                                 OutlinedButton(
                                   onPressed: () {
-                                    menuM(userInfo: widget.userInfo);
+                                    _disposeController();
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            DashboardRepartidor(
+                                                userInfo: widget.userInfo),
+                                      ),
+                                    );
                                   },
                                   child: const Text(
                                     'Regresar al Menu',

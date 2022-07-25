@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:mandaditos_express/dashboard/dashboard_screen.dart';
+import 'package:mandaditos_express/cliente/dashboard_cliente.dart';
 import 'package:mandaditos_express/login/login_screen.dart';
 import 'package:mandaditos_express/metodos_pago/metodospago_screen.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
 
-class ProfileScreen extends StatefulWidget {
+class PerfilCliente extends StatefulWidget {
   final User userInfo;
-  const ProfileScreen({Key? key, required this.userInfo}) : super(key: key);
+  const PerfilCliente({Key? key, required this.userInfo}) : super(key: key);
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<PerfilCliente> createState() => _PerfilClienteState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _PerfilClienteState extends State<PerfilCliente> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,9 +21,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         elevation: 0,
         toolbarHeight: 223,
         automaticallyImplyLeading: false,
-        flexibleSpace: Image.asset(
-          'assets/images/profile_logo.png',
-          fit: BoxFit.contain,
+        flexibleSpace: SafeArea(
+          child: Image.asset('assets/images/profile_logo.png',
+              fit: BoxFit.contain),
         ),
         actions: [
           SizedBox(
@@ -36,7 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Image.asset('assets/images/icon_back_arrow.png',
                       scale: .8),
                   onTap: () {
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
@@ -73,7 +73,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     widget: widget,
                     image: 'assets/images/icon_tarjeta.png',
                     title: 'Metodos de pago',
-                    onTap: () => Navigator.push(
+                    onTap: () => Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
@@ -85,7 +85,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     widget: widget,
                     image: 'assets/images/icon_cerrar_sesion.png',
                     title: 'Cerrar sesión',
-                    onTap: () => Navigator.push(
+                    onTap: () => Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                           builder: (context) => const LoginScreen()),
@@ -110,7 +110,7 @@ class OpcionesPerfil extends StatelessWidget {
       required this.onTap})
       : super(key: key);
 
-  final ProfileScreen widget;
+  final PerfilCliente widget;
   final String image, title;
   final Function() onTap;
 

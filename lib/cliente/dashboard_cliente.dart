@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mandaditos_express/historial/usuario_historial.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:mandaditos_express/cliente/historial_usuario.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
-import 'package:mandaditos_express/pages/solicitarPedido.dart';
-import 'package:mandaditos_express/profile/profile.dart';
+import 'package:mandaditos_express/cliente/mandados/solicitar_pedido.dart';
+import 'package:mandaditos_express/cliente/perfil_cliente.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 
 class Dashboard extends StatefulWidget {
@@ -14,9 +15,6 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  var calles = [];
-
-  String callesValue = '';
   var textInfo = ['Solicitar un mandadito', 'Historial de pedidos'];
   var imgInfo = [
     'assets/images/icon_solicitar.png',
@@ -24,13 +22,48 @@ class _DashboardState extends State<Dashboard> {
   ];
   var colorInfo = [ColorSelect.kContainerGreen, ColorSelect.kContainerPink];
 
+  Future<Position> _getGeoLocationPosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      await Geolocator.openLocationSettings();
+      return Future.error('Location service are disabled');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permission are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions');
+    }
+
+    return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+  }
+
+  void inicializarUbicacion() async {
+    await _getGeoLocationPosition();
+  }
+
   @override
   void initState() {
-    for (var item in widget.userInfo.datatype) {
-      calles.add(item.direccion);
-    }
-    callesValue = widget.userInfo.datatype[0].direccion;
+    setState(() {
+      inicializarUbicacion();
+    });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -51,7 +84,7 @@ class _DashboardState extends State<Dashboard> {
                     color: Colors.black),
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return ProfileScreen(userInfo: widget.userInfo);
+                    return PerfilCliente(userInfo: widget.userInfo);
                   }));
                 },
               ),
@@ -81,27 +114,8 @@ class _DashboardState extends State<Dashboard> {
                           const Text('Tu Direccion Actual: ',
                               style: TextStyle(
                                   fontSize: 17, fontWeight: FontWeight.bold)),
-                          DropdownButton(
-                            items: calles.map((e) {
-                              return DropdownMenuItem(
-                                child: Text(e),
-                                value: e,
-                              );
-                            }).toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                callesValue = value.toString();
-                              });
-                            },
-                            value: callesValue,
-                            underline: Container(),
-                            isDense: true,
-                            icon: const Icon(
-                              Icons.keyboard_arrow_down,
-                              color: Colors.black,
-                              size: 20,
-                            ),
-                          ),
+                          Text('${widget.userInfo.datatype[0].direccion}',
+                              style: const TextStyle(fontSize: 17)),
                         ],
                       ),
                     ],
@@ -139,7 +153,8 @@ class _DashboardState extends State<Dashboard> {
                               onTap: () {
                                 Navigator.push(context,
                                     MaterialPageRoute(builder: (context) {
-                                  return const usuarioHitorial(title: 'Hola');
+                                  return HistorialUsuario(
+                                      userInfo: widget.userInfo);
                                 }));
                               },
                             ),

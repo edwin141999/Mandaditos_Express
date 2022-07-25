@@ -1,11 +1,13 @@
-import 'dart:developer';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:mandaditos_express/cliente/dashboard_cliente.dart';
 import 'package:mandaditos_express/models/iteminfo.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
-import 'package:mandaditos_express/pages/confirmarPedido.dart';
-import 'package:mandaditos_express/pages/googlemaps_controller.dart';
+import 'package:mandaditos_express/cliente/mandados/confirmar_pedido.dart';
+import 'package:mandaditos_express/cliente/mandados/googlemaps_controller.dart';
 
 //SERVER
 import 'package:http/http.dart' as http;
@@ -48,27 +50,59 @@ class _SolicitarPedido extends State<SolicitarPedido> {
   }
 
   Future<void> generarItem() async {
-    var url = Uri.parse('http://54.163.243.254:81/users/item');
+    var url = Uri.parse('http://34.193.105.11/users/item');
     var reqBody = {};
-    reqBody['tipo_producto'] = itemData.tipoProducto;
-    reqBody['recoger_ubicacion'] = itemData.recogerUbicacion;
-    reqBody['descripcion'] = itemData.descripcion;
+    if (itemData.recogerUbicacion != '' && itemData.descripcion != '') {
+      reqBody['recoger_ubicacion'] = itemData.recogerUbicacion;
+      reqBody['descripcion'] = itemData.descripcion;
+      reqBody['latitud'] = itemData.latitud;
+      reqBody['longitud'] = itemData.longitud;
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          duration: Duration(seconds: 3),
+          backgroundColor: Colors.red,
+          elevation: 1,
+          content: Text(
+            '¡Algunos campos estan vacios!',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+        ),
+      );
+    }
+
+    if (itemData.tipoProducto == 'Comida / Consumible' &&
+        itemData.precioProducto == '') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          duration: Duration(seconds: 3),
+          backgroundColor: Colors.red,
+          elevation: 1,
+          content: Text(
+            '¡Algunos campos estan vacios!',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+        ),
+      );
+    } else {
+      reqBody['tipo_producto'] = itemData.tipoProducto;
+    }
+
     reqBody['precio_producto'] = itemData.precioProducto;
-    reqBody['latitud'] = itemData.latitud;
-    reqBody['longitud'] = itemData.longitud;
     final resp = await http.post(url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(reqBody));
-    log(resp.body);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ConfirmarPedido(
-          item: itemInfoFromJson(resp.body),
-          userInfo: widget.userInfo,
+    if (resp.statusCode == 200) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ConfirmarPedido(
+              item: itemInfoFromJson(resp.body), userInfo: widget.userInfo),
         ),
-      ),
-    );
+      );
+    }
   }
 
   final Completer<GoogleMapController> _controller = Completer();
@@ -91,8 +125,6 @@ class _SolicitarPedido extends State<SolicitarPedido> {
   Future<void> getAddressFromLatLong(double latitude, double longitude) async {
     List<Placemark> placemarks =
         await placemarkFromCoordinates(latitude, longitude);
-    log('UBICACION');
-    // log(placemarks.toString());
     Placemark place = placemarks[0];
     address =
         '${place.street}, ${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}';
@@ -100,10 +132,7 @@ class _SolicitarPedido extends State<SolicitarPedido> {
     itemData.recogerUbicacion = place.street.toString();
     itemData.latitud = latitude.toString();
     itemData.longitud = longitude.toString();
-    setState(() {
-      log(address);
-      log(location);
-    });
+    setState(() {});
   }
 
   @override
@@ -114,7 +143,6 @@ class _SolicitarPedido extends State<SolicitarPedido> {
         for (var marker in _controllerMap.markers) {
           getAddressFromLatLong(
               marker.position.latitude, marker.position.longitude);
-          log(marker.position.toString());
         }
       });
     });
@@ -135,7 +163,11 @@ class _SolicitarPedido extends State<SolicitarPedido> {
         leading: TextButton(
           onPressed: () {
             FocusScope.of(context).unfocus();
-            Navigator.pop(context);
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        Dashboard(userInfo: widget.userInfo)));
           },
           child: Image.asset('assets/images/icon_back_arrow.png', scale: .8),
         ),
@@ -228,31 +260,36 @@ class _SolicitarPedido extends State<SolicitarPedido> {
                       ),
                     ],
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Precio del/los productos',
-                          style: TextStyle(fontSize: 18)),
-                      Container(
-                          height: 25,
-                          margin: const EdgeInsets.only(top: 20, bottom: 20),
-                          child: TextFormField(
-                            onSaved: (text) {
-                              itemData.precioProducto = text!;
-                            },
-                            style: const TextStyle(
-                                fontSize: 17, color: Colors.black),
-                            decoration: const InputDecoration(
-                                contentPadding: EdgeInsets.only(bottom: 14),
-                                focusedBorder: UnderlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Colors.black)),
-                                enabledBorder: UnderlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Colors.black))),
-                          )),
-                    ],
-                  ),
+                  (productValue == 'Comida / Consumible')
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Precio del los productos',
+                                style: TextStyle(fontSize: 18)),
+                            Container(
+                                height: 25,
+                                margin:
+                                    const EdgeInsets.only(top: 20, bottom: 20),
+                                child: TextFormField(
+                                  onSaved: (text) {
+                                    itemData.precioProducto = text!;
+                                  },
+                                  keyboardType: TextInputType.number,
+                                  style: const TextStyle(
+                                      fontSize: 17, color: Colors.black),
+                                  decoration: const InputDecoration(
+                                      contentPadding:
+                                          EdgeInsets.only(bottom: 14),
+                                      focusedBorder: UnderlineInputBorder(
+                                          borderSide:
+                                              BorderSide(color: Colors.black)),
+                                      enabledBorder: UnderlineInputBorder(
+                                          borderSide:
+                                              BorderSide(color: Colors.black))),
+                                )),
+                          ],
+                        )
+                      : Container(),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -295,6 +332,12 @@ class _SolicitarPedido extends State<SolicitarPedido> {
                           _controllerMap.initialCameraPosition,
                       myLocationButtonEnabled: false,
                       onTap: _controllerMap.onTap,
+                      gestureRecognizers: <
+                          Factory<OneSequenceGestureRecognizer>>{
+                        Factory<OneSequenceGestureRecognizer>(
+                          () => EagerGestureRecognizer(),
+                        )
+                      },
                     ),
                   ),
                   SizedBox(
