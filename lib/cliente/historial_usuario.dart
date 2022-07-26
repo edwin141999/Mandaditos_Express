@@ -54,7 +54,11 @@ class _HistorialUsuarioState extends State<HistorialUsuario> {
     var url = Uri.parse('http://34.193.105.11/users/mandadosCliente');
     var reqBody = {};
     reqBody['id'] = widget.userInfo.datatype[0].id;
-    var response = await http.post(url, body: jsonEncode(reqBody));
+    var response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(reqBody),
+    );
     pedidosCliente = PedidoCliente.fromJson(json.decode(response.body));
     return pedidosCliente;
   }
@@ -197,9 +201,9 @@ class _HistorialUsuarioState extends State<HistorialUsuario> {
                         return ListView.builder(
                           itemCount: snapshot.data!.pedidos.length,
                           itemBuilder: (BuildContext context, int index) {
-                            int total = int.parse(
+                            double total = double.parse(
                                     snapshot.data!.pedidos[index].subtotal) +
-                                int.parse(snapshot
+                                double.parse(snapshot
                                     .data!.pedidos[index].item.precioProducto);
                             return MuestraPedidos(
                               tipoProducto: snapshot
@@ -399,7 +403,7 @@ class MuestraPedidos extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '\$$subtotal.00',
+                  '\$$subtotal',
                   style:
                       const TextStyle(color: Color(0xff00D1FF), fontSize: 25),
                 )

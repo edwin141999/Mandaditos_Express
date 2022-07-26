@@ -205,8 +205,9 @@ class _ConfirmarMandadoState extends State<ConfirmarMandado> {
 
   @override
   Widget build(BuildContext context) {
-    int sumaTotal = int.parse(widget.pedidoInfo.subtotal) +
-        int.parse(widget.pedidoInfo.item.precioProducto);
+    double sumaTotal = double.parse(widget.pedidoInfo.subtotal) +
+        double.parse(widget.pedidoInfo.item.precioProducto);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(

@@ -133,9 +133,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       reqBody['password'] = userData.password;
       reqBody['phone_number'] = userData.phoneNumber;
       reqBody['user_type'] = userData.userType;
+      reqBody['direccion'] = userData.address;
     }
-
-    reqBody['direccion'] = userData.address;
     reqBody['latitud'] = userData.latitud;
     reqBody['longitud'] = userData.longitud;
     reqBody['city_drive'] = userData.cityDrive;
@@ -387,7 +386,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       context: context,
                                       builder: (ctx) => getAlertDialog(
                                           "Requisitos Minimos",
-                                          "1 Mayuscula,\n4 Minusculas,\n1 Numero,\n1 caracter especial",
+                                          "1 Mayuscula,\n5 Minusculas,\n1 Numero,\n1 caracter especial",
                                           ctx));
                                 },
                                 child: Image.asset('assets/images/info_svg.png',
@@ -410,7 +409,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       backgroundColor: Colors.red,
                                       elevation: 1,
                                       content: Text(
-                                        'Introduce una contraseña con 1 Mayuscula, 4 Minusculas,1 Numero,1 caracter especial!',
+                                        'Introduce una contraseña con 1 Mayuscula, 5 Minusculas,1 Numero,1 caracter especial!',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                             color: Colors.white,

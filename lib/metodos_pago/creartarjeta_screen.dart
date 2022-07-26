@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:mandaditos_express/metodos_pago/metodospago_screen.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
@@ -106,10 +104,9 @@ class _CreaTarjetaScreenState extends State<CreaTarjetaScreen> {
     reqBody['numero_tarjeta'] = data.numeroTarjeta;
     reqBody['year_expiracion'] = data.year;
     reqBody['nombre_banco'] = data.nombreBanco;
-    final resp = await http.post(url,
+    await http.post(url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(reqBody));
-    log(resp.body);
   }
 
   @override

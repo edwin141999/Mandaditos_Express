@@ -11,7 +11,6 @@ class GoogleMapsController extends ChangeNotifier {
   );
 
   void onTap(position) {
-    // log(position.toString());
     _markers.clear();
     final markerdId = MarkerId(_markers.length.toString());
     final marker = Marker(

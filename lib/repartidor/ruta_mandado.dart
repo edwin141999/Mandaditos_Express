@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
@@ -35,7 +34,6 @@ class _RutaMandadoState extends State<RutaMandado> {
   late Timer timer;
   void _onMapCreated(GoogleMapController controller) {
     timer = Timer.periodic(const Duration(seconds: 2), (timer) {
-      log('ACTUALIZANDO MAPA');
       controller.moveCamera(
         CameraUpdate.newCameraPosition(
           CameraPosition(

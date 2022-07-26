@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:mandaditos_express/metodos_pago/desencriptar.dart';
 import 'package:mandaditos_express/metodos_pago/metodospago_screen.dart';
@@ -101,24 +99,22 @@ class _EditarTarjetaState extends State<EditarTarjeta> {
     reqBody["nombre_tarjeta"] = data.nombreCompleto;
     reqBody["year_expiracion"] = data.year;
     reqBody["month_expiracion"] = data.mes;
-    final resp = await http.put(
+    await http.put(
       url,
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(reqBody),
     );
-    log(resp.body);
   }
 
   Future<void> deleteTarjeta() async {
     var url = Uri.parse('http://3.95.107.222/users/deleteTarjeta');
     var reqBody = {};
     reqBody["id"] = widget.tarjeta.id;
-    final resp = await http.delete(
+    await http.delete(
       url,
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(reqBody),
     );
-    log(resp.body);
   }
 
   @override
