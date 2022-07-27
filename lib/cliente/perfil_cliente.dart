@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mandaditos_express/cliente/dashboard_cliente.dart';
-import 'package:mandaditos_express/login/login_screen.dart';
-import 'package:mandaditos_express/metodos_pago/metodospago_screen.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
 
 class PerfilCliente extends StatefulWidget {
-  final User userInfo;
-  const PerfilCliente({Key? key, required this.userInfo}) : super(key: key);
+  const PerfilCliente({Key? key}) : super(key: key);
 
   @override
   State<PerfilCliente> createState() => _PerfilClienteState();
@@ -15,6 +11,8 @@ class PerfilCliente extends StatefulWidget {
 class _PerfilClienteState extends State<PerfilCliente> {
   @override
   Widget build(BuildContext context) {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final userInfo = arguments['user'] as User;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -36,19 +34,15 @@ class _PerfilClienteState extends State<PerfilCliente> {
                   child: Image.asset('assets/images/icon_back_arrow.png',
                       scale: .8),
                   onTap: () {
-                    Navigator.pushReplacement(
+                    Navigator.pushReplacementNamed(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            Dashboard(userInfo: widget.userInfo),
-                      ),
+                      '/cliente/dashboard',
+                      arguments: {'user': userInfo},
                     );
                   },
                 ),
                 Text(
-                  widget.userInfo.user.firstName +
-                      ' ' +
-                      widget.userInfo.user.lastName,
+                  userInfo.user.firstName + ' ' + userInfo.user.lastName,
                   style: const TextStyle(
                       color: Colors.grey,
                       fontSize: 22,
@@ -73,11 +67,10 @@ class _PerfilClienteState extends State<PerfilCliente> {
                     widget: widget,
                     image: 'assets/images/icon_tarjeta.png',
                     title: 'Metodos de pago',
-                    onTap: () => Navigator.pushReplacement(
+                    onTap: () => Navigator.pushReplacementNamed(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              MetodosPagoScreen(userInfo: widget.userInfo)),
+                      '/cliente/tarjetas',
+                      arguments: {'user': userInfo},
                     ),
                   ),
                   const SizedBox(height: 30),
@@ -85,11 +78,8 @@ class _PerfilClienteState extends State<PerfilCliente> {
                     widget: widget,
                     image: 'assets/images/icon_cerrar_sesion.png',
                     title: 'Cerrar sesión',
-                    onTap: () => Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const LoginScreen()),
-                    ),
+                    onTap: () =>
+                        Navigator.pushReplacementNamed(context, '/login'),
                   ),
                 ],
               ),

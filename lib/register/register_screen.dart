@@ -2,7 +2,6 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:mandaditos_express/login/login_screen.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 
 // SERVER
@@ -126,7 +125,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         userData.firstName != '' &&
         userData.lastName != '' &&
         userData.phoneNumber != '' &&
-        userData.userType != '') {
+        userData.userType != '' &&
+        userData.address != '') {
       reqBody['first_name'] = userData.firstName;
       reqBody['last_name'] = userData.lastName;
       reqBody['email'] = userData.email;
@@ -156,8 +156,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           ),
         );
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const LoginScreen()));
+        Navigator.pushReplacementNamed(context, '/login');
       }
     } catch (e) {
       showDialog(
@@ -180,8 +179,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 scale: .8, color: Colors.black),
             onPressed: () {
               FocusScope.of(context).unfocus();
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()));
+              Navigator.pushReplacementNamed(context, '/login');
             }),
       ),
       body: SafeArea(

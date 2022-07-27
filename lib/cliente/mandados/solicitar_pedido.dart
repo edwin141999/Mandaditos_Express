@@ -3,10 +3,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:mandaditos_express/cliente/dashboard_cliente.dart';
 import 'package:mandaditos_express/models/iteminfo.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
-import 'package:mandaditos_express/cliente/mandados/confirmar_pedido.dart';
 import 'package:mandaditos_express/cliente/mandados/googlemaps_controller.dart';
 
 //SERVER
@@ -28,8 +26,7 @@ class _ItemData {
 class Item extends _ItemData {}
 
 class SolicitarPedido extends StatefulWidget {
-  final User userInfo;
-  const SolicitarPedido({Key? key, required this.userInfo}) : super(key: key);
+  const SolicitarPedido({Key? key}) : super(key: key);
 
   @override
   State<SolicitarPedido> createState() => _SolicitarPedido();
@@ -50,6 +47,8 @@ class _SolicitarPedido extends State<SolicitarPedido> {
   }
 
   Future<void> generarItem() async {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final userInfo = arguments['user'] as User;
     var url = Uri.parse('http://34.193.105.11/users/item');
     var reqBody = {};
     if (itemData.recogerUbicacion != '' && itemData.descripcion != '') {
@@ -95,12 +94,17 @@ class _SolicitarPedido extends State<SolicitarPedido> {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(reqBody));
     if (resp.statusCode == 200) {
-      Navigator.pushReplacement(
+      Navigator.pushReplacementNamed(
         context,
-        MaterialPageRoute(
-          builder: (context) => ConfirmarPedido(
-              item: itemInfoFromJson(resp.body), userInfo: widget.userInfo),
-        ),
+        '/cliente/confirmarMandado',
+        arguments: {
+          'user': userInfo,
+          'item': itemInfoFromJson(resp.body),
+        },
+        // MaterialPageRoute(
+        //   builder: (context) => ConfirmarPedido(
+        //       item: itemInfoFromJson(resp.body), userInfo: userInfo),
+        // ),
       );
     }
   }
@@ -156,6 +160,8 @@ class _SolicitarPedido extends State<SolicitarPedido> {
 
   @override
   Widget build(BuildContext context) {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final userInfo = arguments['user'] as User;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -163,11 +169,11 @@ class _SolicitarPedido extends State<SolicitarPedido> {
         leading: TextButton(
           onPressed: () {
             FocusScope.of(context).unfocus();
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        Dashboard(userInfo: widget.userInfo)));
+            Navigator.pushReplacementNamed(
+              context,
+              '/cliente/dashboard',
+              arguments: {'user': userInfo},
+            );
           },
           child: Image.asset('assets/images/icon_back_arrow.png', scale: .8),
         ),

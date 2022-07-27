@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mandaditos_express/cliente/historial_usuario.dart';
 import 'package:mandaditos_express/models/iteminfo.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
@@ -10,13 +9,14 @@ import 'dart:convert';
 import 'dart:async';
 
 class ConfirmarPedido extends StatefulWidget {
-  final ItemInfo item;
-  final User userInfo;
-  const ConfirmarPedido({
-    Key? key,
-    required this.item,
-    required this.userInfo,
-  }) : super(key: key);
+  // final ItemInfo item;
+  // final User userInfo;
+  // const ConfirmarPedido({
+  //   Key? key,
+  //   required this.item,
+  //   required this.userInfo,
+  // }) : super(key: key);
+  const ConfirmarPedido({Key? key}) : super(key: key);
 
   @override
   State<ConfirmarPedido> createState() => _ConfirmarPedido();
@@ -24,12 +24,15 @@ class ConfirmarPedido extends StatefulWidget {
 
 class _ConfirmarPedido extends State<ConfirmarPedido> {
   Future<void> generarPedido() async {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final item = arguments['item'] as ItemInfo;
+    final userInfo = arguments['user'] as User;
     var url = Uri.parse('http://34.193.105.11/users/mandadito');
     var reqBody = {};
-    reqBody['envio_id'] = widget.item.item.id;
-    reqBody['cliente_id'] = widget.userInfo.datatype[0].id;
+    reqBody['envio_id'] = item.item.id;
+    reqBody['cliente_id'] = userInfo.datatype[0].id;
     reqBody['entrega_estimada'] = 30;
-    reqBody['metodo_pago'] = '${widget.userInfo.metodoPago![0].id}';
+    reqBody['metodo_pago'] = '${userInfo.metodoPago![0].id}';
     reqBody['subtotal'] = '50';
     await http.post(
       url,
@@ -40,6 +43,9 @@ class _ConfirmarPedido extends State<ConfirmarPedido> {
 
   @override
   Widget build(BuildContext context) {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final item = arguments['item'] as ItemInfo;
+    final userInfo = arguments['user'] as User;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -76,7 +82,7 @@ class _ConfirmarPedido extends State<ConfirmarPedido> {
                         ),
                         child: Container(
                           margin: const EdgeInsets.only(left: 10, top: 10),
-                          child: Text(widget.userInfo.datatype[0].direccion,
+                          child: Text(userInfo.datatype[0].direccion,
                               style: const TextStyle(fontSize: 16)),
                         ),
                       ),
@@ -149,7 +155,7 @@ class _ConfirmarPedido extends State<ConfirmarPedido> {
                                               padding: const EdgeInsets.only(
                                                   left: 5, top: 10),
                                               child: Text(
-                                                widget.item.item.descripcion,
+                                                item.item.descripcion,
                                                 textAlign: TextAlign.start,
                                                 style: const TextStyle(
                                                     color: Colors.black,
@@ -160,8 +166,7 @@ class _ConfirmarPedido extends State<ConfirmarPedido> {
                                               padding: const EdgeInsets.only(
                                                   right: 15, top: 10),
                                               child: Text(
-                                                widget.item.item
-                                                        .precioProducto +
+                                                item.item.precioProducto +
                                                     ' \$',
                                                 textAlign: TextAlign.end,
                                                 style: const TextStyle(
@@ -222,19 +227,19 @@ class _ConfirmarPedido extends State<ConfirmarPedido> {
                         height: 40,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                              image: (widget.userInfo.metodoPago![0].metodo ==
-                                      'Debito')
-                                  ? const AssetImage(
-                                      'assets/images/tarjeta.png')
-                                  : const AssetImage(
-                                      'assets/images/billete.png'),
+                              image:
+                                  (userInfo.metodoPago![0].metodo == 'Debito')
+                                      ? const AssetImage(
+                                          'assets/images/tarjeta.png')
+                                      : const AssetImage(
+                                          'assets/images/billete.png'),
                               fit: BoxFit.fill),
                         ),
                       ),
-                      Text(widget.userInfo.metodoPago![0].metodo,
+                      Text(userInfo.metodoPago![0].metodo,
                           style: const TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold)),
-                      (widget.userInfo.metodoPago![0].metodo == 'Efectivo')
+                      (userInfo.metodoPago![0].metodo == 'Efectivo')
                           ? const Text('')
                           : const Text('Termina en (3284)',
                               style: TextStyle(fontSize: 16))
@@ -299,12 +304,10 @@ class _ConfirmarPedido extends State<ConfirmarPedido> {
                                     'Vea el mapa para localizar su posible repartidor en su historial de pedidos.'),
                                 OutlinedButton(
                                   onPressed: () {
-                                    Navigator.pushReplacement(
+                                    Navigator.pushReplacementNamed(
                                       context,
-                                      MaterialPageRoute(
-                                        builder: (context) => HistorialUsuario(
-                                            userInfo: widget.userInfo),
-                                      ),
+                                      '/cliente/historialUsuario',
+                                      arguments: {'user': userInfo},
                                     );
                                   },
                                   child: const Center(

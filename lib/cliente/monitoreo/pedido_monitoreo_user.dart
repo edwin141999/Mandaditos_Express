@@ -6,7 +6,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:mandaditos_express/cliente/historial_usuario.dart';
 import 'package:mandaditos_express/models/pedidoclienteinfo.dart';
 import 'package:mandaditos_express/models/repartidorinfo.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
@@ -15,15 +14,16 @@ import 'package:mandaditos_express/cliente/monitoreo/monitoreo_controller.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 
 class PedidoMonitoreo extends StatefulWidget {
-  final User userInfo;
-  final Pedido pedidoInfo;
-  final RepartidorInfo repartidor;
-  const PedidoMonitoreo({
-    Key? key,
-    required this.userInfo,
-    required this.pedidoInfo,
-    required this.repartidor,
-  }) : super(key: key);
+  // final User userInfo;
+  // final Pedido pedidoInfo;
+  // final RepartidorInfo repartidor;
+  // const PedidoMonitoreo({
+  //   Key? key,
+  //   required this.userInfo,
+  //   required this.pedidoInfo,
+  //   required this.repartidor,
+  // }) : super(key: key);
+  const PedidoMonitoreo({Key? key}) : super(key: key);
 
   @override
   State<PedidoMonitoreo> createState() => _PedidoMonitoreostate();
@@ -49,37 +49,56 @@ class _PedidoMonitoreostate extends State<PedidoMonitoreo> {
   late Timer timerDatos;
   late Timer timerGPS;
 
+  void puntosIniciales() {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final userInfo = arguments['user'] as User;
+    final pedidoInfo = arguments['pedido'] as Pedido;
+    final repartidor = arguments['repartidor'] as RepartidorInfo;
+    _controller.onTap(
+      LatLng(double.parse(userInfo.datatype[0].latitud),
+          double.parse(userInfo.datatype[0].longitud)),
+      'Tu ubicación',
+      double.parse('133'),
+      userInfo.user.firstName + ' ' + userInfo.user.lastName,
+    );
+    _controller.onTap(
+      LatLng(double.parse(pedidoInfo.item.latitud),
+          double.parse(pedidoInfo.item.longitud)),
+      'Tu ${pedidoInfo.item.tipoProducto}',
+      double.parse('220'),
+      pedidoInfo.item.descripcion,
+    );
+    _controller.ubicacionRepartidor(
+      LatLng(
+        double.parse(repartidor.repartidor.latitud),
+        double.parse(repartidor.repartidor.longitud),
+      ),
+      'Repartidor',
+      '',
+    );
+  }
+
+  void repartidorInformacion() {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final repartidor = arguments['repartidor'] as RepartidorInfo;
+    datosRepartidor(repartidor.repartidor.id);
+  }
+
+  @override
+  void didChangeDependencies() {
+    puntosIniciales();
+    super.didChangeDependencies();
+  }
+
   @override
   void initState() {
     super.initState();
     _controller.addListener(() {
       setState(() {});
     });
-    _controller.onTap(
-      LatLng(double.parse(widget.userInfo.datatype[0].latitud),
-          double.parse(widget.userInfo.datatype[0].longitud)),
-      'Tu ubicación',
-      double.parse('133'),
-      widget.userInfo.user.firstName + ' ' + widget.userInfo.user.lastName,
-    );
-    _controller.onTap(
-      LatLng(double.parse(widget.pedidoInfo.item.latitud),
-          double.parse(widget.pedidoInfo.item.longitud)),
-      'Tu ${widget.pedidoInfo.item.tipoProducto}',
-      double.parse('220'),
-      widget.pedidoInfo.item.descripcion,
-    );
-    _controller.ubicacionRepartidor(
-      LatLng(
-        double.parse(widget.repartidor.repartidor.latitud),
-        double.parse(widget.repartidor.repartidor.longitud),
-      ),
-      'Repartidor',
-      '',
-    );
     setState(() {
       timerDatos = Timer.periodic(const Duration(seconds: 2), (Timer t2) async {
-        datosRepartidor(widget.repartidor.repartidor.id);
+        repartidorInformacion();
       });
       timerGPS = Timer.periodic(const Duration(seconds: 4), (Timer t) {
         _controller.ubicacionRepartidor(
@@ -109,6 +128,8 @@ class _PedidoMonitoreostate extends State<PedidoMonitoreo> {
 
   @override
   Widget build(BuildContext context) {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final userInfo = arguments['user'] as User;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -116,12 +137,12 @@ class _PedidoMonitoreostate extends State<PedidoMonitoreo> {
         toolbarHeight: 80,
         leading: TextButton(
           onPressed: () {
-            Navigator.pushReplacement(
+            Navigator.pushReplacementNamed(
               context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    HistorialUsuario(userInfo: widget.userInfo),
-              ),
+              '/cliente/historialUsuario',
+              arguments: {
+                'user': userInfo,
+              },
             );
           },
           child: Image.asset('assets/images/icon_back_arrow.png', scale: .8),
@@ -152,8 +173,8 @@ class _PedidoMonitoreostate extends State<PedidoMonitoreo> {
             child: GoogleMap(
               onMapCreated: _controller.onMapCreated,
               initialCameraPosition: _controller.ubicacionCliente(
-                double.parse(widget.userInfo.datatype[0].latitud),
-                double.parse(widget.userInfo.datatype[0].longitud),
+                double.parse(userInfo.datatype[0].latitud),
+                double.parse(userInfo.datatype[0].longitud),
               ),
               markers: _controller.markers,
               myLocationEnabled: true,

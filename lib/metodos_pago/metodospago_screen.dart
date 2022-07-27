@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mandaditos_express/metodos_pago/desencriptar.dart';
-import 'package:mandaditos_express/metodos_pago/editartarjeta_screen.dart';
-import 'package:mandaditos_express/models/tarjetasInfo.dart';
+import 'package:mandaditos_express/models/tarjetasinfo.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
-import 'package:mandaditos_express/cliente/perfil_cliente.dart';
-import 'creartarjeta_screen.dart';
 
 // SERVER
 import 'package:http/http.dart' as http;
@@ -12,8 +9,7 @@ import 'dart:convert';
 import 'dart:async';
 
 class MetodosPagoScreen extends StatefulWidget {
-  final User userInfo;
-  const MetodosPagoScreen({Key? key, required this.userInfo}) : super(key: key);
+  const MetodosPagoScreen({Key? key}) : super(key: key);
 
   @override
   State<MetodosPagoScreen> createState() => _MetodosPagoScreenState();
@@ -41,9 +37,11 @@ class _MetodosPagoScreenState extends State<MetodosPagoScreen> {
   var nombreBanco = [];
 
   Future<TarjetasInfo> getTarjetasCliente() async {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final userInfo = arguments['user'] as User;
     var url = Uri.parse('http://3.95.107.222/users/getTarjetas');
     var reqBody = {};
-    reqBody['user_id'] = widget.userInfo.user.id;
+    reqBody['user_id'] = userInfo.user.id;
     final resp = await http.post(url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(reqBody));
@@ -62,7 +60,6 @@ class _MetodosPagoScreenState extends State<MetodosPagoScreen> {
 
   @override
   void initState() {
-    getTarjetasCliente();
     super.initState();
   }
 
@@ -73,6 +70,8 @@ class _MetodosPagoScreenState extends State<MetodosPagoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final userInfo = arguments['user'] as User;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Metodos de Pago',
@@ -85,12 +84,11 @@ class _MetodosPagoScreenState extends State<MetodosPagoScreen> {
             icon: Image.asset('assets/images/icon_back_arrow.png',
                 scale: .8, color: Colors.white),
             onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => PerfilCliente(
-                            userInfo: widget.userInfo,
-                          )));
+              Navigator.pushReplacementNamed(
+                context,
+                '/cliente/perfil',
+                arguments: {'user': userInfo},
+              );
             }),
       ),
       body: SafeArea(
@@ -99,15 +97,12 @@ class _MetodosPagoScreenState extends State<MetodosPagoScreen> {
             const FondoAzul(),
             const FondoBlanco(),
             SizedBox(
-              // height: MediaQuery.of(context).size.height,
-              // height: double.infinity,
               width: double.infinity,
               child: Column(
                 children: [
-                  BotonAgregar(userInfo: widget.userInfo),
+                  BotonAgregar(userInfo: userInfo),
                   Expanded(
                     child: SizedBox(
-                      // height: MediaQuery.of(context).size.height * .758,
                       height: MediaQuery.of(context).size.height,
                       width: MediaQuery.of(context).size.height * 0.26,
                       child: FutureBuilder(
@@ -127,14 +122,14 @@ class _MetodosPagoScreenState extends State<MetodosPagoScreen> {
                                       color: coloresBanco[0],
                                       image: imagenesBanco[0],
                                       tarjeta: snapshot.data!.tarjetas[index],
-                                      userInfo: widget.userInfo);
+                                      userInfo: userInfo);
                                 }
                                 if (nombreBanco[index] == 'Banamex') {
                                   return BotonTarjeta(
                                     color: coloresBanco[1],
                                     image: imagenesBanco[1],
                                     tarjeta: snapshot.data!.tarjetas[index],
-                                    userInfo: widget.userInfo,
+                                    userInfo: userInfo,
                                   );
                                 }
                                 if (nombreBanco[index] == 'Santander') {
@@ -142,28 +137,28 @@ class _MetodosPagoScreenState extends State<MetodosPagoScreen> {
                                       color: coloresBanco[2],
                                       image: imagenesBanco[2],
                                       tarjeta: snapshot.data!.tarjetas[index],
-                                      userInfo: widget.userInfo);
+                                      userInfo: userInfo);
                                 }
                                 if (nombreBanco[index] == 'Banorte') {
                                   return BotonTarjeta(
                                       color: coloresBanco[3],
                                       image: imagenesBanco[3],
                                       tarjeta: snapshot.data!.tarjetas[index],
-                                      userInfo: widget.userInfo);
+                                      userInfo: userInfo);
                                 }
                                 if (nombreBanco[index] == 'HSBC') {
                                   return BotonTarjeta(
                                       color: coloresBanco[4],
                                       image: imagenesBanco[4],
                                       tarjeta: snapshot.data!.tarjetas[index],
-                                      userInfo: widget.userInfo);
+                                      userInfo: userInfo);
                                 }
                                 if (nombreBanco[index] == 'Scotiabank') {
                                   return BotonTarjeta(
                                       color: coloresBanco[5],
                                       image: imagenesBanco[5],
                                       tarjeta: snapshot.data!.tarjetas[index],
-                                      userInfo: widget.userInfo);
+                                      userInfo: userInfo);
                                 } else {
                                   return const BotonTarjeta(
                                       color: Color(0xff83DC4E), image: '');
@@ -221,14 +216,15 @@ class BotonTarjeta extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         image != ''
-            ? Navigator.push(
+            ? Navigator.pushReplacementNamed(
                 context,
-                MaterialPageRoute(
-                    builder: (context) => EditarTarjeta(
-                        colorTarjeta: color,
-                        imageTarjeta: image,
-                        tarjeta: tarjeta,
-                        userInfo: userInfo)),
+                '/cliente/editarTarjeta',
+                arguments: {
+                  'user': userInfo,
+                  'tarjeta': tarjeta,
+                  'imageTarjeta': image,
+                  'colorTarjeta': color,
+                },
               )
             : null;
       },
@@ -294,10 +290,11 @@ class BotonAgregar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => CreaTarjetaScreen(userInfo: userInfo))),
+      onTap: () => Navigator.pushReplacementNamed(
+        context,
+        '/cliente/agregartarjeta',
+        arguments: {'user': userInfo},
+      ),
       child: Container(
         height: 50,
         width: MediaQuery.of(context).size.width * 0.5,

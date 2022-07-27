@@ -9,20 +9,10 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mandaditos_express/models/pedidoinfo.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
 import 'package:mandaditos_express/repartidor/googlemapsrepartidor_controller.dart';
-import 'package:mandaditos_express/repartidor/dashboard_repartidor.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 
 class RutaMandado extends StatefulWidget {
-  final PedidoElement pedidoInfo;
-  final User userInfo;
-  final String lat, long;
-  const RutaMandado({
-    Key? key,
-    required this.pedidoInfo,
-    required this.userInfo,
-    required this.lat,
-    required this.long,
-  }) : super(key: key);
+  const RutaMandado({Key? key}) : super(key: key);
 
   @override
   State<RutaMandado> createState() => _RutaMandadoState();
@@ -57,9 +47,11 @@ class _RutaMandadoState extends State<RutaMandado> {
   }
 
   Future<void> entregarPedido() async {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final pedidoInfo = arguments['pedido'] as PedidoElement;
     var url = Uri.parse('http://34.193.105.11/users/entrega');
     var reqBody = {};
-    reqBody['id'] = widget.pedidoInfo.id;
+    reqBody['id'] = pedidoInfo.id;
     await http.put(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -68,9 +60,11 @@ class _RutaMandadoState extends State<RutaMandado> {
   }
 
   Future<void> actualizarUbicacionRepartidor() async {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final userInfo = arguments['user'] as User;
     var url = Uri.parse('http://34.193.105.11/users/actualizarUbicacion');
     var reqBody = {};
-    reqBody['id'] = widget.userInfo.datatype[0].id;
+    reqBody['id'] = userInfo.datatype[0].id;
     reqBody['lat'] = latitud;
     reqBody['long'] = longitud;
     await http.put(
@@ -129,45 +123,47 @@ class _RutaMandadoState extends State<RutaMandado> {
 
   late Timer timerRepartidor;
 
-  @override
-  void initState() {
+  void mostrarPuntos() {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final pedidoInfo = arguments['pedido'] as PedidoElement;
     //CLIENTE
     _controllerMap.onTap(
       LatLng(
-        double.parse(widget.pedidoInfo.cliente.latitud),
-        double.parse(widget.pedidoInfo.cliente.longitud),
+        double.parse(pedidoInfo.cliente.latitud),
+        double.parse(pedidoInfo.cliente.longitud),
       ),
       'Cliente',
       double.parse('133'),
-      widget.pedidoInfo.cliente.users.firstName +
+      pedidoInfo.cliente.users.firstName +
           ' ' +
-          widget.pedidoInfo.cliente.users.lastName,
+          pedidoInfo.cliente.users.lastName,
     );
     //PEDIDO
     _controllerMap.onTap(
       LatLng(
-        double.parse(widget.pedidoInfo.item.latitud),
-        double.parse(widget.pedidoInfo.item.longitud),
+        double.parse(pedidoInfo.item.latitud),
+        double.parse(pedidoInfo.item.longitud),
       ),
       'Pedido',
       double.parse('220'),
-      widget.pedidoInfo.item.descripcion,
+      pedidoInfo.item.descripcion,
     );
-    // setState(() {
-    //   _controllerMap.createPolylines(
-    //     double.parse(widget.pedidoInfo.item.latitud),
-    //     double.parse(widget.pedidoInfo.item.longitud),
-    //     double.parse(widget.pedidoInfo.cliente.latitud),
-    //     double.parse(widget.pedidoInfo.cliente.longitud),
-    //   );
-    // });
+  }
+
+  @override
+  void didChangeDependencies() {
+    mostrarPuntos();
+    super.didChangeDependencies();
+  }
+
+  @override
+  void initState() {
     // FUNCION PARA ACTUALIZAR LA UBICACION DEL REPARTIDOR
     timerRepartidor =
         Timer.periodic(const Duration(seconds: 2), (Timer t2) async {
       inicializarUbicacion();
       actualizarUbicacionRepartidor();
     });
-
     super.initState();
   }
 
@@ -179,6 +175,11 @@ class _RutaMandadoState extends State<RutaMandado> {
 
   @override
   Widget build(BuildContext context) {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final pedidoInfo = arguments['pedido'] as PedidoElement;
+    final userInfo = arguments['user'] as User;
+    final lat = arguments['lat'];
+    final long = arguments['long'];
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -203,8 +204,8 @@ class _RutaMandadoState extends State<RutaMandado> {
                     markers: _controllerMap.markers,
                     onMapCreated: _onMapCreated,
                     initialCameraPosition: _controllerMap.ubicacionRepartidor(
-                      double.parse(widget.lat),
-                      double.parse(widget.long),
+                      double.parse(lat),
+                      double.parse(long),
                     ),
                     myLocationButtonEnabled: false,
                     polylines: _controllerMap.polylines,
@@ -233,17 +234,14 @@ class _RutaMandadoState extends State<RutaMandado> {
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                    'Acabas de entregar el pedido a ${widget.pedidoInfo.cliente.users.firstName} ${widget.pedidoInfo.cliente.users.lastName}.'),
+                                    'Acabas de entregar el pedido a ${pedidoInfo.cliente.users.firstName} ${pedidoInfo.cliente.users.lastName}.'),
                                 OutlinedButton(
                                   onPressed: () {
                                     _disposeController();
-                                    Navigator.pushReplacement(
+                                    Navigator.pushReplacementNamed(
                                       context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            DashboardRepartidor(
-                                                userInfo: widget.userInfo),
-                                      ),
+                                      '/repartidor/dashboard',
+                                      arguments: {'user': userInfo},
                                     );
                                   },
                                   child: const Text(
