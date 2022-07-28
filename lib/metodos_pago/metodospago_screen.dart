@@ -39,7 +39,7 @@ class _MetodosPagoScreenState extends State<MetodosPagoScreen> {
   Future<TarjetasInfo> getTarjetasCliente() async {
     final arguments = ModalRoute.of(context)!.settings.arguments as Map;
     final userInfo = arguments['user'] as User;
-    var url = Uri.parse('http://3.95.107.222/users/getTarjetas');
+    var url = Uri.parse('http://3.88.123.192/users/getTarjetas');
     var reqBody = {};
     reqBody['user_id'] = userInfo.user.id;
     final resp = await http.post(url,

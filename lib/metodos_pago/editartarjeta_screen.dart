@@ -70,11 +70,34 @@ class _EditarTarjetaState extends State<EditarTarjeta> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   void updateTarjeta() {
-    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
-    final userInfo = arguments['user'] as User;
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       editarTarjeta();
+    }
+  }
+
+  void eliminarTarjeta() {
+    deleteTarjeta();
+  }
+
+  EditCard data = EditCard();
+
+  Future<void> editarTarjeta() async {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final tarjeta = arguments['tarjeta'] as Tarjeta;
+    final userInfo = arguments['user'] as User;
+    var url = Uri.parse('http://3.88.123.192/users/updateTarjeta');
+    var reqBody = {};
+    reqBody["id"] = tarjeta.id;
+    reqBody["nombre_tarjeta"] = data.nombreCompleto;
+    reqBody["year_expiracion"] = data.year;
+    reqBody["month_expiracion"] = data.mes;
+    final resp = await http.put(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(reqBody),
+    );
+    if (resp.statusCode == 200) {
       Navigator.pushReplacementNamed(
         context,
         '/cliente/tarjetas',
@@ -83,46 +106,25 @@ class _EditarTarjetaState extends State<EditarTarjeta> {
     }
   }
 
-  void eliminarTarjeta() {
-    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
-    final userInfo = arguments['user'] as User;
-    deleteTarjeta();
-    Navigator.pushReplacementNamed(
-      context,
-      '/cliente/tarjetas',
-      arguments: {'user': userInfo},
-    );
-  }
-
-  EditCard data = EditCard();
-
-  Future<void> editarTarjeta() async {
-    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
-    final tarjeta = arguments['tarjeta'] as Tarjeta;
-    var url = Uri.parse('http://3.95.107.222/users/updateTarjeta');
-    var reqBody = {};
-    reqBody["id"] = tarjeta.id;
-    reqBody["nombre_tarjeta"] = data.nombreCompleto;
-    reqBody["year_expiracion"] = data.year;
-    reqBody["month_expiracion"] = data.mes;
-    await http.put(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(reqBody),
-    );
-  }
-
   Future<void> deleteTarjeta() async {
     final arguments = ModalRoute.of(context)!.settings.arguments as Map;
     final tarjeta = arguments['tarjeta'] as Tarjeta;
-    var url = Uri.parse('http://3.95.107.222/users/deleteTarjeta');
+    final userInfo = arguments['user'] as User;
+    var url = Uri.parse('http://3.88.123.192/users/deleteTarjeta');
     var reqBody = {};
     reqBody["id"] = tarjeta.id;
-    await http.delete(
+    final resp = await http.delete(
       url,
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(reqBody),
     );
+    if (resp.statusCode == 200) {
+      Navigator.pushReplacementNamed(
+        context,
+        '/cliente/tarjetas',
+        arguments: {'user': userInfo},
+      );
+    }
   }
 
   @override
@@ -144,19 +146,6 @@ class _EditarTarjetaState extends State<EditarTarjeta> {
 
   @override
   void initState() {
-    // final arguments = ModalRoute.of(context)!.settings.arguments as Map;
-    // log(arguments.toString());
-    // final tarjeta = arguments['tarjeta'] as Tarjeta;
-    // mesValue = desencriptar(tarjeta.monthExpiracion);
-    // yearValue = desencriptar(tarjeta.yearExpiracion);
-    // nameValue = tarjeta.nombreTarjeta;
-    // List reversed = desencriptar(tarjeta.numeroTarjeta)
-    //     .replaceAll(" ", "")
-    //     .split('')
-    //     .reversed
-    //     .toList();
-    // var list = reversed.sublist(0, 4).reversed.toList();
-    // last4Value = list.join();
     super.initState();
   }
 
@@ -271,14 +260,14 @@ class _EditarTarjetaState extends State<EditarTarjeta> {
                                     Container(
                                       height: 40,
                                       width: MediaQuery.of(context).size.width *
-                                          0.82,
+                                          .8,
                                       margin: const EdgeInsets.only(bottom: 30),
                                       child: Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceAround,
                                         children: [
                                           Container(
-                                            width: 150,
+                                            width: 100,
                                             decoration: const BoxDecoration(
                                               color: Color(0xffEEEEEE),
                                               borderRadius: BorderRadius.all(
@@ -287,21 +276,20 @@ class _EditarTarjetaState extends State<EditarTarjeta> {
                                             child: Container(
                                               margin:
                                                   const EdgeInsets.symmetric(
-                                                      horizontal: 15),
+                                                      horizontal: 5),
                                               child: DropdownButtonFormField(
-                                                items: mesNumero.map((e) {
-                                                  return DropdownMenuItem(
-                                                    child: Text(
-                                                      e,
-                                                      style: const TextStyle(
-                                                          fontSize: 18),
-                                                    ),
-                                                    value: e,
-                                                    // onTap: () {
-                                                    //   mesValue = e;
-                                                    // },
-                                                  );
-                                                }).toList(),
+                                                items: mesNumero.map(
+                                                  (e) {
+                                                    return DropdownMenuItem(
+                                                      child: Text(
+                                                        e,
+                                                        style: const TextStyle(
+                                                            fontSize: 18),
+                                                      ),
+                                                      value: e,
+                                                    );
+                                                  },
+                                                ).toList(),
                                                 onChanged: (value) {
                                                   setState(() {
                                                     mesValue = value.toString();
@@ -320,20 +308,16 @@ class _EditarTarjetaState extends State<EditarTarjeta> {
                                                       borderSide:
                                                           BorderSide.none),
                                                 ),
-                                                icon: Container(
-                                                  margin: const EdgeInsets.only(
-                                                      left: 70),
-                                                  child: const Icon(
-                                                    Icons.keyboard_arrow_down,
-                                                    color: Colors.black,
-                                                    size: 25,
-                                                  ),
+                                                icon: const Icon(
+                                                  Icons.keyboard_arrow_down,
+                                                  color: Colors.black,
+                                                  size: 25,
                                                 ),
                                               ),
                                             ),
                                           ),
                                           Container(
-                                            width: 150,
+                                            width: 100,
                                             decoration: const BoxDecoration(
                                               color: Color(0xffEEEEEE),
                                               borderRadius: BorderRadius.all(
@@ -342,7 +326,7 @@ class _EditarTarjetaState extends State<EditarTarjeta> {
                                             child: Container(
                                               margin:
                                                   const EdgeInsets.symmetric(
-                                                      horizontal: 15),
+                                                      horizontal: 5),
                                               child: DropdownButtonFormField(
                                                 items: yearNumero.map((e) {
                                                   return DropdownMenuItem(
@@ -373,14 +357,10 @@ class _EditarTarjetaState extends State<EditarTarjeta> {
                                                       borderSide:
                                                           BorderSide.none),
                                                 ),
-                                                icon: Container(
-                                                  margin: const EdgeInsets.only(
-                                                      left: 50),
-                                                  child: const Icon(
-                                                    Icons.keyboard_arrow_down,
-                                                    color: Colors.black,
-                                                    size: 25,
-                                                  ),
+                                                icon: const Icon(
+                                                  Icons.keyboard_arrow_down,
+                                                  color: Colors.black,
+                                                  size: 25,
                                                 ),
                                               ),
                                             ),

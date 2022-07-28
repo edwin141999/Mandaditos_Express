@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
 
@@ -78,16 +80,9 @@ class _CreaTarjetaScreenState extends State<CreaTarjetaScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   void guardarTarjeta() {
-    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
-    final userInfo = arguments['user'] as User;
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       crearTarjeta();
-      Navigator.pushReplacementNamed(
-        context,
-        '/cliente/tarjetas',
-        arguments: {'user': userInfo},
-      );
     }
   }
 
@@ -96,18 +91,42 @@ class _CreaTarjetaScreenState extends State<CreaTarjetaScreen> {
   Future<void> crearTarjeta() async {
     final arguments = ModalRoute.of(context)!.settings.arguments as Map;
     final userInfo = arguments['user'] as User;
-    var url = Uri.parse('http://3.95.107.222/users/createTarjeta');
+    var url = Uri.parse('http://3.88.123.192/users/createTarjeta');
     var reqBody = {};
+    if (data.cvv != '' &&
+        data.nombreCompleto != '' &&
+        data.numeroTarjeta != '') {
+      reqBody['cvv'] = data.cvv;
+      reqBody['nombre_tarjeta'] = data.nombreCompleto;
+      reqBody['numero_tarjeta'] = data.numeroTarjeta;
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          duration: Duration(seconds: 2),
+          backgroundColor: Colors.red,
+          elevation: 1,
+          content: Text(
+            'Te fatan campos por rellenar!',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+        ),
+      );
+    }
     reqBody['user_id'] = userInfo.user.id;
-    reqBody['cvv'] = data.cvv;
     reqBody['month_expiracion'] = data.mes;
-    reqBody['nombre_tarjeta'] = data.nombreCompleto;
-    reqBody['numero_tarjeta'] = data.numeroTarjeta;
     reqBody['year_expiracion'] = data.year;
     reqBody['nombre_banco'] = data.nombreBanco;
-    await http.post(url,
+    final resp = await http.post(url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(reqBody));
+    if (resp.statusCode == 200) {
+      Navigator.pushReplacementNamed(
+        context,
+        '/cliente/tarjetas',
+        arguments: {'user': userInfo},
+      );
+    }
   }
 
   @override
