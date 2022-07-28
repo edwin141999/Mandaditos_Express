@@ -40,7 +40,6 @@ dependencies:
     flutter_phone_direct_caller: ^2.1.1
     geocoding: ^2.0.4
     font_awesome_flutter: ^10.1.0
-    in_app_update: ^3.0.0
 
 dev_dependencies:
     flutter_test:

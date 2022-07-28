@@ -49,9 +49,7 @@ class _ConfirmarMandadoState extends State<ConfirmarMandado> {
   Future<void> getTarjeta() async {
     final arguments = ModalRoute.of(context)!.settings.arguments as Map;
     final pedidoInfo = arguments['pedido'] as PedidoElement;
-    var url = Uri.parse('http://3.95.107.222/users/getTarjeta');
-    // var url = Uri.parse(
-    //     'http://balanceadorpagos-1548156697.us-east-1.elb.amazonaws.com/users/getTarjeta');
+    var url = Uri.parse('http://3.88.123.192/users/getTarjeta');
     var reqBody = {};
     reqBody['id'] = int.parse(pedidoInfo.metodoPago);
     final resp = await http.post(

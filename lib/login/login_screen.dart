@@ -2,7 +2,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
-import 'package:in_app_update/in_app_update.dart';
 
 // SERVER
 import 'package:http/http.dart' as http;
@@ -53,30 +52,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   UserData userData = UserData();
 
-  //UPDATE APP
-  AppUpdateInfo? _updateInfo;
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-  final bool _flexibleUpdateAvailable = false;
-
-  Future<void> checkForUpdate() async {
-    InAppUpdate.checkForUpdate()
-        .then((info) => {
-              setState(() {
-                _updateInfo = info;
-              })
-            })
-        .catchError((e) {
-      showSnack(e.toString());
-    });
-  }
-
-  void showSnack(String text) {
-    if (_scaffoldKey.currentContext != null) {
-      ScaffoldMessenger.of(_scaffoldKey.currentContext!)
-          .showSnackBar(SnackBar(content: Text(text)));
-    }
-  }
-
   void submit() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
@@ -91,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> loginwithDB() async {
-    var url = Uri.parse('http://35.171.142.223/users/login');
+    var url = Uri.parse('http://44.201.202.138/users/login');
     return await Future.delayed(
         const Duration(seconds: 2),
         () => {
