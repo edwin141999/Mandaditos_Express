@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1057042117300",
+    "project_id": "mandaditos-express-1c300",
+    "storage_bucket": "mandaditos-express-1c300.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1057042117300:android:1c11a7d89048aefc239de1",
+        "android_client_info": {
+          "package_name": "com.mandaditos_express"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1057042117300-on30bfn3dsifsftf668o9shvhr9o9h8v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCyJ3vrJeRborj-Svcj9QkWUFWfh_nKVfo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1057042117300-on30bfn3dsifsftf668o9shvhr9o9h8v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
