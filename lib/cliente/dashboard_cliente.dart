@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:mandaditos_express/cliente/historial_usuario.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
-import 'package:mandaditos_express/cliente/mandados/solicitar_pedido.dart';
-import 'package:mandaditos_express/cliente/perfil_cliente.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 
 class Dashboard extends StatefulWidget {
-  final User userInfo;
-  const Dashboard({Key? key, required this.userInfo}) : super(key: key);
+  const Dashboard({Key? key}) : super(key: key);
 
   @override
   State<Dashboard> createState() => _DashboardState();
@@ -68,6 +64,8 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final userInfo = arguments['user'] as User;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -83,9 +81,11 @@ class _DashboardState extends State<Dashboard> {
                 child: Image.asset('assets/images/icon_profile.png',
                     color: Colors.black),
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return PerfilCliente(userInfo: widget.userInfo);
-                  }));
+                  Navigator.pushReplacementNamed(
+                    context,
+                    '/cliente/perfil',
+                    arguments: {'user': userInfo},
+                  );
                 },
               ),
             ),
@@ -106,7 +106,7 @@ class _DashboardState extends State<Dashboard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Hola ${widget.userInfo.user.firstName}!',
+                        'Hola ${userInfo.user.firstName}!',
                         style: const TextStyle(fontSize: 22),
                       ),
                       Row(
@@ -114,7 +114,7 @@ class _DashboardState extends State<Dashboard> {
                           const Text('Tu Direccion Actual: ',
                               style: TextStyle(
                                   fontSize: 17, fontWeight: FontWeight.bold)),
-                          Text('${widget.userInfo.datatype[0].direccion}',
+                          Text('${userInfo.datatype[0].direccion}',
                               style: const TextStyle(fontSize: 17)),
                         ],
                       ),
@@ -139,11 +139,11 @@ class _DashboardState extends State<Dashboard> {
                               text: textInfo[0],
                               colorContainer: colorInfo[0],
                               onTap: () {
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: (context) {
-                                  return SolicitarPedido(
-                                      userInfo: widget.userInfo);
-                                }));
+                                Navigator.pushReplacementNamed(
+                                  context,
+                                  '/cliente/solictarMandado',
+                                  arguments: {'user': userInfo},
+                                );
                               },
                             ),
                             AccionesContainer(
@@ -151,11 +151,11 @@ class _DashboardState extends State<Dashboard> {
                               text: textInfo[1],
                               colorContainer: colorInfo[1],
                               onTap: () {
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: (context) {
-                                  return HistorialUsuario(
-                                      userInfo: widget.userInfo);
-                                }));
+                                Navigator.pushReplacementNamed(
+                                  context,
+                                  '/cliente/historialUsuario',
+                                  arguments: {'user': userInfo},
+                                );
                               },
                             ),
                           ],

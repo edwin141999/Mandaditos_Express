@@ -5,14 +5,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:mandaditos_express/models/pedidoinfo.dart';
 import 'package:http/http.dart' as http;
 import 'package:mandaditos_express/models/userinfo.dart';
-import 'package:mandaditos_express/repartidor/confirmar_mandado.dart';
-import 'package:mandaditos_express/repartidor/dashboard_repartidor.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 
 class MandadosDisponibles extends StatefulWidget {
-  final User userInfo;
-  const MandadosDisponibles({Key? key, required this.userInfo})
-      : super(key: key);
+  const MandadosDisponibles({Key? key}) : super(key: key);
 
   @override
   State<MandadosDisponibles> createState() => _MandadosDisponiblesState();
@@ -88,6 +84,8 @@ class _MandadosDisponiblesState extends State<MandadosDisponibles> {
 
   @override
   Widget build(BuildContext context) {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final userInfo = arguments['user'] as User;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -96,12 +94,10 @@ class _MandadosDisponiblesState extends State<MandadosDisponibles> {
         leading: TextButton(
           onPressed: () {
             FocusScope.of(context).unfocus();
-            Navigator.pushReplacement(
+            Navigator.pushReplacementNamed(
               context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    DashboardRepartidor(userInfo: widget.userInfo),
-              ),
+              '/repartidor/dashboard',
+              arguments: {'user': userInfo},
             );
           },
           child: Image.asset('assets/images/icon_back_arrow.png', scale: .8),
@@ -119,7 +115,7 @@ class _MandadosDisponiblesState extends State<MandadosDisponibles> {
             return const Center(child: CircularProgressIndicator());
           } else {
             return _ListaPedidos(
-                snapshot.data.pedidos, widget.userInfo, latitud, longitud);
+                snapshot.data.pedidos, userInfo, latitud, longitud);
           }
         },
       ),
@@ -155,10 +151,21 @@ class _ListaPedidos extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 10),
                   width: MediaQuery.of(context).size.width * .4,
                   child: Text(
-                    '\n${pe[i].cliente.users.firstName} ${pe[i].cliente.users.lastName}\n'
-                    '\n${pe[i].item.tipoProducto}\n'
-                    '\n${pe[i].horaSolicitada.toString().substring(11, 16)}\n'
-                    '\nTotal: \$ ${pe[i].subtotal}\n',
+                    (int.parse(pe[i]
+                                .horaSolicitada
+                                .toString()
+                                .substring(11, 13)) <
+                            12)
+                        ? '\n${pe[i].cliente.users.firstName} ${pe[i].cliente.users.lastName}\n'
+                            '\n${pe[i].item.tipoProducto}\n'
+                            '\n${pe[i].horaSolicitada.toString().substring(11, 16)} AM\n'
+                            '\n${pe[i].horaSolicitada.toString().substring(0, 11)}\n'
+                            '\nTotal: \$ ${pe[i].subtotal}\n'
+                        : '\n${pe[i].cliente.users.firstName} ${pe[i].cliente.users.lastName}\n'
+                            '\n${pe[i].item.tipoProducto}\n'
+                            '\n${pe[i].horaSolicitada.toString().substring(11, 16)} PM\n'
+                            '\n${pe[i].horaSolicitada.toString().substring(0, 11)}\n'
+                            '\nTotal: \$ ${pe[i].subtotal}\n',
                     style: const TextStyle(
                       fontSize: 15,
                       color: Colors.black,
@@ -172,18 +179,15 @@ class _ListaPedidos extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20)),
                     onPressed: () {
-                      Navigator.pushReplacement(
+                      Navigator.pushReplacementNamed(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return ConfirmarMandado(
-                              pedidoInfo: pe[i],
-                              userInfo: userInfo,
-                              lat: lat,
-                              long: long,
-                            );
-                          },
-                        ),
+                        '/repartidor/confirmarMandado',
+                        arguments: {
+                          'pedido': pe[i],
+                          'user': userInfo,
+                          'lat': lat,
+                          'long': long,
+                        },
                       );
                     },
                     color: Colors.lightBlue,

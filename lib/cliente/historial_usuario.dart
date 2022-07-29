@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mandaditos_express/cliente/dashboard_cliente.dart';
 import 'package:mandaditos_express/models/pedidoclienteinfo.dart';
 import 'package:mandaditos_express/models/repartidorinfo.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
@@ -8,8 +7,6 @@ import 'package:mandaditos_express/models/userinfo.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
-
-import 'package:mandaditos_express/cliente/monitoreo/pedido_monitoreo_user.dart';
 
 AlertDialog getAlertDialog(title, content, ctx) {
   return AlertDialog(
@@ -27,8 +24,7 @@ AlertDialog getAlertDialog(title, content, ctx) {
 }
 
 class HistorialUsuario extends StatefulWidget {
-  final User userInfo;
-  const HistorialUsuario({Key? key, required this.userInfo}) : super(key: key);
+  const HistorialUsuario({Key? key}) : super(key: key);
 
   @override
   State<HistorialUsuario> createState() => _HistorialUsuarioState();
@@ -51,9 +47,11 @@ class _HistorialUsuarioState extends State<HistorialUsuario> {
   PedidoCliente pedidosCliente = PedidoCliente(pedidos: []);
 
   Future<PedidoCliente> verMandadosCliente() async {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final userInfo = arguments['user'] as User;
     var url = Uri.parse('http://34.193.105.11/users/mandadosCliente');
     var reqBody = {};
-    reqBody['id'] = widget.userInfo.datatype[0].id;
+    reqBody['id'] = userInfo.datatype[0].id;
     var response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -64,14 +62,21 @@ class _HistorialUsuarioState extends State<HistorialUsuario> {
   }
 
   @override
+  void didChangeDependencies() {
+    verMandadosCliente();
+    super.didChangeDependencies();
+  }
+
+  @override
   void initState() {
     botonSeleccionado = false;
-    verMandadosCliente();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final userInfo = arguments['user'] as User;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -80,11 +85,8 @@ class _HistorialUsuarioState extends State<HistorialUsuario> {
         leading: TextButton(
           onPressed: () {
             FocusScope.of(context).unfocus();
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        Dashboard(userInfo: widget.userInfo)));
+            Navigator.pushReplacementNamed(context, '/cliente/dashboard',
+                arguments: {'user': userInfo});
           },
           child: Image.asset('assets/images/icon_back_arrow.png', scale: .8),
         ),
@@ -238,7 +240,7 @@ class _HistorialUsuarioState extends State<HistorialUsuario> {
                                 subtotal:
                                     snapshot.data!.pedidos[index].subtotal,
                                 pedidos: snapshot.data!.pedidos[index],
-                                userInfo: widget.userInfo,
+                                userInfo: userInfo,
                               );
                             } else {
                               return Container();
@@ -326,14 +328,14 @@ class PedidosActivos extends StatelessWidget {
                 } else {
                   datosRepartidor(int.parse(pedidos.deliveryId.toString()));
                   Future.delayed(const Duration(seconds: 2), () {
-                    Navigator.pushReplacement(
+                    Navigator.pushReplacementNamed(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => PedidoMonitoreo(
-                            pedidoInfo: pedidos,
-                            userInfo: userInfo,
-                            repartidor: repartidorInfo!),
-                      ),
+                      '/cliente/monitoreo',
+                      arguments: {
+                        'user': userInfo,
+                        'pedido': pedidos,
+                        'repartidor': repartidorInfo,
+                      },
                     );
                   });
                 }

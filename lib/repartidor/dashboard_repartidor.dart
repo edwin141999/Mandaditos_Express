@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
-import 'package:mandaditos_express/repartidor/mandados_disponibles.dart';
-import 'package:mandaditos_express/repartidor/perfil_repartidor.dart';
 
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 
@@ -12,9 +10,7 @@ import 'dart:convert';
 import 'dart:async';
 
 class DashboardRepartidor extends StatefulWidget {
-  final User userInfo;
-  const DashboardRepartidor({Key? key, required this.userInfo})
-      : super(key: key);
+  const DashboardRepartidor({Key? key}) : super(key: key);
 
   @override
   State<DashboardRepartidor> createState() => _DashboardRepartidorState();
@@ -23,9 +19,11 @@ class DashboardRepartidor extends StatefulWidget {
 class _DashboardRepartidorState extends State<DashboardRepartidor> {
   var estado = '';
   Future<void> actualizarEstado() async {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final userInfo = arguments['user'] as User;
     var url = Uri.parse('http://34.193.105.11/users/cambiarEstado');
     var reqBody = {};
-    reqBody['id'] = widget.userInfo.datatype[0].id;
+    reqBody['id'] = userInfo.datatype[0].id;
     reqBody['estado'] = 'Disponible';
     final resp = await http.post(
       url,
@@ -82,6 +80,8 @@ class _DashboardRepartidorState extends State<DashboardRepartidor> {
 
   @override
   Widget build(BuildContext context) {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final userInfo = arguments['user'] as User;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -99,10 +99,11 @@ class _DashboardRepartidorState extends State<DashboardRepartidor> {
                   color: Colors.black,
                 ),
                 onTap: () {
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) {
-                    return PerfilRepartidor(userInfo: widget.userInfo);
-                  }));
+                  Navigator.pushReplacementNamed(
+                    context,
+                    '/repartidor/perfil',
+                    arguments: {'user': userInfo},
+                  );
                 },
               ),
             ),
@@ -123,11 +124,11 @@ class _DashboardRepartidorState extends State<DashboardRepartidor> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Hola ${widget.userInfo.user.firstName}',
+                        'Hola ${userInfo.user.firstName}',
                         style: const TextStyle(fontSize: 22),
                       ),
                       Text(
-                        'Usted esta en: ${widget.userInfo.datatype[0].cityDrive}',
+                        'Usted esta en: ${userInfo.datatype[0].cityDrive}',
                         style: const TextStyle(fontSize: 16),
                       ),
                       Row(
@@ -162,28 +163,20 @@ class _DashboardRepartidorState extends State<DashboardRepartidor> {
                   ),
                 ),
                 const Padding(padding: EdgeInsets.only(top: 15)),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.7,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.3,
-                        width: MediaQuery.of(context).size.width,
-                        child: AccionesContainer(
-                          text: 'Mandados disponibles',
-                          image: 'assets/images/icon_solicitar.png',
-                          colorContainer: ColorSelect.kContainerGreen,
-                          onTap: () {
-                            Navigator.pushReplacement(context,
-                                MaterialPageRoute(builder: (context) {
-                              return MandadosDisponibles(
-                                  userInfo: widget.userInfo);
-                            }));
-                          },
-                        ),
-                      ),
-                    ],
+                Container(
+                  height: MediaQuery.of(context).size.height * .751,
+                  alignment: Alignment.center,
+                  child: AccionesContainer(
+                    text: 'Mandados disponibles',
+                    image: 'assets/images/icon_solicitar.png',
+                    colorContainer: ColorSelect.kContainerGreen,
+                    onTap: () {
+                      Navigator.pushReplacementNamed(
+                        context,
+                        '/repartidor/mandadosDisponibles',
+                        arguments: {'user': userInfo},
+                      );
+                    },
                   ),
                 ),
               ],
@@ -209,27 +202,30 @@ class AccionesContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        GestureDetector(
-            key: UniqueKey(),
-            child: Container(
-              width: 160,
-              height: 130,
-              decoration: BoxDecoration(
-                color: colorContainer.withOpacity(.42),
-                borderRadius: BorderRadius.circular(17),
-                image: DecorationImage(image: AssetImage(image), scale: .8),
+    return SizedBox(
+      height: 200,
+      child: Column(
+        children: [
+          GestureDetector(
+              key: UniqueKey(),
+              child: Container(
+                width: 160,
+                height: 130,
+                decoration: BoxDecoration(
+                  color: colorContainer.withOpacity(.42),
+                  borderRadius: BorderRadius.circular(17),
+                  image: DecorationImage(image: AssetImage(image), scale: .8),
+                ),
               ),
-            ),
-            onTap: onTap),
-        SizedBox(
-          width: 140,
-          child: Text(text,
-              style: const TextStyle(fontSize: 22),
-              textAlign: TextAlign.center),
-        ),
-      ],
+              onTap: onTap),
+          SizedBox(
+            width: 140,
+            child: Text(text,
+                style: const TextStyle(fontSize: 22),
+                textAlign: TextAlign.center),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -10,8 +10,6 @@ import 'package:mandaditos_express/models/pedidoinfo.dart';
 import 'package:http/http.dart' as http;
 import 'package:mandaditos_express/models/userinfo.dart';
 import 'package:mandaditos_express/repartidor/googlemapsrepartidor_controller.dart';
-import 'package:mandaditos_express/repartidor/mandados_disponibles.dart';
-import 'package:mandaditos_express/repartidor/ruta_mandado.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 
 AlertDialog getAlertDialog(title, content, onPressed) {
@@ -40,16 +38,7 @@ AlertDialog getAlertDialog(title, content, onPressed) {
 }
 
 class ConfirmarMandado extends StatefulWidget {
-  final PedidoElement pedidoInfo;
-  final User userInfo;
-  final String lat, long;
-  const ConfirmarMandado({
-    Key? key,
-    required this.pedidoInfo,
-    required this.userInfo,
-    required this.lat,
-    required this.long,
-  }) : super(key: key);
+  const ConfirmarMandado({Key? key}) : super(key: key);
 
   @override
   State<ConfirmarMandado> createState() => _ConfirmarMandadoState();
@@ -58,9 +47,11 @@ class ConfirmarMandado extends StatefulWidget {
 class _ConfirmarMandadoState extends State<ConfirmarMandado> {
   var tipoPago = '';
   Future<void> getTarjeta() async {
-    var url = Uri.parse('http://3.95.107.222/users/getTarjeta');
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final pedidoInfo = arguments['pedido'] as PedidoElement;
+    var url = Uri.parse('http://3.88.123.192/users/getTarjeta');
     var reqBody = {};
-    reqBody['id'] = int.parse(widget.pedidoInfo.metodoPago);
+    reqBody['id'] = int.parse(pedidoInfo.metodoPago);
     final resp = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -71,21 +62,32 @@ class _ConfirmarMandadoState extends State<ConfirmarMandado> {
   }
 
   Future<void> guardarUbicacionRepartidor() async {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final userInfo = arguments['user'] as User;
+    final lat = arguments['lat'];
+    final long = arguments['long'];
     var url = Uri.parse('http://34.193.105.11/users/actualizarUbicacion');
     var reqBody = {};
-    reqBody['id'] = widget.userInfo.datatype[0].id;
-    reqBody['lat'] = widget.lat;
-    reqBody['long'] = widget.long;
-    await http.put(url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(reqBody));
+    reqBody['id'] = userInfo.datatype[0].id;
+    reqBody['lat'] = lat;
+    reqBody['long'] = long;
+    await http.put(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(reqBody),
+    );
   }
 
   Future<void> aceptarPedido() async {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final pedidoInfo = arguments['pedido'] as PedidoElement;
+    final userInfo = arguments['user'] as User;
+    final lat = arguments['lat'];
+    final long = arguments['long'];
     var url = Uri.parse('http://34.193.105.11/users/vincularRepartidor');
     var reqBody = {};
-    reqBody['id'] = widget.pedidoInfo.id;
-    reqBody['delivery_id'] = widget.userInfo.datatype[0].id;
+    reqBody['id'] = pedidoInfo.id;
+    reqBody['delivery_id'] = userInfo.datatype[0].id;
     final resp = await http.put(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -99,25 +101,24 @@ class _ConfirmarMandadoState extends State<ConfirmarMandado> {
           'Lo sentimos',
           responseMap['message'],
           () {
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (ctx) =>
-                        MandadosDisponibles(userInfo: widget.userInfo)));
+            Navigator.pushReplacementNamed(
+              context,
+              '/repartidor/mandadosDisponibles',
+              arguments: {'user': userInfo},
+            );
           },
         ),
       );
     } else if (resp.statusCode == 200) {
-      Navigator.pushReplacement(
+      Navigator.pushReplacementNamed(
         context,
-        MaterialPageRoute(
-          builder: (context) => RutaMandado(
-            pedidoInfo: widget.pedidoInfo,
-            userInfo: widget.userInfo,
-            lat: widget.lat,
-            long: widget.long,
-          ),
-        ),
+        '/repartidor/rutaMandado',
+        arguments: {
+          'pedido': pedidoInfo,
+          'user': userInfo,
+          'lat': lat,
+          'long': long,
+        },
       );
     } else {
       showDialog(
@@ -126,12 +127,10 @@ class _ConfirmarMandadoState extends State<ConfirmarMandado> {
           'Lo sentimos',
           'Hubo un Error en el Servidor',
           () {
-            Navigator.pushReplacement(
+            Navigator.pushReplacementNamed(
               context,
-              MaterialPageRoute(
-                builder: (ctx) =>
-                    MandadosDisponibles(userInfo: widget.userInfo),
-              ),
+              '/repartidor/mandadosDisponibles',
+              arguments: {'user': userInfo},
             );
           },
         ),
@@ -143,12 +142,15 @@ class _ConfirmarMandadoState extends State<ConfirmarMandado> {
   final _controllerMap = GoogleMapsRepartidorController();
   final Completer<GoogleMapController> _controller = Completer();
   void _onMapCreated(GoogleMapController controller) {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final lat = arguments['lat'];
+    final long = arguments['long'];
     controller.animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(
           target: LatLng(
-            double.parse(widget.lat),
-            double.parse(widget.long),
+            double.parse(lat),
+            double.parse(long),
           ),
           zoom: 14,
         ),
@@ -163,37 +165,39 @@ class _ConfirmarMandadoState extends State<ConfirmarMandado> {
     });
   }
 
-  @override
-  void initState() {
+  void ponerPuntos() {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final pedidoInfo = arguments['pedido'] as PedidoElement;
     _controllerMap.onTap(
       LatLng(
-        double.parse(widget.pedidoInfo.cliente.latitud),
-        double.parse(widget.pedidoInfo.cliente.longitud),
+        double.parse(pedidoInfo.cliente.latitud),
+        double.parse(pedidoInfo.cliente.longitud),
       ),
       'Cliente',
       double.parse('133'),
-      widget.pedidoInfo.cliente.users.firstName +
+      pedidoInfo.cliente.users.firstName +
           ' ' +
-          widget.pedidoInfo.cliente.users.lastName,
+          pedidoInfo.cliente.users.lastName,
     );
     _controllerMap.onTap(
       LatLng(
-        double.parse(widget.pedidoInfo.item.latitud),
-        double.parse(widget.pedidoInfo.item.longitud),
+        double.parse(pedidoInfo.item.latitud),
+        double.parse(pedidoInfo.item.longitud),
       ),
       'Pedido',
       double.parse('220'),
-      widget.pedidoInfo.item.descripcion,
+      pedidoInfo.item.descripcion,
     );
-    // setState(() {
-    //   _controllerMap.createPolylines(
-    //     double.parse(widget.pedidoInfo.item.latitud),
-    //     double.parse(widget.pedidoInfo.item.longitud),
-    //     double.parse(widget.pedidoInfo.cliente.latitud),
-    //     double.parse(widget.pedidoInfo.cliente.longitud),
-    //   );
-    // });
+  }
 
+  @override
+  void didChangeDependencies() {
+    ponerPuntos();
+    super.didChangeDependencies();
+  }
+
+  @override
+  void initState() {
     super.initState();
   }
 
@@ -205,9 +209,11 @@ class _ConfirmarMandadoState extends State<ConfirmarMandado> {
 
   @override
   Widget build(BuildContext context) {
-    double sumaTotal = double.parse(widget.pedidoInfo.subtotal) +
-        double.parse(widget.pedidoInfo.item.precioProducto);
-
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final pedidoInfo = arguments['pedido'] as PedidoElement;
+    final userInfo = arguments['user'] as User;
+    double sumaTotal = double.parse(pedidoInfo.subtotal) +
+        double.parse(pedidoInfo.item.precioProducto);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -216,13 +222,9 @@ class _ConfirmarMandadoState extends State<ConfirmarMandado> {
         leading: TextButton(
           onPressed: () {
             FocusScope.of(context).unfocus();
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    MandadosDisponibles(userInfo: widget.userInfo),
-              ),
-            );
+            Navigator.pushReplacementNamed(
+                context, '/repartidor/mandadosDisponibles',
+                arguments: {'user': userInfo});
           },
           child: Image.asset('assets/images/icon_back_arrow.png', scale: .8),
         ),
@@ -260,9 +262,9 @@ class _ConfirmarMandadoState extends State<ConfirmarMandado> {
                           );
                         } else {
                           return Text(
-                            '\nProducto: ${widget.pedidoInfo.item.tipoProducto}\n'
-                            '\nDescripción: ${widget.pedidoInfo.item.descripcion}\n '
-                            '\nUbicación: ${widget.pedidoInfo.cliente.direccion}\n'
+                            '\nProducto: ${pedidoInfo.item.tipoProducto}\n'
+                            '\nDescripción: ${pedidoInfo.item.descripcion}\n '
+                            '\nUbicación: ${pedidoInfo.cliente.direccion}\n'
                             '\nMetodo de Pago: $tipoPago\n'
                             '\nTotal: \$ $sumaTotal\n',
                             style: const TextStyle(

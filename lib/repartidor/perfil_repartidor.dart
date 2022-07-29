@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mandaditos_express/login/login_screen.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
-import 'package:mandaditos_express/repartidor/dashboard_repartidor.dart';
 
 // SERVER
 import 'package:http/http.dart' as http;
@@ -9,8 +7,7 @@ import 'dart:convert';
 import 'dart:async';
 
 class PerfilRepartidor extends StatefulWidget {
-  final User userInfo;
-  const PerfilRepartidor({Key? key, required this.userInfo}) : super(key: key);
+  const PerfilRepartidor({Key? key}) : super(key: key);
 
   @override
   State<PerfilRepartidor> createState() => _PerfilRepartidorState();
@@ -18,9 +15,11 @@ class PerfilRepartidor extends StatefulWidget {
 
 class _PerfilRepartidorState extends State<PerfilRepartidor> {
   Future<void> actualizarEstado() async {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final userInfo = arguments['user'] as User;
     var url = Uri.parse('http://34.193.105.11/users/cambiarEstado');
     var reqBody = {};
-    reqBody['id'] = widget.userInfo.datatype[0].id;
+    reqBody['id'] = userInfo.datatype[0].id;
     reqBody['estado'] = 'No Disponible';
     await http.post(
       url,
@@ -31,6 +30,8 @@ class _PerfilRepartidorState extends State<PerfilRepartidor> {
 
   @override
   Widget build(BuildContext context) {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    final userInfo = arguments['user'] as User;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -50,17 +51,15 @@ class _PerfilRepartidorState extends State<PerfilRepartidor> {
                   child: Image.asset('assets/images/icon_back_arrow.png',
                       scale: .8),
                   onTap: () {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => DashboardRepartidor(
-                                userInfo: widget.userInfo)));
+                    Navigator.pushReplacementNamed(
+                      context,
+                      '/repartidor/dashboard',
+                      arguments: {'user': userInfo},
+                    );
                   },
                 ),
                 Text(
-                  widget.userInfo.user.firstName +
-                      ' ' +
-                      widget.userInfo.user.lastName,
+                  userInfo.user.firstName + ' ' + userInfo.user.lastName,
                   style: const TextStyle(
                       color: Colors.grey,
                       fontSize: 22,
@@ -85,11 +84,7 @@ class _PerfilRepartidorState extends State<PerfilRepartidor> {
                     image: 'assets/images/icon_cerrar_sesion.png',
                     title: 'Cerrar sesión',
                     onTap: () => {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginScreen()),
-                      ),
+                      Navigator.pushReplacementNamed(context, '/login'),
                       actualizarEstado()
                     },
                   ),

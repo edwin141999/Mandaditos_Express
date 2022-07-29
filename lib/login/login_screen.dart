@@ -1,8 +1,5 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:mandaditos_express/cliente/dashboard_cliente.dart';
-import 'package:mandaditos_express/register/register_screen.dart';
-import 'package:mandaditos_express/repartidor/dashboard_repartidor.dart';
 import 'package:mandaditos_express/styles/colors/colors_view.dart';
 import 'package:mandaditos_express/models/userinfo.dart';
 
@@ -69,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> loginwithDB() async {
-    var url = Uri.parse('http://35.171.142.223/users/login');
+    var url = Uri.parse('http://44.201.202.138/users/login');
     return await Future.delayed(
         const Duration(seconds: 2),
         () => {
@@ -93,16 +90,17 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   );
                   if (responseMap['user']['user_type'] == 'Cliente') {
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) {
-                      return Dashboard(userInfo: userFromJson(response.body));
-                    }));
+                    Navigator.pushReplacementNamed(
+                      context,
+                      '/cliente/dashboard',
+                      arguments: {'user': userFromJson(response.body)},
+                    );
                   } else {
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) {
-                      return DashboardRepartidor(
-                          userInfo: userFromJson(response.body));
-                    }));
+                    Navigator.pushReplacementNamed(
+                      context,
+                      '/repartidor/dashboard',
+                      arguments: {'user': userFromJson(response.body)},
+                    );
                   }
                 } else {
                   if (responseMap.containsKey("message")) {
@@ -210,16 +208,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                           contentPadding:
                                               const EdgeInsets.only(bottom: 0),
                                           suffixIcon: IconButton(
-                                              onPressed: () {
-                                                setState(() {
-                                                  _passwordVisible =
-                                                      !_passwordVisible;
-                                                });
-                                              },
-                                              alignment: Alignment.topCenter,
-                                              icon: Icon(_passwordVisible
-                                                  ? Icons.visibility
-                                                  : Icons.visibility_off)),
+                                            onPressed: () {
+                                              setState(() {
+                                                _passwordVisible =
+                                                    !_passwordVisible;
+                                              });
+                                            },
+                                            alignment: Alignment.topCenter,
+                                            icon: Icon(_passwordVisible
+                                                ? Icons.visibility
+                                                : Icons.visibility_off),
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -264,14 +263,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                             color: ColorSelect.kSecondaryColor,
                                             fontWeight: FontWeight.bold),
                                         recognizer: TapGestureRecognizer()
-                                          ..onTap =
-                                              () => Navigator.pushReplacement(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          const RegisterScreen(),
-                                                    ),
-                                                  ),
+                                          ..onTap = () =>
+                                              Navigator.pushReplacementNamed(
+                                                context,
+                                                '/register',
+                                              ),
                                       )
                                     ],
                                   ),

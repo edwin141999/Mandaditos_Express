@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mandaditos_express/login/login_screen.dart';
 import 'dart:async';
 
 class SplashView extends StatefulWidget {
@@ -18,8 +17,7 @@ class _SplashViewState extends State<SplashView> {
 
   _toOnboarding() async {
     await Future.delayed(const Duration(seconds: 5), () {});
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (ctx) => const LoginScreen()));
+    Navigator.pushReplacementNamed(context, '/login');
   }
 
   @override
